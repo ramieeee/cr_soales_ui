@@ -5,7 +5,8 @@ import styles from "./page.module.css";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
 const PROCESS_PATH =
-  process.env.NEXT_PUBLIC_PROCESS_PATH ?? "/api/v1/document/process";
+  process.env.NEXT_PUBLIC_PROCESS_PATH ??
+  "/api/v1/multimodal_extraction/process";
 
 type UploadStatus = "idle" | "uploading" | "success" | "error";
 
@@ -17,6 +18,7 @@ const isPdfFile = (file: File) => {
 
 export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
   const [prompt, setPrompt] = useState("Describe the document");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [status, setStatus] = useState<UploadStatus>("idle");
@@ -57,11 +59,14 @@ export default function Home() {
 
     setStatus("uploading");
     setMessage("Uploading to the processing API...");
+    const controller = new AbortController();
+    abortRef.current = controller;
 
     try {
       const response = await fetch(`${API_BASE}${PROCESS_PATH}`, {
         method: "POST",
         body: formData,
+        signal: controller.signal,
       });
 
       if (!response.ok) {
@@ -77,10 +82,26 @@ export default function Home() {
       setStatus("success");
       setMessage(payload || "Upload completed.");
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Upload failed.";
-      setStatus("error");
-      setMessage(message);
+      if (error instanceof DOMException && error.name === "AbortError") {
+        setStatus("idle");
+        setMessage("Upload cancelled.");
+      } else {
+        const message =
+          error instanceof Error ? error.message : "Upload failed.";
+        setStatus("error");
+        setMessage(message);
+      }
+    } finally {
+      if (abortRef.current === controller) {
+        abortRef.current = null;
+      }
     }
+  };
+
+  const handleCancel = () => {
+    if (!abortRef.current) return;
+    abortRef.current.abort();
+    abortRef.current = null;
   };
 
   return (
@@ -90,8 +111,10 @@ export default function Home() {
           <p className={styles.kicker}>CR Soles</p>
           <h1>Send a PDF straight to your processing API.</h1>
           <p className={styles.subhead}>
-            Drag and drop a file, add a prompt, and we will post it to the
-            backend running on localhost:8000.
+            Drag and drop a file and add a prompt.
+          </p>
+          <p className={styles.subhead}>
+            FastAPI backend running on localhost:8000
           </p>
         </header>
 
@@ -159,13 +182,23 @@ export default function Home() {
                   placeholder="Describe the document"
                 />
               </label>
-              <button
-                className={styles.button}
-                type="submit"
-                disabled={status === "uploading"}
-              >
-                {status === "uploading" ? "Uploading..." : "Upload PDF"}
-              </button>
+              <div className={styles.actions}>
+                <button
+                  className={styles.button}
+                  type="submit"
+                  disabled={status === "uploading"}
+                >
+                  {status === "uploading" ? "Uploading..." : "Upload PDF"}
+                </button>
+                <button
+                  className={`${styles.button} ${styles.secondaryButton}`}
+                  type="button"
+                  onClick={handleCancel}
+                  disabled={status !== "uploading"}
+                >
+                  Request Cancel
+                </button>
+              </div>
             </div>
           </form>
 
