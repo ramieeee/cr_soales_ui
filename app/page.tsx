@@ -16,6 +16,34 @@ const isPdfFile = (file: File) => {
   );
 };
 
+const highlightJson = (value: string) => {
+  const tokenRegex =
+    /("(?:\\u[a-fA-F0-9]{4}|\\[^u]|[^\\"])*"(?:\s*:)?|\btrue\b|\bfalse\b|\bnull\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g;
+
+  return value.split(tokenRegex).map((part, index) => {
+    if (!part) return null;
+    let className = "";
+
+    if (part.startsWith('"') && part.endsWith('":')) {
+      className = styles.jsonKey;
+    } else if (part.startsWith('"')) {
+      className = styles.jsonString;
+    } else if (/^-?\d/.test(part)) {
+      className = styles.jsonNumber;
+    } else if (part === "true" || part === "false") {
+      className = styles.jsonBoolean;
+    } else if (part === "null") {
+      className = styles.jsonNull;
+    }
+
+    return (
+      <span key={`${part}-${index}`} className={className || undefined}>
+        {part}
+      </span>
+    );
+  });
+};
+
 export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -36,7 +64,7 @@ export default function Home() {
     let animationFrame = 0;
     let width = 0;
     let height = 0;
-    const starCount = 200;
+    const starCount = 20;
     const stars: {
       radius: number;
       angle: number;
@@ -98,9 +126,12 @@ export default function Home() {
 
       const centerX = width / 2;
       const centerY = height / 2;
-      const cellSize = 120;
+      const cellSize = 140;
+      const connectionDistance = 100;
+      const maxConnections = 3;
       const grid = new Map<string, number[]>();
       const positions: { x: number; y: number }[] = [];
+      const lineColors: { r: number; g: number; b: number }[] = [];
 
       for (let i = 0; i < stars.length; i += 1) {
         const star = stars[i];
@@ -110,6 +141,12 @@ export default function Home() {
         const x = centerX + Math.cos(angle) * radius;
         const y = centerY + Math.sin(angle) * radius;
         positions[i] = { x, y };
+        const mix = Math.min(1, Math.max(0, (x / width) * 1.1));
+        lineColors[i] = {
+          r: Math.round(lerp(purple.r, green.r, mix)),
+          g: Math.round(lerp(purple.g, green.g, mix)),
+          b: Math.round(lerp(purple.b, green.b, mix)),
+        };
 
         const cx = Math.floor(x / cellSize);
         const cy = Math.floor(y / cellSize);
@@ -125,6 +162,7 @@ export default function Home() {
         const { x: ax, y: ay } = positions[i];
         const cx = Math.floor(ax / cellSize);
         const cy = Math.floor(ay / cellSize);
+        let connections = 0;
         for (let gx = -1; gx <= 1; gx += 1) {
           for (let gy = -1; gy <= 1; gy += 1) {
             const neighborKey = `${cx + gx},${cy + gy}`;
@@ -136,34 +174,66 @@ export default function Home() {
               const dx = ax - bx;
               const dy = ay - by;
               const distance = Math.hypot(dx, dy);
-              if (distance > 120) continue;
-              const alpha = (1 - distance / 120) * 0.4;
-              const mix = Math.min(1, Math.max(0, (ax / width) * 1.1));
-              const r = Math.round(lerp(purple.r, green.r, mix));
-              const g = Math.round(lerp(purple.g, green.g, mix));
-              const b = Math.round(lerp(purple.b, green.b, mix));
-              context.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+              if (distance > connectionDistance) continue;
+              const sway = Math.sin(time * 0.0012 + (i + j) * 0.08) * 6;
+              const midX = (ax + bx) / 2 + (dy / Math.max(1, distance)) * sway;
+              const midY = (ay + by) / 2 - (dx / Math.max(1, distance)) * sway;
+              const alpha = (1 - distance / connectionDistance) * 0.45;
+              const { r, g, b } = lineColors[i];
+              const glowAlpha = Math.min(1, alpha + 0.15);
+
+              context.save();
+              context.lineWidth = 2.2;
+              context.shadowBlur = 16;
+              context.shadowColor = `rgba(${r}, ${g}, ${b}, ${glowAlpha})`;
+              context.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha * 0.35})`;
               context.beginPath();
               context.moveTo(ax, ay);
-              context.lineTo(bx, by);
+              context.quadraticCurveTo(midX, midY, bx, by);
               context.stroke();
+
+              context.lineWidth = 0.9;
+              context.shadowBlur = 6;
+              context.shadowColor = `rgba(${r}, ${g}, ${b}, ${glowAlpha})`;
+              context.strokeStyle = `rgba(${r}, ${g}, ${b}, ${glowAlpha})`;
+              context.beginPath();
+              context.moveTo(ax, ay);
+              context.quadraticCurveTo(midX, midY, bx, by);
+              context.stroke();
+              context.restore();
+              connections += 1;
+              if (connections >= maxConnections) {
+                break;
+              }
             }
+            if (connections >= maxConnections) {
+              break;
+            }
+          }
+          if (connections >= maxConnections) {
+            break;
           }
         }
       }
 
+      context.shadowBlur = 0;
       for (let i = 0; i < stars.length; i += 1) {
         const star = stars[i];
         const { x, y } = positions[i];
         const twinkle =
           (Math.sin(time * 0.002 + star.phase) + 1) * 0.5 * star.twinkle;
         const glow = 1 + twinkle * 0.6;
-        context.fillStyle = `rgba(255, 255, 255, ${0.6 + twinkle * 0.4})`;
-        context.shadowBlur = 6 * glow;
-        context.shadowColor = "rgba(255, 255, 255, 0.7)";
+        context.fillStyle = `rgba(255, 255, 255, ${0.55 + twinkle * 0.35})`;
+        if (twinkle > 0.8) {
+          context.shadowBlur = 6 * glow;
+          context.shadowColor = "rgba(255, 255, 255, 0.7)";
+        }
         context.beginPath();
         context.arc(x, y, star.size * glow, 0, Math.PI * 2);
         context.fill();
+        if (twinkle > 0.8) {
+          context.shadowBlur = 0;
+        }
       }
 
       context.shadowBlur = 0;
@@ -262,19 +332,28 @@ export default function Home() {
     abortRef.current = null;
   };
 
+  const renderMessage = () => {
+    if (!message) return "Your response will appear here after upload.";
+
+    try {
+      const parsed = JSON.parse(message);
+      const pretty = JSON.stringify(parsed, null, 2);
+      return (
+        <pre className={styles.jsonBlock}>
+          {highlightJson(pretty)}
+        </pre>
+      );
+    } catch {
+      return <pre className={styles.jsonBlock}>{message}</pre>;
+    }
+  };
+
   return (
     <div className={styles.page}>
       <canvas className={styles.starfield} ref={canvasRef} aria-hidden />
       <main className={styles.main}>
         <header className={styles.header}>
-          <p className={styles.kicker}>CR Soles</p>
-          <h1>Send a PDF straight to your processing API.</h1>
-          <p className={styles.subhead}>
-            Drag and drop a file and add a prompt.
-          </p>
-          <p className={styles.subhead}>
-            FastAPI backend running on localhost:8000
-          </p>
+          <p className={styles.kicker}>CR SOLES</p>
         </header>
 
         <section className={styles.card}>
@@ -313,22 +392,16 @@ export default function Home() {
                   <span />
                 </div>
                 <div>
-                  <p className={styles.dropTitle}>Drop your PDF here</p>
+                  <p className={styles.dropTitle}>
+                    {selectedFile ? selectedFile.name : "Drop your PDF here"}
+                  </p>
                   <p className={styles.dropHint}>
-                    or click to browse from your device
+                    {selectedFile
+                      ? "Click to replace the file"
+                      : "or click to browse from your device"}
                   </p>
                 </div>
               </div>
-            </div>
-
-            <div className={styles.meta}>
-              <div>
-                <p className={styles.metaLabel}>Selected file</p>
-                <p className={styles.metaValue}>
-                  {selectedFile ? selectedFile.name : "No file chosen yet."}
-                </p>
-              </div>
-              <span className={styles.badge}>PDF only</span>
             </div>
 
             <div className={styles.controls}>
@@ -371,7 +444,7 @@ export default function Home() {
             }`}
             role="status"
           >
-            {message || "Your response will appear here after upload."}
+            {renderMessage()}
           </div>
         </section>
       </main>

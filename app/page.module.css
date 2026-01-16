@@ -46,42 +46,49 @@
 .header {
   max-width: 620px;
   display: grid;
-  gap: 16px;
+  gap: 8px;
 }
 
 .kicker {
   font-family: var(--font-display), "Helvetica Neue", Arial, sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.24em;
   font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0.28em;
+  font-weight: 600;
+  text-transform: uppercase;
   color: var(--muted);
-  font-weight: 500;
-}
-
-.header h1 {
-  font-family: var(--font-display), "Helvetica Neue", Arial, sans-serif;
-  font-size: clamp(32px, 4vw, 52px);
-  line-height: 1.05;
-  letter-spacing: -0.015em;
-  font-weight: 300;
-}
-
-.subhead {
-  font-size: 18px;
-  line-height: 1.7;
-  color: var(--muted);
-  font-weight: 300;
 }
 
 .card {
-  background: linear-gradient(165deg, rgba(31, 26, 45, 0.92), rgba(22, 19, 34, 0.92));
-  border-radius: 24px;
-  border: 1px solid rgba(239, 234, 255, 0.08);
-  box-shadow: 0 24px 70px var(--shadow);
+  position: relative;
+  background: rgba(18, 16, 32, 0.58);
+  border-radius: 26px;
+  border: 1px solid rgba(239, 234, 255, 0.18);
+  box-shadow: 0 24px 70px rgba(4, 5, 12, 0.5);
+  backdrop-filter: blur(10px) saturate(165%);
   padding: 32px;
   display: grid;
   gap: 24px;
   animation: floatIn 0.9s ease both;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.015)
+  );
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .form {
@@ -249,15 +256,53 @@
 }
 
 .status {
-  background: rgba(14, 12, 23, 0.8);
+  background: linear-gradient(
+    160deg,
+    rgba(9, 10, 18, 0.85),
+    rgba(18, 22, 32, 0.75)
+  );
   border-radius: 16px;
+  border: 1px solid rgba(164, 212, 255, 0.14);
   padding: 16px;
   font-size: 13px;
-  color: var(--muted);
+  color: #a9bdd8;
   white-space: pre-wrap;
   word-break: break-word;
-  max-height: 240px;
+  overflow-wrap: anywhere;
+  max-height: 45vh;
+  min-height: 240px;
   overflow: auto;
+}
+
+.jsonBlock {
+  margin: 0;
+  font-family: "Space Grotesk", "Manrope", sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  color: inherit;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.jsonKey {
+  color: #9ed2ff;
+}
+
+.jsonString {
+  color: #7ef0c6;
+}
+
+.jsonNumber {
+  color: #f2c67d;
+}
+
+.jsonBoolean {
+  color: #f39bff;
+}
+
+.jsonNull {
+  color: #d0a9ff;
 }
 
 .error {
@@ -325,6 +370,7 @@
   }
 
   .status {
-    max-height: 200px;
+    max-height: 38vh;
+    min-height: 200px;
   }
 }
