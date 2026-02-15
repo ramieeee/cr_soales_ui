@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import styles from "./page.module.css";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost";
 const API_PORT = process.env.NEXT_PUBLIC_API_PORT ?? "8000";
@@ -9,9 +8,23 @@ const API_PORT = process.env.NEXT_PUBLIC_API_PORT ?? "8000";
 const API_URL = `${API_BASE_URL}:${API_PORT}`;
 const PROCESS_PATH =
   process.env.NEXT_PUBLIC_PROCESS_PATH ??
-  "/api/v1/multimodal_extraction/process";
+  "/api/v1/multimodal_extraction/extract";
 
 type UploadStatus = "idle" | "uploading" | "success" | "error";
+
+const jsonClassMap = {
+  key: "text-[#cfcfcf]",
+  string: "text-[#e0e0e0]",
+  number: "text-[#bdbdbd]",
+  boolean: "text-[#d6d6d6]",
+  null: "text-[#9a9a9a]",
+} as const;
+
+const baseInputClass =
+  'rounded-xl border border-white/[0.18] bg-[rgba(12,12,12,0.9)] px-[14px] py-3 text-sm text-[#f2f2f2] transition-[border-color,box-shadow] duration-200 ease-in focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)] [font-family:var(--font-body),"Helvetica_Neue",Arial,sans-serif]';
+
+const buttonClass =
+  "min-w-40 rounded-full border-none bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-7 py-3 text-sm font-semibold text-[#0b0b0b] shadow-[0_14px_30px_rgba(0,0,0,0.35)] transition-[transform,box-shadow] duration-200 ease-in enabled:hover:-translate-y-px disabled:cursor-wait disabled:opacity-70 disabled:shadow-none max-[900px]:w-full";
 
 const isPdfFile = (file: File) => {
   return (
@@ -28,15 +41,15 @@ const highlightJson = (value: string) => {
     let className = "";
 
     if (part.startsWith('"') && part.endsWith('":')) {
-      className = styles.jsonKey;
+      className = jsonClassMap.key;
     } else if (part.startsWith('"')) {
-      className = styles.jsonString;
+      className = jsonClassMap.string;
     } else if (/^-?\d/.test(part)) {
-      className = styles.jsonNumber;
+      className = jsonClassMap.number;
     } else if (part === "true" || part === "false") {
-      className = styles.jsonBoolean;
+      className = jsonClassMap.boolean;
     } else if (part === "null") {
-      className = styles.jsonNull;
+      className = jsonClassMap.null;
     }
 
     return (
@@ -52,10 +65,15 @@ export default function Home() {
   const abortRef = useRef<AbortController | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [prompt, setPrompt] = useState("Describe the document");
+  const [ingestionSource, setIngestionSource] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [status, setStatus] = useState<UploadStatus>("idle");
   const [message, setMessage] = useState("");
   const [isDragging, setIsDragging] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{
+    pdf?: string;
+    ingestionSource?: string;
+  }>({});
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -238,11 +256,16 @@ export default function Home() {
       setStatus("error");
       setMessage("Only PDF files are supported.");
       setSelectedFile(null);
+      setFieldErrors((prev) => ({
+        ...prev,
+        pdf: "PDF file is required (only .pdf is supported).",
+      }));
       return;
     }
     setSelectedFile(file);
     setStatus("idle");
     setMessage("");
+    setFieldErrors((prev) => ({ ...prev, pdf: undefined }));
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
@@ -254,15 +277,31 @@ export default function Home() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const nextErrors: { pdf?: string; ingestionSource?: string } = {};
+
     if (!selectedFile) {
       setStatus("error");
       setMessage("Add a PDF before uploading.");
+      nextErrors.pdf = "PDF is required.";
+    }
+
+    if (!ingestionSource.trim()) {
+      nextErrors.ingestionSource = "Ingestion source is required.";
+    }
+
+    if (nextErrors.pdf || nextErrors.ingestionSource) {
+      setFieldErrors((prev) => ({ ...prev, ...nextErrors }));
+      if (!message) {
+        setMessage("Please fill the required fields.");
+      }
       return;
     }
 
     const formData = new FormData();
     formData.append("pdf", selectedFile);
     formData.append("prompt", prompt || "Describe the document");
+    formData.append("ingestion_source", ingestionSource.trim());
 
     setStatus("uploading");
     setMessage("Uploading to the PDF and processing...");
@@ -314,16 +353,19 @@ export default function Home() {
   const renderMessage = () => {
     if (status === "uploading") {
       return (
-        <div className={styles.loading}>
-          <div className={styles.loadingHeader}>
-            <span className={styles.loadingTitle}>
+        <div className="grid gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span className="text-sm font-semibold tracking-[0.02em] text-[#e6e6e6]">
               Uploading to the PDF and processing
             </span>
           </div>
-          <div className={styles.loadingBar} aria-hidden="true">
-            <span />
+          <div
+            className="relative h-[10px] overflow-hidden rounded-full bg-white/12"
+            aria-hidden="true"
+          >
+            <span className="absolute inset-0 animate-loading-sweep bg-[linear-gradient(90deg,rgba(255,255,255,0),#e5e5e5,#9d9d9d,rgba(255,255,255,0))]" />
           </div>
-          <p className={styles.loadingHint}>
+          <p className="m-0 text-[13px] text-[#a5a5a5]">
             We are reading pages and extracting details.
           </p>
         </div>
@@ -335,25 +377,45 @@ export default function Home() {
     try {
       const parsed = JSON.parse(message);
       const pretty = JSON.stringify(parsed, null, 2);
-      return <pre className={styles.jsonBlock}>{highlightJson(pretty)}</pre>;
+      return (
+        <pre className='m-0 whitespace-pre-wrap break-words text-[13px] leading-[1.6] [overflow-wrap:anywhere] [font-family:var(--font-display),"Manrope",sans-serif]'>
+          {highlightJson(pretty)}
+        </pre>
+      );
     } catch {
-      return <pre className={styles.jsonBlock}>{message}</pre>;
+      return (
+        <pre className='m-0 whitespace-pre-wrap break-words text-[13px] leading-[1.6] [overflow-wrap:anywhere] [font-family:var(--font-display),"Manrope",sans-serif]'>
+          {message}
+        </pre>
+      );
     }
   };
 
   return (
-    <div className={styles.page}>
-      <canvas className={styles.starfield} ref={canvasRef} aria-hidden />
-      <main className={styles.main}>
-        <header className={styles.header}>
-          <p className={styles.kicker}>CR SOLES</p>
+    <div className="relative flex min-h-dvh items-start justify-center overflow-x-hidden overflow-y-auto bg-[#0b0b0b] px-6 py-20 text-[#f2f2f2] max-sm:px-4 max-sm:py-[60px]">
+      <canvas
+        className="pointer-events-none fixed inset-0 z-0"
+        ref={canvasRef}
+        aria-hidden
+      />
+      <main className="relative z-[1] grid w-full max-w-[980px] gap-10 animate-fade-in-up">
+        <header className="grid max-w-[620px] gap-2">
+          <p className='text-xs font-semibold uppercase leading-[1.2] tracking-[0.28em] text-[#a5a5a5] [font-family:var(--font-display),"Helvetica_Neue",Arial,sans-serif]'>
+            CR SOLES
+          </p>
         </header>
 
-        <section className={styles.card}>
-          <form className={styles.form} onSubmit={handleSubmit}>
+        <section className="relative grid gap-6 rounded-[26px] border border-white/14 bg-[rgba(18,18,18,0.76)] p-8 shadow-[0_24px_70px_rgba(0,0,0,0.45)] backdrop-blur-[10px] backdrop-saturate-[165%] before:pointer-events-none before:absolute before:inset-0 before:rounded-[inherit] before:bg-[linear-gradient(140deg,rgba(255,255,255,0.08),rgba(255,255,255,0.015))] before:opacity-80 [&>*]:relative [&>*]:z-[1] max-sm:p-6 animate-float-in">
+          <form className="grid gap-5" onSubmit={handleSubmit}>
             <div
-              className={`${styles.dropzone} ${
-                isDragging ? styles.dragging : ""
+              className={`cursor-pointer rounded-[20px] border-[1.5px] border-dashed border-white/12 bg-[linear-gradient(140deg,rgba(26,26,26,0.95),rgba(16,16,16,0.98)_58%)] p-7 transition-[border-color,background,box-shadow] duration-200 ease-in hover:border-white/40 ${
+                isDragging
+                  ? "border-[#f0f0f0] bg-[linear-gradient(140deg,rgba(32,32,32,0.98),rgba(18,18,18,0.98)_60%)] shadow-[0_0_0_4px_rgba(255,255,255,0.12)]"
+                  : ""
+              } ${
+                fieldErrors.pdf
+                  ? "!border-[rgba(255,96,96,0.9)] shadow-[0_0_0_4px_rgba(255,96,96,0.14)]"
+                  : ""
               }`}
               onDragOver={(event) => {
                 event.preventDefault();
@@ -373,50 +435,98 @@ export default function Home() {
             >
               <input
                 ref={inputRef}
-                className={styles.fileInput}
+                className="hidden"
                 type="file"
-                accept="application/pdf"
+                accept="application/pdf,.pdf"
                 onChange={(event) =>
                   handleFile(event.target.files?.[0] ?? null)
                 }
               />
-              <div className={styles.dropContent}>
-                <div className={styles.dropIcon} aria-hidden="true">
+              <div className="grid grid-cols-[auto_1fr] items-center gap-4 max-sm:grid-cols-1">
+                <div className="max-sm:h-12 max-sm:w-12" aria-hidden="true">
                   <span />
                 </div>
                 <div>
-                  <p className={styles.dropTitle}>
+                  <p className="text-[18px] font-semibold">
                     {selectedFile ? selectedFile.name : "Drop your PDF here"}
                   </p>
-                  <p className={styles.dropHint}>
+                  <p className="text-sm text-[#a5a5a5]">
                     {selectedFile
                       ? "Click to replace the file"
                       : "or click to browse from your device"}
                   </p>
+                  {fieldErrors.pdf ? (
+                    <p
+                      id="pdf-error"
+                      className="mt-2 text-xs font-semibold leading-[1.3] text-[rgba(255,170,170,0.95)]"
+                      role="alert"
+                    >
+                      {fieldErrors.pdf}
+                    </p>
+                  ) : null}
                 </div>
               </div>
             </div>
 
-            <div className={styles.controls}>
-              <label className={styles.field}>
-                <span>Prompt</span>
+            <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-end gap-[18px] max-[900px]:grid-cols-1">
+              <label className="grid gap-2 text-sm font-semibold">
+                <span className="text-[#a5a5a5]">Prompt</span>
                 <input
                   type="text"
                   value={prompt}
                   onChange={(event) => setPrompt(event.target.value)}
                   placeholder="Describe the document"
+                  className={baseInputClass}
                 />
               </label>
-              <div className={styles.actions}>
+              <label className="grid gap-2 text-sm font-semibold">
+                <span className="text-[#a5a5a5]">Ingestion source</span>
+                <input
+                  type="text"
+                  value={ingestionSource}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setIngestionSource(value);
+                    if (value.trim()) {
+                      setFieldErrors((prev) => ({
+                        ...prev,
+                        ingestionSource: undefined,
+                      }));
+                    }
+                  }}
+                  placeholder="Enter ingestion source"
+                  className={`${baseInputClass} ${
+                    fieldErrors.ingestionSource
+                      ? "!border-[rgba(255,96,96,0.9)] shadow-[0_0_0_4px_rgba(255,96,96,0.14)]"
+                      : ""
+                  }`}
+                  aria-invalid={fieldErrors.ingestionSource ? true : undefined}
+                  aria-describedby={
+                    fieldErrors.ingestionSource
+                      ? "ingestion-source-error"
+                      : undefined
+                  }
+                />
+                {fieldErrors.ingestionSource ? (
+                  <span
+                    id="ingestion-source-error"
+                    className="mt-2 text-xs font-semibold leading-[1.3] text-[rgba(255,170,170,0.95)]"
+                    role="alert"
+                  >
+                    {fieldErrors.ingestionSource}
+                  </span>
+                ) : null}
+              </label>
+              <div className="flex flex-wrap items-center justify-end gap-3 max-[900px]:w-full">
                 <button
-                  className={styles.button}
+                  className={buttonClass}
                   type="submit"
                   disabled={status === "uploading"}
                 >
                   {status === "uploading" ? "Uploading..." : "Upload PDF"}
                 </button>
                 <button
-                  className={`${styles.button} ${styles.secondaryButton}`}
+                  className={`${buttonClass} border border-white/12 bg-[rgba(18,18,18,0.9)] text-[#f2f2f2] shadow-none disabled:cursor-not-allowed disabled:opacity-60`}
                   type="button"
                   onClick={handleCancel}
                   disabled={status !== "uploading"}
@@ -428,13 +538,13 @@ export default function Home() {
           </form>
 
           <div
-            className={`${styles.status} ${
+            className={`max-h-[45vh] min-h-[240px] overflow-auto whitespace-pre-wrap break-words rounded-2xl border border-white/12 bg-[linear-gradient(160deg,rgba(10,10,10,0.9),rgba(18,18,18,0.78))] p-4 text-[13px] text-[#bdbdbd] [overflow-wrap:anywhere] max-sm:max-h-[38vh] max-sm:min-h-[200px] ${
               status === "error"
-                ? styles.error
+                ? "bg-[rgba(255,255,255,0.06)] text-[#f0b8a6]"
                 : status === "success"
-                  ? styles.success
+                  ? "bg-[rgba(255,255,255,0.06)] text-[#d8d8d8]"
                   : status === "uploading"
-                    ? styles.loadingStatus
+                    ? "border-white/30 shadow-[0_0_0_1px_rgba(255,255,255,0.12),0_18px_40px_rgba(0,0,0,0.4)]"
                     : ""
             }`}
             role="status"
