@@ -1,41 +1,17 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+import { verifyAccessToken } from "@/lib/access-token";
+
 const COOKIE_NAME = "cr_soles_access";
 
-const toBase64Url = (bytes: ArrayBuffer) => {
-  const binary = String.fromCharCode(...new Uint8Array(bytes));
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
-};
-
-const sign = async (message: string, secret: string) => {
-  const key = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"],
+const isProtectedPath = (pathname: string) => {
+  return (
+    pathname === "/" ||
+    pathname.startsWith("/upload") ||
+    pathname.startsWith("/papers-staging") ||
+    pathname.startsWith("/papers")
   );
-
-  const sig = await crypto.subtle.sign(
-    "HMAC",
-    key,
-    new TextEncoder().encode(message),
-  );
-
-  return toBase64Url(sig);
-};
-
-const isValidToken = async (token: string | undefined, secret: string) => {
-  if (!token) return false;
-  const [expRaw, signature] = token.split(".");
-  if (!expRaw || !signature) return false;
-
-  const expiresAt = Number(expRaw);
-  if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) return false;
-
-  const expected = await sign(expRaw, secret);
-  return signature === expected;
 };
 
 export async function proxy(request: NextRequest) {
@@ -47,22 +23,22 @@ export async function proxy(request: NextRequest) {
   }
 
   const token = request.cookies.get(COOKIE_NAME)?.value;
-  const authenticated = await isValidToken(token, secret);
+  const authenticated = await verifyAccessToken(token, secret);
 
-  if (pathname === "/access") {
+  if (pathname === "/login" || pathname === "/access") {
     if (authenticated) {
-      return NextResponse.redirect(new URL("/", request.url));
+      return NextResponse.redirect(new URL("/upload", request.url));
     }
     return NextResponse.next();
   }
 
-  if (!authenticated) {
-    return NextResponse.redirect(new URL("/access", request.url));
+  if (isProtectedPath(pathname) && !authenticated) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/", "/access"],
+  matcher: ["/", "/login", "/access", "/upload/:path*", "/papers-staging/:path*", "/papers/:path*"],
 };
