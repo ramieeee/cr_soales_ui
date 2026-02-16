@@ -2,9 +2,7 @@
 
 import { useRef, useState } from "react";
 
-import { uploadDocument } from "@/lib/paper-review-api";
-
-type UploadStatus = "idle" | "uploading" | "success" | "error";
+import { useUploadSession } from "@/components/upload-session";
 
 const isPdfFile = (file: File) => {
   return (
@@ -17,9 +15,9 @@ export default function UploadPanel() {
   const [prompt, setPrompt] = useState("Describe the document");
   const [ingestionSource, setIngestionSource] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [status, setStatus] = useState<UploadStatus>("idle");
-  const [message, setMessage] = useState("");
   const [isDragging, setIsDragging] = useState(false);
+  const [formError, setFormError] = useState("");
+  const { status, message, startUpload } = useUploadSession();
 
   const handleFileSelect = (selected: File | null) => {
     if (!selected) return;
@@ -28,39 +26,22 @@ export default function UploadPanel() {
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setFormError("");
 
     if (!file || !isPdfFile(file)) {
-      setStatus("error");
-      setMessage("Please select a valid PDF file.");
+      setFormError("Please select a valid PDF file.");
       return;
     }
 
     if (!ingestionSource.trim()) {
-      setStatus("error");
-      setMessage("Ingestion source is required.");
+      setFormError("Ingestion source is required.");
       return;
     }
-
-    setStatus("uploading");
-    setMessage("Uploading to Python server...");
-
-    try {
-      const payload = await uploadDocument({
-        pdf: file,
-        prompt: prompt || "Describe the document",
-        ingestionSource: ingestionSource.trim(),
-      });
-
-      setStatus("success");
-      setMessage(
-        typeof payload === "string"
-          ? payload
-          : JSON.stringify(payload, null, 2),
-      );
-    } catch (error) {
-      setStatus("error");
-      setMessage(error instanceof Error ? error.message : "Upload failed.");
-    }
+    await startUpload({
+      pdf: file,
+      prompt: prompt || "Describe the document",
+      ingestionSource: ingestionSource.trim(),
+    });
   };
 
   return (
@@ -148,6 +129,12 @@ export default function UploadPanel() {
           {status === "uploading" ? "Uploading..." : "Upload"}
         </button>
       </form>
+
+      {formError ? (
+        <div className="rounded-2xl border border-red-300/30 bg-red-200/10 p-4 text-sm text-red-200">
+          {formError}
+        </div>
+      ) : null}
 
       <div className="rounded-2xl border border-white/12 bg-[rgba(14,14,14,0.72)] p-4 text-sm whitespace-pre-wrap break-words">
         {message || "The server response will appear here."}
