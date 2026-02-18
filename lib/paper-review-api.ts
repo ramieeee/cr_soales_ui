@@ -1,5 +1,14 @@
 export type PaperRow = Record<string, unknown>;
 export type ReviewTableType = "papers_staging" | "papers";
+const EDITABLE_KEYS = [
+  "title",
+  "authors",
+  "journal",
+  "year",
+  "abstract",
+  "pdf_url",
+  "ingestion_source",
+] as const;
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost";
 const API_PORT = process.env.NEXT_PUBLIC_API_PORT ?? "8000";
@@ -140,18 +149,28 @@ const resolveId = (row: PaperRow) => {
   return value ? String(value) : "";
 };
 
+const sanitizeEditablePayload = (row: PaperRow): PaperRow => {
+  const payload: PaperRow = {};
+  EDITABLE_KEYS.forEach((key) => {
+    payload[key] = row[key];
+  });
+  return payload;
+};
+
 export const updateStagingPaper = async (row: PaperRow) => {
   const id = resolveId(row);
+  const payload = sanitizeEditablePayload(row);
   return postForm(UPDATE_STAGING_PATH, {
     id,
-    payload: JSON.stringify(row),
+    payload: JSON.stringify(payload),
   });
 };
 
 export const updatePaper = async (row: PaperRow) => {
   const id = resolveId(row);
+  const payload = sanitizeEditablePayload(row);
   return postForm(UPDATE_PAPERS_PATH, {
     id,
-    payload: JSON.stringify(row),
+    payload: JSON.stringify(payload),
   });
 };
