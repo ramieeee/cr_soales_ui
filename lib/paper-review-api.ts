@@ -1,17 +1,15 @@
 export type PaperRow = Record<string, unknown>;
+export type ReviewTableType = "papers_staging" | "papers";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost";
 const API_PORT = process.env.NEXT_PUBLIC_API_PORT ?? "8000";
-const PAPER_REVIEW_PREFIX = process.env.NEXT_PUBLIC_PAPER_REVIEW_PREFIX ?? "/paper_review";
+const PAPER_REVIEW_PREFIX =
+  process.env.NEXT_PUBLIC_PAPER_REVIEW_PREFIX ?? "/paper_review";
 
 const UPLOAD_PATH =
   process.env.NEXT_PUBLIC_UPLOAD_PATH ??
   process.env.NEXT_PUBLIC_PROCESS_PATH ??
   `${PAPER_REVIEW_PREFIX}/upload_pdf`;
-
-const FETCH_STAGING_PATH =
-  process.env.NEXT_PUBLIC_FETCH_STAGING_PATH ??
-  `${PAPER_REVIEW_PREFIX}/fetch/staging_papers`;
 
 const FETCH_PAPERS_PATH =
   process.env.NEXT_PUBLIC_FETCH_PAPERS_PATH ??
@@ -30,7 +28,33 @@ const buildUrl = (path: string) => {
   return `${API_BASE_URL}:${API_PORT}${normalized}`;
 };
 
-const postForm = async (path: string, fields: Record<string, string | number | Blob>) => {
+const getWithQuery = async (
+  path: string,
+  query: Record<string, string | number>,
+) => {
+  const url = new URL(buildUrl(path));
+  Object.entries(query).forEach(([key, value]) => {
+    url.searchParams.set(key, String(value));
+  });
+
+  const response = await fetch(url.toString(), {
+    method: "GET",
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  const contentType = response.headers.get("content-type") ?? "";
+  return contentType.includes("application/json")
+    ? response.json()
+    : response.text();
+};
+
+const postForm = async (
+  path: string,
+  fields: Record<string, string | number | Blob>,
+) => {
   const form = new FormData();
   Object.entries(fields).forEach(([key, value]) => {
     form.append(key, value);
@@ -53,12 +77,18 @@ const postForm = async (path: string, fields: Record<string, string | number | B
 
 const toRows = (payload: unknown): PaperRow[] => {
   if (Array.isArray(payload)) {
-    return payload.filter((row): row is PaperRow => typeof row === "object" && row !== null);
+    return payload.filter(
+      (row): row is PaperRow => typeof row === "object" && row !== null,
+    );
   }
 
   if (payload && typeof payload === "object") {
     const objectPayload = payload as Record<string, unknown>;
-    const candidates = [objectPayload.items, objectPayload.results, objectPayload.data];
+    const candidates = [
+      objectPayload.items,
+      objectPayload.results,
+      objectPayload.data,
+    ];
 
     for (const candidate of candidates) {
       if (Array.isArray(candidate)) {
@@ -85,18 +115,28 @@ export const uploadDocument = async (params: {
 };
 
 export const fetchStagingPapers = async (offset: number, limit: number) => {
-  const payload = await postForm(FETCH_STAGING_PATH, { offset, limit });
+  const payload = await getWithQuery(FETCH_PAPERS_PATH, {
+    offset,
+    limit,
+    table_type: "papers_staging",
+  });
   return toRows(payload);
 };
 
 export const fetchPapers = async (offset: number, limit: number) => {
-  const payload = await postForm(FETCH_PAPERS_PATH, { offset, limit });
+  const payload = await getWithQuery(FETCH_PAPERS_PATH, {
+    offset,
+    limit,
+    table_type: "papers",
+  });
   return toRows(payload);
 };
 
 const resolveId = (row: PaperRow) => {
   const candidates = [row.id, row.paper_id, row.staging_id, row.uuid, row._id];
-  const value = candidates.find((item) => item !== undefined && item !== null && item !== "");
+  const value = candidates.find(
+    (item) => item !== undefined && item !== null && item !== "",
+  );
   return value ? String(value) : "";
 };
 

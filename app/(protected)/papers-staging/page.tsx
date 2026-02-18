@@ -5,7 +5,7 @@ export default function PapersStagingPage() {
     <PapersTableManager
       variant="papers-staging"
       title="papers_staging"
-      description="POST /paper_review/fetch/staging_papers (offset, limit)"
+      description="GET /paper_review/fetch/staging_papers (offset, limit)"
     />
   );
 }
