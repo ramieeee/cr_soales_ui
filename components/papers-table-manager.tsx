@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import {
+  approveStagingPaper,
   fetchPapers,
   fetchStagingPapers,
   type PaperRow,
@@ -78,6 +79,8 @@ export default function PapersTableManager({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [approveIndex, setApproveIndex] = useState<number | null>(null);
+  const [approving, setApproving] = useState(false);
   const [editForm, setEditForm] = useState<EditForm>({
     title: "",
     authorsText: "",
@@ -140,6 +143,25 @@ export default function PapersTableManager({
       await load();
     } catch (saveError) {
       setError(saveError instanceof Error ? saveError.message : "Update failed");
+    }
+  };
+
+  const approve = async () => {
+    if (approveIndex === null || variant !== "papers-staging") return;
+
+    setApproving(true);
+    try {
+      await approveStagingPaper(rows[approveIndex]);
+      setApproveIndex(null);
+      await load();
+    } catch (approveError) {
+      setError(
+        approveError instanceof Error
+          ? approveError.message
+          : "Approve failed",
+      );
+    } finally {
+      setApproving(false);
     }
   };
 
@@ -222,13 +244,24 @@ export default function PapersTableManager({
                   </td>
                 ))}
                 <td className="px-3 py-2">
-                  <button
-                    type="button"
-                    onClick={() => openEditor(rowIndex)}
-                    className="rounded-lg border border-white/15 px-2 py-1 text-xs font-semibold text-[#e5e5e5] hover:border-white/35"
-                  >
-                    Edit
-                  </button>
+                  <div className="flex flex-col gap-2">
+                    {variant === "papers-staging" ? (
+                      <button
+                        type="button"
+                        onClick={() => setApproveIndex(rowIndex)}
+                        className="rounded-lg border border-emerald-300/35 px-2 py-1 text-xs font-semibold text-emerald-200 hover:border-emerald-200/60"
+                      >
+                        Approve
+                      </button>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => openEditor(rowIndex)}
+                      className="rounded-lg border border-white/15 px-2 py-1 text-xs font-semibold text-[#e5e5e5] hover:border-white/35"
+                    >
+                      Edit
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -353,6 +386,35 @@ export default function PapersTableManager({
             >
               Cancel
             </button>
+          </div>
+        </div>
+      ) : null}
+
+      {approveIndex !== null ? (
+        <div className="fixed inset-0 z-40 grid place-items-center bg-black/55 px-4">
+          <div className="w-full max-w-md rounded-2xl border border-white/15 bg-[rgba(18,18,18,0.96)] p-5">
+            <p className="text-sm text-[#e5e5e5]">
+              Are you sure you want to approve this paper&apos;s bibliographic
+              information?
+            </p>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={approve}
+                disabled={approving}
+                className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b] disabled:opacity-70"
+              >
+                {approving ? "Approving..." : "Approve"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setApproveIndex(null)}
+                disabled={approving}
+                className="rounded-full border border-white/20 px-5 py-2 text-sm disabled:opacity-70"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       ) : null}

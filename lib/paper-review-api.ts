@@ -26,11 +26,15 @@ const FETCH_PAPERS_PATH =
 
 const UPDATE_STAGING_PATH =
   process.env.NEXT_PUBLIC_UPDATE_STAGING_PATH ??
-  `${PAPER_REVIEW_PREFIX}/update/staging_paper`;
+  `${PAPER_REVIEW_PREFIX}/update/paper_staging`;
 
 const UPDATE_PAPERS_PATH =
   process.env.NEXT_PUBLIC_UPDATE_PAPERS_PATH ??
   `${PAPER_REVIEW_PREFIX}/update/paper`;
+
+const APPROVE_STAGING_PATH =
+  process.env.NEXT_PUBLIC_APPROVE_STAGING_PATH ??
+  `${PAPER_REVIEW_PREFIX}/approve/paper_staging`;
 
 const buildUrl = (path: string) => {
   const normalized = path.startsWith("/") ? path : `/${path}`;
@@ -66,7 +70,7 @@ const postForm = async (
 ) => {
   const form = new FormData();
   Object.entries(fields).forEach(([key, value]) => {
-    form.append(key, value);
+    form.append(key, value instanceof Blob ? value : String(value));
   });
 
   const response = await fetch(buildUrl(path), {
@@ -203,4 +207,23 @@ export const updatePaper = async (row: PaperRow) => {
     id,
     payload: JSON.stringify(payload),
   });
+};
+
+const resolveStagingApproveId = (row: PaperRow) => {
+  const candidates = [row.idx, row.staging_idx, row.staging_id];
+  const numeric = candidates.find((item) => {
+    if (item === null || item === undefined || item === "") return false;
+    return Number.isInteger(Number(item));
+  });
+
+  if (numeric === undefined) {
+    throw new Error("Missing numeric idx for staging approval");
+  }
+
+  return String(numeric);
+};
+
+export const approveStagingPaper = async (row: PaperRow) => {
+  const id = resolveStagingApproveId(row);
+  return postWithQuery(APPROVE_STAGING_PATH, { id });
 };
