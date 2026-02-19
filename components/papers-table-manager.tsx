@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import {
   approveStagingPaper,
@@ -44,6 +44,11 @@ const toCellText = (value: unknown) => {
   return JSON.stringify(value);
 };
 
+const isAlreadyApprovedError = (error: unknown) => {
+  if (!(error instanceof Error)) return false;
+  return error.message.toLowerCase().includes("already approved");
+};
+
 const toEditForm = (row: PaperRow): EditForm => {
   const authors =
     Array.isArray(row.authors) &&
@@ -81,6 +86,11 @@ export default function PapersTableManager({
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [approveIndex, setApproveIndex] = useState<number | null>(null);
   const [approving, setApproving] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
+  const [pendingSaveRow, setPendingSaveRow] = useState<PaperRow | null>(null);
+  const saveInFlightRef = useRef(false);
+  const approveInFlightRef = useRef(false);
   const [editForm, setEditForm] = useState<EditForm>({
     title: "",
     authorsText: "",
@@ -117,50 +127,81 @@ export default function PapersTableManager({
     setEditForm(toEditForm(rows[index]));
   };
 
-  const save = async () => {
-    if (editingIndex === null) return;
-
+  const executeSave = async (row: PaperRow) => {
+    if (saveInFlightRef.current) return;
+    saveInFlightRef.current = true;
+    setSaving(true);
     try {
       const updateRow =
         variant === "papers-staging" ? updateStagingPaper : updatePaper;
-
-      const source = rows[editingIndex];
-      const nextRow: PaperRow = {
-        ...source,
-        title: editForm.title,
-        authors: editForm.authorsText
-          .split("\n")
-          .map((author) => author.trim())
-          .filter(Boolean),
-        journal: editForm.journal,
-        year: editForm.year.trim() ? Number(editForm.year) : null,
-        abstract: editForm.abstract,
-        pdf_url: editForm.pdfUrl.trim() || null,
-        ingestion_source: editForm.ingestionSource,
-      };
-
-      await updateRow(nextRow);
+      await updateRow(row);
       await load();
     } catch (saveError) {
-      setError(saveError instanceof Error ? saveError.message : "Update failed");
+      setError(
+        saveError instanceof Error ? saveError.message : "Update failed",
+      );
+    } finally {
+      saveInFlightRef.current = false;
+      setSaving(false);
     }
+  };
+
+  const save = async () => {
+    if (editingIndex === null) return;
+
+    const source = rows[editingIndex];
+    const nextRow: PaperRow = {
+      ...source,
+      title: editForm.title,
+      authors: editForm.authorsText
+        .split("\n")
+        .map((author) => author.trim())
+        .filter(Boolean),
+      journal: editForm.journal,
+      year: editForm.year.trim() ? Number(editForm.year) : null,
+      abstract: editForm.abstract,
+      pdf_url: editForm.pdfUrl.trim() || null,
+      ingestion_source: editForm.ingestionSource,
+    };
+
+    setPendingSaveRow(nextRow);
+    setConfirmSaveOpen(true);
+  };
+
+  const confirmSave = async () => {
+    if (!pendingSaveRow) return;
+    await executeSave(pendingSaveRow);
+    setConfirmSaveOpen(false);
+    setPendingSaveRow(null);
+  };
+
+  const cancelSaveConfirm = () => {
+    setConfirmSaveOpen(false);
+    setPendingSaveRow(null);
   };
 
   const approve = async () => {
     if (approveIndex === null || variant !== "papers-staging") return;
+    if (approveInFlightRef.current) return;
+    approveInFlightRef.current = true;
 
     setApproving(true);
     try {
-      await approveStagingPaper(rows[approveIndex]);
+      try {
+        await approveStagingPaper(rows[approveIndex]);
+      } catch (approveError) {
+        if (!isAlreadyApprovedError(approveError)) {
+          throw approveError;
+        }
+      }
       setApproveIndex(null);
       await load();
     } catch (approveError) {
       setError(
-        approveError instanceof Error
-          ? approveError.message
-          : "Approve failed",
+        approveError instanceof Error ? approveError.message : "Approve failed",
       );
     } finally {
+      approveInFlightRef.current = false;
       setApproving(false);
     }
   };
@@ -224,7 +265,9 @@ export default function PapersTableManager({
                   {column}
                 </th>
               ))}
-              <th className="px-3 py-2 font-semibold text-[#d8d8d8]">Actions</th>
+              <th className="px-3 py-2 font-semibold text-[#d8d8d8]">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -315,7 +358,10 @@ export default function PapersTableManager({
               type="text"
               value={editForm.journal}
               onChange={(event) =>
-                setEditForm((prev) => ({ ...prev, journal: event.target.value }))
+                setEditForm((prev) => ({
+                  ...prev,
+                  journal: event.target.value,
+                }))
               }
               className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2"
             />
@@ -338,7 +384,10 @@ export default function PapersTableManager({
             <textarea
               value={editForm.abstract}
               onChange={(event) =>
-                setEditForm((prev) => ({ ...prev, abstract: event.target.value }))
+                setEditForm((prev) => ({
+                  ...prev,
+                  abstract: event.target.value,
+                }))
               }
               className="min-h-40 rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] p-3 text-xs"
             />
@@ -375,9 +424,10 @@ export default function PapersTableManager({
             <button
               type="button"
               onClick={save}
+              disabled={saving}
               className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b]"
             >
-              Save
+              {saving ? "Saving..." : "Save"}
             </button>
             <button
               type="button"
@@ -418,6 +468,33 @@ export default function PapersTableManager({
           </div>
         </div>
       ) : null}
+
+      {confirmSaveOpen ? (
+        <div className="fixed inset-0 z-40 grid place-items-center bg-black/55 px-4">
+          <div className="w-full max-w-md rounded-2xl border border-white/15 bg-[rgba(18,18,18,0.96)] p-5">
+            <p className="text-sm text-[#e5e5e5]">Approve the edited data?</p>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={confirmSave}
+                disabled={saving}
+                className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b] disabled:opacity-70"
+              >
+                {saving ? "Saving..." : "Approve"}
+              </button>
+              <button
+                type="button"
+                onClick={cancelSaveConfirm}
+                disabled={saving}
+                className="rounded-full border border-white/20 px-5 py-2 text-sm disabled:opacity-70"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
     </section>
   );
 }

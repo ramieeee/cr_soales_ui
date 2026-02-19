@@ -111,6 +111,34 @@ const postWithQuery = async (
     : response.text();
 };
 
+const postJsonWithQuery = async (
+  path: string,
+  query: Record<string, string | number>,
+  body: unknown,
+) => {
+  const url = new URL(buildUrl(path));
+  Object.entries(query).forEach(([key, value]) => {
+    url.searchParams.set(key, String(value));
+  });
+
+  const response = await fetch(url.toString(), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  const contentType = response.headers.get("content-type") ?? "";
+  return contentType.includes("application/json")
+    ? response.json()
+    : response.text();
+};
+
 const toRows = (payload: unknown): PaperRow[] => {
   if (Array.isArray(payload)) {
     return payload.filter(
@@ -194,10 +222,7 @@ const sanitizeEditablePayload = (row: PaperRow): PaperRow => {
 export const updateStagingPaper = async (row: PaperRow) => {
   const id = resolveId(row);
   const payload = sanitizeEditablePayload(row);
-  return postWithQuery(UPDATE_STAGING_PATH, {
-    id,
-    payload: JSON.stringify(payload),
-  });
+  return postJsonWithQuery(UPDATE_STAGING_PATH, { id }, payload);
 };
 
 export const updatePaper = async (row: PaperRow) => {
