@@ -84,6 +84,29 @@ const postForm = async (
     : response.text();
 };
 
+const postWithQuery = async (
+  path: string,
+  query: Record<string, string | number>,
+) => {
+  const url = new URL(buildUrl(path));
+  Object.entries(query).forEach(([key, value]) => {
+    url.searchParams.set(key, String(value));
+  });
+
+  const response = await fetch(url.toString(), {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  const contentType = response.headers.get("content-type") ?? "";
+  return contentType.includes("application/json")
+    ? response.json()
+    : response.text();
+};
+
 const toRows = (payload: unknown): PaperRow[] => {
   if (Array.isArray(payload)) {
     return payload.filter(
@@ -142,7 +165,14 @@ export const fetchPapers = async (offset: number, limit: number) => {
 };
 
 const resolveId = (row: PaperRow) => {
-  const candidates = [row.id, row.paper_id, row.staging_id, row.uuid, row._id];
+  const candidates = [
+    row.id,
+    row.paper_id,
+    row.staging_id,
+    row.idx,
+    row.uuid,
+    row._id,
+  ];
   const value = candidates.find(
     (item) => item !== undefined && item !== null && item !== "",
   );
@@ -160,7 +190,7 @@ const sanitizeEditablePayload = (row: PaperRow): PaperRow => {
 export const updateStagingPaper = async (row: PaperRow) => {
   const id = resolveId(row);
   const payload = sanitizeEditablePayload(row);
-  return postForm(UPDATE_STAGING_PATH, {
+  return postWithQuery(UPDATE_STAGING_PATH, {
     id,
     payload: JSON.stringify(payload),
   });
@@ -169,7 +199,7 @@ export const updateStagingPaper = async (row: PaperRow) => {
 export const updatePaper = async (row: PaperRow) => {
   const id = resolveId(row);
   const payload = sanitizeEditablePayload(row);
-  return postForm(UPDATE_PAPERS_PATH, {
+  return postWithQuery(UPDATE_PAPERS_PATH, {
     id,
     payload: JSON.stringify(payload),
   });
