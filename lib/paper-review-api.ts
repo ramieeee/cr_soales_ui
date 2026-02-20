@@ -228,10 +228,7 @@ export const updateStagingPaper = async (row: PaperRow) => {
 export const updatePaper = async (row: PaperRow) => {
   const id = resolveId(row);
   const payload = sanitizeEditablePayload(row);
-  return postWithQuery(UPDATE_PAPERS_PATH, {
-    id,
-    payload: JSON.stringify(payload),
-  });
+  return postJsonWithQuery(UPDATE_PAPERS_PATH, { id }, payload);
 };
 
 const resolveStagingApproveId = (row: PaperRow) => {
