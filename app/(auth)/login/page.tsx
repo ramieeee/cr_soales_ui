@@ -17,10 +17,14 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       <section className="w-full max-w-md rounded-3xl border border-white/15 bg-[rgba(18,18,18,0.82)] p-8 shadow-[0_18px_55px_rgba(0,0,0,0.45)] backdrop-blur-md">
         <h1 className="text-xl font-semibold tracking-tight">CR Soles Login</h1>
         <p className="mt-2 text-sm text-[#a5a5a5]">
-          Password를 입력하면 보호된 화면으로 이동합니다.
+          Enter the password to access
         </p>
 
-        <form action="/api/auth/login" method="post" className="mt-6 grid gap-4">
+        <form
+          action="/api/auth/login"
+          method="post"
+          className="mt-6 grid gap-4"
+        >
           <label className="grid gap-2 text-sm font-semibold">
             <span className="text-[#a5a5a5]">Password</span>
             <input
@@ -33,7 +37,10 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           </label>
 
           {hasError ? (
-            <p className="text-xs font-semibold text-[rgba(255,170,170,0.95)]" role="alert">
+            <p
+              className="text-xs font-semibold text-[rgba(255,170,170,0.95)]"
+              role="alert"
+            >
               비밀번호가 올바르지 않습니다.
             </p>
           ) : null}
