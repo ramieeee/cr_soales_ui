@@ -36,6 +36,9 @@ const APPROVE_STAGING_PATH =
   process.env.NEXT_PUBLIC_APPROVE_STAGING_PATH ??
   `${PAPER_REVIEW_PREFIX}/approve/paper_staging`;
 
+const EXTRACT_PATH =
+  process.env.NEXT_PUBLIC_EXTRACT_PATH ?? "/cr_extraction/extract";
+
 const buildUrl = (path: string) => {
   const normalized = path.startsWith("/") ? path : `/${path}`;
   return `${API_BASE_URL}:${API_PORT}${normalized}`;
@@ -122,6 +125,25 @@ const postJsonWithQuery = async (
   });
 
   const response = await fetch(url.toString(), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  const contentType = response.headers.get("content-type") ?? "";
+  return contentType.includes("application/json")
+    ? response.json()
+    : response.text();
+};
+
+const postJson = async (path: string, body: unknown) => {
+  const response = await fetch(buildUrl(path), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -248,4 +270,22 @@ const resolveStagingApproveId = (row: PaperRow) => {
 export const approveStagingPaper = async (row: PaperRow) => {
   const id = resolveStagingApproveId(row);
   return postWithQuery(APPROVE_STAGING_PATH, { id });
+};
+
+const resolvePaperId = (row: PaperRow) => {
+  const candidates = [row.paper_id, row.id, row.idx, row.uuid, row._id];
+  const value = candidates.find(
+    (item) => item !== undefined && item !== null && item !== "",
+  );
+
+  if (value === undefined) {
+    throw new Error("Missing paper_id for extraction");
+  }
+
+  return String(value);
+};
+
+export const extractPaper = async (row: PaperRow) => {
+  const paperId = resolvePaperId(row);
+  return postJson(EXTRACT_PATH, { paper_id: paperId });
 };

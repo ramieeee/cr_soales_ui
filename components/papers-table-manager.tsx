@@ -4,6 +4,7 @@ import { useMemo, useRef, useState } from "react";
 
 import {
   approveStagingPaper,
+  extractPaper,
   fetchPapers,
   fetchStagingPapers,
   type PaperRow,
@@ -86,6 +87,7 @@ export default function PapersTableManager({
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [approveIndex, setApproveIndex] = useState<number | null>(null);
   const [approving, setApproving] = useState(false);
+  const [extractingIndex, setExtractingIndex] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
   const [pendingSaveRow, setPendingSaveRow] = useState<PaperRow | null>(null);
@@ -206,6 +208,23 @@ export default function PapersTableManager({
     }
   };
 
+  const extract = async (rowIndex: number) => {
+    if (variant !== "papers") return;
+    setExtractingIndex(rowIndex);
+    setError("");
+
+    try {
+      await extractPaper(rows[rowIndex]);
+      await load();
+    } catch (extractError) {
+      setError(
+        extractError instanceof Error ? extractError.message : "Extract failed",
+      );
+    } finally {
+      setExtractingIndex(null);
+    }
+  };
+
   return (
     <section className="grid gap-5">
       <header>
@@ -304,6 +323,16 @@ export default function PapersTableManager({
                     >
                       Edit
                     </button>
+                    {variant === "papers" ? (
+                      <button
+                        type="button"
+                        onClick={() => extract(rowIndex)}
+                        disabled={extractingIndex === rowIndex}
+                        className="rounded-lg border border-sky-300/35 px-2 py-1 text-xs font-semibold text-sky-200 hover:border-sky-200/60 disabled:opacity-70"
+                      >
+                        {extractingIndex === rowIndex ? "Extracting..." : "Extract"}
+                      </button>
+                    ) : null}
                   </div>
                 </td>
               </tr>
