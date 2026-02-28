@@ -86,7 +86,11 @@ export function UploadStatusCard() {
           : "text-[#a5a5a5] border-white/12";
 
   return (
-    <div className={`mt-5 rounded-xl border bg-[rgba(12,12,12,0.75)] p-3 ${toneClass}`}>
+    <div
+      className={`mt-5 rounded-xl border bg-[rgba(12,12,12,0.75)] p-3 transition-colors duration-200 ease-out ${
+        status === "uploading" ? "animate-pulse" : ""
+      } ${toneClass}`}
+    >
       <p className="text-xs font-semibold uppercase tracking-[0.14em]">Upload Status</p>
       <p className="mt-2 line-clamp-4 text-xs whitespace-pre-wrap break-words">
         {message || "No upload has been started yet."}

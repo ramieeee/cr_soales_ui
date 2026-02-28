@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes ui-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ui-pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @layer base {
   html,
   body {
@@ -24,5 +44,18 @@
   a {
     color: inherit;
     text-decoration: none;
+  }
+}
+
+@layer utilities {
+  @media (prefers-reduced-motion: no-preference) {
+    .ui-fade-in {
+      animation: ui-fade-in 160ms ease-out both;
+    }
+
+    .ui-pop {
+      animation: ui-pop 180ms ease-out both;
+      transform-origin: center;
+    }
   }
 }

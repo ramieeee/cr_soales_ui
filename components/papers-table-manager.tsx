@@ -240,7 +240,7 @@ export default function PapersTableManager({
             min={0}
             value={offset}
             onChange={(event) => setOffset(Number(event.target.value))}
-            className="w-28 rounded-lg border border-white/15 bg-[rgba(10,10,10,0.9)] px-2 py-1"
+            className="w-28 rounded-lg border border-white/15 bg-[rgba(10,10,10,0.9)] px-2 py-1 transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
           />
         </label>
 
@@ -252,7 +252,7 @@ export default function PapersTableManager({
             max={1000}
             value={limit}
             onChange={(event) => setLimit(Number(event.target.value))}
-            className="w-28 rounded-lg border border-white/15 bg-[rgba(10,10,10,0.9)] px-2 py-1"
+            className="w-28 rounded-lg border border-white/15 bg-[rgba(10,10,10,0.9)] px-2 py-1 transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
           />
         </label>
 
@@ -260,14 +260,14 @@ export default function PapersTableManager({
           type="button"
           onClick={load}
           disabled={loading}
-          className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b] disabled:opacity-70"
+          className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b] transition-transform duration-150 ease-out hover:-translate-y-px active:translate-y-0 disabled:opacity-70"
         >
           {loading ? "Loading..." : "Fetch"}
         </button>
       </div>
 
       {error ? (
-        <p className="rounded-xl border border-red-300/30 bg-red-200/10 px-3 py-2 text-sm text-red-200">
+        <p className="ui-fade-in rounded-xl border border-red-300/30 bg-red-200/10 px-3 py-2 text-sm text-red-200">
           {error}
         </p>
       ) : null}
@@ -293,7 +293,7 @@ export default function PapersTableManager({
             {rows.map((row, rowIndex) => (
               <tr
                 key={`${rowIndex}-${toCellText(row.id) || toCellText(row.idx)}`}
-                className="border-b border-white/5 align-top"
+                className="border-b border-white/5 align-top transition-colors duration-150 ease-out hover:bg-white/[0.02]"
               >
                 {columns.map((column) => (
                   <td
@@ -311,7 +311,7 @@ export default function PapersTableManager({
                       <button
                         type="button"
                         onClick={() => setApproveIndex(rowIndex)}
-                        className="rounded-lg border border-emerald-300/35 px-2 py-1 text-xs font-semibold text-emerald-200 hover:border-emerald-200/60"
+                        className="rounded-lg border border-emerald-300/35 px-2 py-1 text-xs font-semibold text-emerald-200 transition-colors duration-150 ease-out hover:border-emerald-200/60"
                       >
                         Approve
                       </button>
@@ -319,7 +319,7 @@ export default function PapersTableManager({
                     <button
                       type="button"
                       onClick={() => openEditor(rowIndex)}
-                      className="w-20 rounded-lg border border-white/15 px-2 py-1 text-xs font-semibold text-[#e5e5e5] hover:border-white/35"
+                      className="w-20 rounded-lg border border-white/15 px-2 py-1 text-xs font-semibold text-[#e5e5e5] transition-colors duration-150 ease-out hover:border-white/35"
                     >
                       Edit
                     </button>
@@ -328,7 +328,7 @@ export default function PapersTableManager({
                         type="button"
                         onClick={() => extract(rowIndex)}
                         disabled={extractingIndex === rowIndex}
-                        className="w-20 rounded-lg border border-sky-300/35 px-2 py-1 text-xs font-semibold text-sky-200 hover:border-sky-200/60 disabled:opacity-70"
+                        className="w-20 rounded-lg border border-sky-300/35 px-2 py-1 text-xs font-semibold text-sky-200 transition-colors duration-150 ease-out hover:border-sky-200/60 disabled:opacity-70"
                       >
                         {extractingIndex === rowIndex
                           ? "Extracting..."
@@ -354,7 +354,7 @@ export default function PapersTableManager({
       </div>
 
       {editingIndex !== null ? (
-        <div className="grid gap-3 rounded-2xl border border-white/12 bg-[rgba(14,14,14,0.72)] p-4">
+        <div className="ui-pop grid gap-3 rounded-2xl border border-white/12 bg-[rgba(14,14,14,0.72)] p-4">
           <p className="text-sm font-semibold">Edit Allowed Fields</p>
 
           <label className="grid gap-1 text-sm">
@@ -365,7 +365,7 @@ export default function PapersTableManager({
               onChange={(event) =>
                 setEditForm((prev) => ({ ...prev, title: event.target.value }))
               }
-              className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2"
+              className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2 transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
             />
           </label>
 
@@ -379,7 +379,7 @@ export default function PapersTableManager({
                   authorsText: event.target.value,
                 }))
               }
-              className="min-h-28 rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] p-3 text-xs"
+              className="min-h-28 rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] p-3 text-xs transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
             />
           </label>
 
@@ -394,7 +394,7 @@ export default function PapersTableManager({
                   journal: event.target.value,
                 }))
               }
-              className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2"
+              className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2 transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
             />
           </label>
 
@@ -406,7 +406,7 @@ export default function PapersTableManager({
               onChange={(event) =>
                 setEditForm((prev) => ({ ...prev, year: event.target.value }))
               }
-              className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2"
+              className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2 transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
             />
           </label>
 
@@ -420,7 +420,7 @@ export default function PapersTableManager({
                   abstract: event.target.value,
                 }))
               }
-              className="min-h-40 rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] p-3 text-xs"
+              className="min-h-40 rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] p-3 text-xs transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
             />
           </label>
 
@@ -432,7 +432,7 @@ export default function PapersTableManager({
               onChange={(event) =>
                 setEditForm((prev) => ({ ...prev, pdfUrl: event.target.value }))
               }
-              className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2"
+              className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2 transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
             />
           </label>
 
@@ -447,7 +447,7 @@ export default function PapersTableManager({
                   ingestionSource: event.target.value,
                 }))
               }
-              className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2"
+              className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2 transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
             />
           </label>
 
@@ -456,14 +456,14 @@ export default function PapersTableManager({
               type="button"
               onClick={save}
               disabled={saving}
-              className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b]"
+              className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b] transition-transform duration-150 ease-out hover:-translate-y-px active:translate-y-0 disabled:opacity-70"
             >
               {saving ? "Saving..." : "Save"}
             </button>
             <button
               type="button"
               onClick={() => setEditingIndex(null)}
-              className="rounded-full border border-white/20 px-5 py-2 text-sm"
+              className="rounded-full border border-white/20 px-5 py-2 text-sm transition-colors duration-150 ease-out hover:border-white/35"
             >
               Cancel
             </button>
@@ -472,8 +472,8 @@ export default function PapersTableManager({
       ) : null}
 
       {approveIndex !== null ? (
-        <div className="fixed inset-0 z-40 grid place-items-center bg-black/55 px-4">
-          <div className="w-full max-w-md rounded-2xl border border-white/15 bg-[rgba(18,18,18,0.96)] p-5">
+        <div className="ui-fade-in fixed inset-0 z-40 grid place-items-center bg-black/55 px-4">
+          <div className="ui-pop w-full max-w-md rounded-2xl border border-white/15 bg-[rgba(18,18,18,0.96)] p-5">
             <p className="text-sm text-[#e5e5e5]">
               Are you sure you want to approve this paper&apos;s bibliographic
               information?
@@ -483,7 +483,7 @@ export default function PapersTableManager({
                 type="button"
                 onClick={approve}
                 disabled={approving}
-                className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b] disabled:opacity-70"
+                className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b] transition-transform duration-150 ease-out hover:-translate-y-px active:translate-y-0 disabled:opacity-70"
               >
                 {approving ? "Approving..." : "Approve"}
               </button>
@@ -491,7 +491,7 @@ export default function PapersTableManager({
                 type="button"
                 onClick={() => setApproveIndex(null)}
                 disabled={approving}
-                className="rounded-full border border-white/20 px-5 py-2 text-sm disabled:opacity-70"
+                className="rounded-full border border-white/20 px-5 py-2 text-sm transition-colors duration-150 ease-out hover:border-white/35 disabled:opacity-70"
               >
                 Cancel
               </button>
@@ -501,15 +501,15 @@ export default function PapersTableManager({
       ) : null}
 
       {confirmSaveOpen ? (
-        <div className="fixed inset-0 z-40 grid place-items-center bg-black/55 px-4">
-          <div className="w-full max-w-md rounded-2xl border border-white/15 bg-[rgba(18,18,18,0.96)] p-5">
+        <div className="ui-fade-in fixed inset-0 z-40 grid place-items-center bg-black/55 px-4">
+          <div className="ui-pop w-full max-w-md rounded-2xl border border-white/15 bg-[rgba(18,18,18,0.96)] p-5">
             <p className="text-sm text-[#e5e5e5]">Approve the edited data?</p>
             <div className="mt-4 flex justify-end gap-2">
               <button
                 type="button"
                 onClick={confirmSave}
                 disabled={saving}
-                className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b] disabled:opacity-70"
+                className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b] transition-transform duration-150 ease-out hover:-translate-y-px active:translate-y-0 disabled:opacity-70"
               >
                 {saving ? "Saving..." : "Approve"}
               </button>
@@ -517,7 +517,7 @@ export default function PapersTableManager({
                 type="button"
                 onClick={cancelSaveConfirm}
                 disabled={saving}
-                className="rounded-full border border-white/20 px-5 py-2 text-sm disabled:opacity-70"
+                className="rounded-full border border-white/20 px-5 py-2 text-sm transition-colors duration-150 ease-out hover:border-white/35 disabled:opacity-70"
               >
                 Cancel
               </button>

@@ -19,6 +19,13 @@ export default function UploadPanel() {
   const [formError, setFormError] = useState("");
   const { status, message, startUpload } = useUploadSession();
 
+  const outputToneClass =
+    status === "error"
+      ? "border-red-300/30 text-red-200"
+      : status === "success"
+        ? "border-emerald-300/20 text-[#d8d8d8]"
+        : "border-white/12 text-[#d8d8d8]";
+
   const handleFileSelect = (selected: File | null) => {
     if (!selected) return;
     setFile(selected);
@@ -60,7 +67,7 @@ export default function UploadPanel() {
         <label className="grid gap-2 text-sm font-semibold">
           <span className="text-[#a5a5a5]">PDF File</span>
           <div
-            className={`cursor-pointer rounded-xl border border-dashed px-4 py-8 text-center text-sm transition-colors ${
+            className={`cursor-pointer rounded-xl border border-dashed px-4 py-8 text-center text-sm transition-colors duration-150 ease-out ${
               isDragging
                 ? "border-white/70 bg-white/[0.08] text-[#f2f2f2]"
                 : "border-white/20 bg-[rgba(10,10,10,0.9)] text-[#bdbdbd]"
@@ -106,7 +113,7 @@ export default function UploadPanel() {
             type="text"
             value={prompt}
             onChange={(event) => setPrompt(event.target.value)}
-            className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2 text-sm"
+            className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
           />
         </label>
 
@@ -117,26 +124,30 @@ export default function UploadPanel() {
             value={ingestionSource}
             onChange={(event) => setIngestionSource(event.target.value)}
             placeholder="source name"
-            className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2 text-sm"
+            className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2 text-sm transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
           />
         </label>
 
         <button
           type="submit"
           disabled={status === "uploading"}
-          className="w-fit rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-6 py-2 text-sm font-semibold text-[#0b0b0b] disabled:opacity-70"
+          className="w-fit rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-6 py-2 text-sm font-semibold text-[#0b0b0b] transition-transform duration-150 ease-out hover:-translate-y-px active:translate-y-0 disabled:opacity-70"
         >
           {status === "uploading" ? "Uploading..." : "Upload"}
         </button>
       </form>
 
       {formError ? (
-        <div className="rounded-2xl border border-red-300/30 bg-red-200/10 p-4 text-sm text-red-200">
+        <div className="ui-fade-in rounded-2xl border border-red-300/30 bg-red-200/10 p-4 text-sm text-red-200">
           {formError}
         </div>
       ) : null}
 
-      <div className="rounded-2xl border border-white/12 bg-[rgba(14,14,14,0.72)] p-4 text-sm whitespace-pre-wrap break-words">
+      <div
+        className={`rounded-2xl border bg-[rgba(14,14,14,0.72)] p-4 text-sm whitespace-pre-wrap break-words transition-colors duration-200 ease-out ${
+          status === "uploading" ? "animate-pulse" : ""
+        } ${outputToneClass}`}
+      >
         {message || "The server response will appear here."}
       </div>
     </section>
