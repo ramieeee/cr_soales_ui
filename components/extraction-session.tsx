@@ -2,9 +2,11 @@
 
 import {
   createContext,
+  useEffect,
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -19,6 +21,7 @@ type ExtractionSession = {
   output: string;
   status: ExtractionStatus;
   minimized: boolean;
+  hidden: boolean;
   createdAt: number;
 };
 
@@ -32,7 +35,10 @@ type ExtractionSessionContextValue = {
   expandedSessionId: string | null;
   startExtraction: (params: StartExtractionParams) => Promise<void>;
   minimizeSession: (id: string) => void;
+  restoreSession: (id: string) => void;
   expandSession: (id: string) => void;
+  dismissSession: (id: string) => void;
+  revealSessionByPaperId: (paperId: string) => void;
   closeExpandedSession: () => void;
 };
 
@@ -63,6 +69,124 @@ const updateSession = (
   updater: (session: ExtractionSession) => ExtractionSession,
 ) => sessions.map((session) => (session.id === id ? updater(session) : session));
 
+type ParsedStreamEvent = {
+  event: string;
+  data: Record<string, unknown> | string | null;
+};
+
+type OutputSection = {
+  node: string;
+  content: string;
+};
+
+const parseJsonSafely = (value: string) => {
+  try {
+    return JSON.parse(value) as Record<string, unknown>;
+  } catch {
+    return value;
+  }
+};
+
+const parseSseBlocks = (buffer: string) => {
+  const normalized = buffer.replace(/\r\n/g, "\n");
+  const blocks = normalized.split("\n\n");
+  const trailing = normalized.endsWith("\n\n") ? "" : blocks.pop() ?? "";
+
+  const events = blocks
+    .map((block) => {
+      const lines = block.split("\n");
+      const eventLine = lines.find((line) => line.startsWith("event:"));
+      const dataLines = lines
+        .filter((line) => line.startsWith("data:"))
+        .map((line) => line.slice(5).trimStart());
+
+      if (!eventLine) return null;
+
+      return {
+        event: eventLine.slice(6).trim(),
+        data: dataLines.length ? parseJsonSafely(dataLines.join("\n")) : null,
+      } satisfies ParsedStreamEvent;
+    })
+    .filter((event): event is ParsedStreamEvent => event !== null);
+
+  return { events, trailing };
+};
+
+const normalizeNodeLabel = (node: string) => node.trim() || "general";
+
+const formatNodeLabel = (node: string) => `[${normalizeNodeLabel(node)}]`;
+
+const ensureActiveSection = (
+  sections: OutputSection[],
+  node: string,
+  forceNew: boolean,
+) => {
+  const normalizedNode = normalizeNodeLabel(node);
+  const lastSection = sections.at(-1);
+
+  if (!forceNew && lastSection && lastSection.node === normalizedNode) {
+    return lastSection;
+  }
+
+  const nextSection: OutputSection = {
+    node: normalizedNode,
+    content: "",
+  };
+  sections.push(nextSection);
+  return nextSection;
+};
+
+const appendLine = (section: OutputSection, value: string) => {
+  const line = value.trim();
+  if (!line) return;
+  if (!section.content) {
+    section.content = line;
+    return;
+  }
+
+  const existingLines = section.content.split("\n");
+  if (existingLines.at(-1) === line) return;
+  section.content = `${section.content}\n${line}`;
+};
+
+const appendToken = (section: OutputSection, token: string) => {
+  if (!token) return;
+  section.content += token;
+};
+
+const renderSections = (sections: OutputSection[]) =>
+  sections
+    .map((section) => {
+      const text = section.content.trim();
+      if (!text) return formatNodeLabel(section.node);
+      return `${formatNodeLabel(section.node)}\n${text}`;
+    })
+    .filter(Boolean)
+    .join("\n\n");
+
+const appendParsedEvent = (
+  event: ParsedStreamEvent,
+  sections: OutputSection[],
+) => {
+  if (!event.data || typeof event.data === "string") return;
+
+  const node =
+    typeof event.data.node === "string" && event.data.node.trim()
+      ? event.data.node
+      : "general";
+
+  if (event.event === "llm_token") {
+    const token = typeof event.data.token === "string" ? event.data.token : "";
+    const section = ensureActiveSection(sections, node, false);
+    appendToken(section, token);
+    return;
+  }
+
+  if (event.event === "node_progress") {
+    ensureActiveSection(sections, node, false);
+  }
+};
+
 export function ExtractionSessionProvider({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -76,11 +200,42 @@ export function ExtractionSessionProvider({
     setExpandedSessionId((current) => (current === id ? null : current));
   }, []);
 
-  const expandSession = useCallback((id: string) => {
+  const restoreSession = useCallback((id: string) => {
     setSessions((current) =>
       updateSession(current, id, (session) => ({ ...session, minimized: false })),
     );
+    setExpandedSessionId((current) => (current === id ? null : current));
+  }, []);
+
+  const expandSession = useCallback((id: string) => {
+    setSessions((current) =>
+      updateSession(current, id, (session) => ({
+        ...session,
+        minimized: false,
+        hidden: false,
+      })),
+    );
     setExpandedSessionId(id);
+  }, []);
+
+  const dismissSession = useCallback((id: string) => {
+    setSessions((current) =>
+      updateSession(current, id, (session) => ({ ...session, hidden: true })),
+    );
+    setExpandedSessionId((current) => (current === id ? null : current));
+  }, []);
+
+  const revealSessionByPaperId = useCallback((paperId: string) => {
+    setSessions((current) => {
+      const target = current.find((session) => session.paperId === paperId);
+      if (!target) return current;
+
+      return updateSession(current, target.id, (session) => ({
+        ...session,
+        hidden: false,
+        minimized: false,
+      }));
+    });
   }, []);
 
   const closeExpandedSession = useCallback(() => {
@@ -91,6 +246,8 @@ export function ExtractionSessionProvider({
     const paperId = resolvePaperId(row);
     const sessionId = `${paperId}-${Date.now()}`;
     const title = paperTitle.trim() || `Paper ${paperId}`;
+    let streamBuffer = "";
+    const sections: OutputSection[] = [];
 
     setSessions((current) => [
       {
@@ -100,6 +257,7 @@ export function ExtractionSessionProvider({
         output: "",
         status: "extracting",
         minimized: false,
+        hidden: false,
         createdAt: Date.now(),
       },
       ...current,
@@ -107,20 +265,38 @@ export function ExtractionSessionProvider({
 
     try {
       await streamExtractPaper(row, (chunk) => {
+        streamBuffer += chunk;
+        const { events, trailing } = parseSseBlocks(streamBuffer);
+        streamBuffer = trailing;
+
+        events.forEach((event) => {
+          appendParsedEvent(event, sections);
+        });
+
+        const output = renderSections(sections);
         setSessions((current) =>
           updateSession(current, sessionId, (session) => ({
             ...session,
-            output: session.output + chunk,
+            output,
           })),
         );
       });
+
+      if (streamBuffer.trim()) {
+        const { events } = parseSseBlocks(`${streamBuffer}\n\n`);
+        events.forEach((event) => {
+          appendParsedEvent(event, sections);
+        });
+      }
+
+      const finalOutput = renderSections(sections);
 
       setSessions((current) =>
         updateSession(current, sessionId, (session) => ({
           ...session,
           status: "success",
-          output: session.output.trim()
-            ? session.output
+          output: finalOutput.trim()
+            ? finalOutput
             : "Extraction completed.",
         })),
       );
@@ -143,7 +319,10 @@ export function ExtractionSessionProvider({
       expandedSessionId,
       startExtraction,
       minimizeSession,
+      restoreSession,
       expandSession,
+      dismissSession,
+      revealSessionByPaperId,
       closeExpandedSession,
     }),
     [
@@ -151,7 +330,10 @@ export function ExtractionSessionProvider({
       expandedSessionId,
       startExtraction,
       minimizeSession,
+      restoreSession,
       expandSession,
+      dismissSession,
+      revealSessionByPaperId,
       closeExpandedSession,
     ],
   );
@@ -174,20 +356,38 @@ export const useExtractionSession = () => {
 };
 
 const iconButtonClass =
-  "grid h-8 w-8 place-items-center rounded-full border border-white/12 bg-white/[0.04] text-[#d8d8d8] transition-colors duration-150 ease-out hover:border-white/30 hover:bg-white/[0.08]";
+  "grid h-6 w-6 place-items-center rounded-full border border-[#6a6a6a]/45 bg-white/[0.03] text-[#d8d8d8] transition-colors duration-150 ease-out hover:border-[#878787]/55 hover:bg-white/[0.06]";
 
 function MinimizeIcon() {
   return (
     <svg
       aria-hidden="true"
       viewBox="0 0 16 16"
-      className="h-4 w-4"
+      className="h-3.5 w-3.5"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.6"
+      strokeWidth="1.5"
       strokeLinecap="round"
     >
       <path d="M3 8h10" />
+    </svg>
+  );
+}
+
+function RestoreIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      className="h-3.5 w-3.5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="3.5" y="5" width="9" height="7.5" rx="1.25" />
+      <path d="M5.5 3.5h5" />
     </svg>
   );
 }
@@ -197,7 +397,7 @@ function ExpandIcon() {
     <svg
       aria-hidden="true"
       viewBox="0 0 16 16"
-      className="h-4 w-4"
+      className="h-3.5 w-3.5"
       fill="none"
       stroke="currentColor"
       strokeWidth="1.4"
@@ -212,6 +412,23 @@ function ExpandIcon() {
       <path d="M13 3l-3 3" />
       <path d="M3 13l3-3" />
       <path d="M13 13l-3-3" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      className="h-3 w-3"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    >
+      <path d="M4 4l8 8" />
+      <path d="M12 4l-8 8" />
     </svg>
   );
 }
@@ -233,19 +450,32 @@ export function ExtractionDock() {
     sessions,
     expandedSessionId,
     minimizeSession,
+    restoreSession,
     expandSession,
+    dismissSession,
     closeExpandedSession,
   } = useExtractionSession();
 
   const expandedSession =
     sessions.find((session) => session.id === expandedSessionId) ?? null;
+  const visibleSessions = sessions.filter((session) => !session.hidden);
+  const chipBodyRefs = useRef<Record<string, HTMLPreElement | null>>({});
 
-  if (!sessions.length) return null;
+  useEffect(() => {
+    visibleSessions.forEach((session) => {
+      if (session.minimized || session.status !== "extracting") return;
+      const element = chipBodyRefs.current[session.id];
+      if (!element) return;
+      element.scrollTop = element.scrollHeight;
+    });
+  }, [visibleSessions]);
+
+  if (!visibleSessions.length && !expandedSession) return null;
 
   return (
     <>
       <div className="pointer-events-none fixed bottom-4 right-4 z-40 flex max-h-[calc(100dvh-2rem)] w-[min(26rem,calc(100vw-2rem))] flex-col gap-3 overflow-y-auto">
-        {sessions.map((session) => {
+        {visibleSessions.map((session) => {
           const minimized = session.minimized && expandedSessionId !== session.id;
 
           return (
@@ -264,8 +494,17 @@ export function ExtractionDock() {
                     {statusLabel(session.status)}
                   </p>
                 </div>
-                <div className="flex gap-2">
-                  {!minimized ? (
+                <div className="flex gap-1.5">
+                  {minimized ? (
+                    <button
+                      type="button"
+                      onClick={() => restoreSession(session.id)}
+                      className={iconButtonClass}
+                      aria-label="Restore extraction panel"
+                    >
+                      <RestoreIcon />
+                    </button>
+                  ) : (
                     <button
                       type="button"
                       onClick={() => minimizeSession(session.id)}
@@ -274,7 +513,7 @@ export function ExtractionDock() {
                     >
                       <MinimizeIcon />
                     </button>
-                  ) : null}
+                  )}
                   <button
                     type="button"
                     onClick={() => expandSession(session.id)}
@@ -283,12 +522,27 @@ export function ExtractionDock() {
                   >
                     <ExpandIcon />
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => dismissSession(session.id)}
+                    className={iconButtonClass}
+                    aria-label="Dismiss extraction panel"
+                  >
+                    <CloseIcon />
+                  </button>
                 </div>
               </div>
 
               {!minimized ? (
                 <div className="mt-3 rounded-2xl border border-white/10 bg-black/30 p-3">
-                  <pre className="max-h-48 overflow-auto whitespace-pre-wrap break-words font-mono text-[11px] leading-5 text-[#f7f3ea]">
+                  <pre
+                    ref={(element) => {
+                      chipBodyRefs.current[session.id] = element;
+                    }}
+                    className={`no-scrollbar h-20 overflow-y-auto whitespace-pre-wrap break-words font-mono text-[11px] leading-5 text-[#f7f3ea] ${
+                      session.status === "extracting" ? "stream-breathe" : ""
+                    }`}
+                  >
                     {session.output || "Waiting for stream output..."}
                   </pre>
                 </div>
@@ -322,7 +576,13 @@ export function ExtractionDock() {
 
             <div className="min-h-0 flex-1 p-4 md:p-6">
               <div className="h-full rounded-[1.5rem] border border-white/10 bg-black/35 p-4 md:p-5">
-                <pre className="h-full overflow-auto whitespace-pre-wrap break-words font-mono text-xs leading-6 text-[#f7f3ea]">
+                <pre
+                  className={`h-full overflow-auto whitespace-pre-wrap break-words font-mono text-xs leading-6 text-[#f7f3ea] ${
+                    expandedSession.status === "extracting"
+                      ? "stream-breathe"
+                      : ""
+                  }`}
+                >
                   {expandedSession.output || "Waiting for stream output..."}
                 </pre>
               </div>

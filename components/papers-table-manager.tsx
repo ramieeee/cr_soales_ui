@@ -93,7 +93,8 @@ export default function PapersTableManager({
   const [pendingSaveRow, setPendingSaveRow] = useState<PaperRow | null>(null);
   const saveInFlightRef = useRef(false);
   const approveInFlightRef = useRef(false);
-  const { startExtraction, sessions } = useExtractionSession();
+  const { startExtraction, sessions, revealSessionByPaperId } =
+    useExtractionSession();
   const [editForm, setEditForm] = useState<EditForm>({
     title: "",
     authorsText: "",
@@ -229,6 +230,13 @@ export default function PapersTableManager({
   };
 
   const openExtractConfirm = (rowIndex: number) => {
+    const paperId = resolvePaperId(rows[rowIndex]);
+
+    if (extractingPaperIds.has(paperId)) {
+      revealSessionByPaperId(paperId);
+      return;
+    }
+
     setExtractIndex(rowIndex);
   };
 
@@ -237,10 +245,10 @@ export default function PapersTableManager({
 
     const row = rows[extractIndex];
     const paperTitle = typeof row.title === "string" ? row.title : "";
+    setExtractIndex(null);
 
     try {
-      await startExtraction({ row, paperTitle });
-      setExtractIndex(null);
+      void startExtraction({ row, paperTitle });
     } catch (extractError) {
       setError(
         extractError instanceof Error ? extractError.message : "Extract failed",

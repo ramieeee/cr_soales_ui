@@ -22,6 +22,16 @@
   }
 }
 
+@keyframes stream-breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.48;
+  }
+}
+
 @layer base {
   html,
   body {
@@ -48,6 +58,15 @@
 }
 
 @layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .ui-fade-in {
       animation: ui-fade-in 160ms ease-out both;
@@ -56,6 +75,10 @@
     .ui-pop {
       animation: ui-pop 180ms ease-out both;
       transform-origin: center;
+    }
+
+    .stream-breathe {
+      animation: stream-breathe 1400ms ease-in-out infinite;
     }
   }
 }
