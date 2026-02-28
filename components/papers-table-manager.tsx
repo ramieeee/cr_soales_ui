@@ -2,9 +2,9 @@
 
 import { useMemo, useRef, useState } from "react";
 
+import { useExtractionSession } from "@/components/extraction-session";
 import {
   approveStagingPaper,
-  extractPaper,
   fetchPapers,
   fetchStagingPapers,
   type PaperRow,
@@ -86,13 +86,14 @@ export default function PapersTableManager({
   const [error, setError] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [approveIndex, setApproveIndex] = useState<number | null>(null);
+  const [extractIndex, setExtractIndex] = useState<number | null>(null);
   const [approving, setApproving] = useState(false);
-  const [extractingIndex, setExtractingIndex] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
   const [pendingSaveRow, setPendingSaveRow] = useState<PaperRow | null>(null);
   const saveInFlightRef = useRef(false);
   const approveInFlightRef = useRef(false);
+  const { startExtraction, sessions } = useExtractionSession();
   const [editForm, setEditForm] = useState<EditForm>({
     title: "",
     authorsText: "",
@@ -104,6 +105,16 @@ export default function PapersTableManager({
   });
 
   const columns = useMemo(() => Array.from(VISIBLE_KEYS), []);
+
+  const extractingPaperIds = useMemo(
+    () =>
+      new Set(
+        sessions
+          .filter((session) => session.status === "extracting")
+          .map((session) => session.paperId),
+      ),
+    [sessions],
+  );
 
   const load = async () => {
     setLoading(true);
@@ -208,20 +219,32 @@ export default function PapersTableManager({
     }
   };
 
-  const extract = async (rowIndex: number) => {
-    if (variant !== "papers") return;
-    setExtractingIndex(rowIndex);
-    setError("");
+  const resolvePaperId = (row: PaperRow) => {
+    const candidates = [row.paper_id, row.id, row.idx, row.uuid, row._id];
+    const value = candidates.find(
+      (item) => item !== undefined && item !== null && item !== "",
+    );
+
+    return value === undefined ? "" : String(value);
+  };
+
+  const openExtractConfirm = (rowIndex: number) => {
+    setExtractIndex(rowIndex);
+  };
+
+  const confirmExtract = async () => {
+    if (extractIndex === null || variant !== "papers") return;
+
+    const row = rows[extractIndex];
+    const paperTitle = typeof row.title === "string" ? row.title : "";
 
     try {
-      await extractPaper(rows[rowIndex]);
-      await load();
+      await startExtraction({ row, paperTitle });
+      setExtractIndex(null);
     } catch (extractError) {
       setError(
         extractError instanceof Error ? extractError.message : "Extract failed",
       );
-    } finally {
-      setExtractingIndex(null);
     }
   };
 
@@ -326,11 +349,11 @@ export default function PapersTableManager({
                     {variant === "papers" ? (
                       <button
                         type="button"
-                        onClick={() => extract(rowIndex)}
-                        disabled={extractingIndex === rowIndex}
+                        onClick={() => openExtractConfirm(rowIndex)}
+                        disabled={extractingPaperIds.has(resolvePaperId(row))}
                         className="w-20 rounded-lg border border-sky-300/35 px-2 py-1 text-xs font-semibold text-sky-200 transition-colors duration-150 ease-out hover:border-sky-200/60 disabled:opacity-70"
                       >
-                        {extractingIndex === rowIndex
+                        {extractingPaperIds.has(resolvePaperId(row))
                           ? "Extracting..."
                           : "Extract"}
                       </button>
@@ -518,6 +541,32 @@ export default function PapersTableManager({
                 onClick={cancelSaveConfirm}
                 disabled={saving}
                 className="rounded-full border border-white/20 px-5 py-2 text-sm transition-colors duration-150 ease-out hover:border-white/35 disabled:opacity-70"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {extractIndex !== null ? (
+        <div className="ui-fade-in fixed inset-0 z-40 grid place-items-center bg-black/55 px-4">
+          <div className="ui-pop w-full max-w-md rounded-2xl border border-white/15 bg-[rgba(18,18,18,0.96)] p-5">
+            <p className="text-sm text-[#e5e5e5]">
+              Extract data from the paper?
+            </p>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={confirmExtract}
+                className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b] transition-transform duration-150 ease-out hover:-translate-y-px active:translate-y-0"
+              >
+                Extract
+              </button>
+              <button
+                type="button"
+                onClick={() => setExtractIndex(null)}
+                className="rounded-full border border-white/20 px-5 py-2 text-sm transition-colors duration-150 ease-out hover:border-white/35"
               >
                 Cancel
               </button>

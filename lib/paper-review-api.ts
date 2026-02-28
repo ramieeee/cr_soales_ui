@@ -161,6 +161,45 @@ const postJson = async (path: string, body: unknown) => {
     : response.text();
 };
 
+const postJsonStream = async (
+  path: string,
+  body: unknown,
+  onChunk: (chunk: string) => void,
+) => {
+  const response = await fetch(buildUrl(path), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+
+  if (!response.body) {
+    const payload = await response.text();
+    if (payload) onChunk(payload);
+    return;
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      const trailing = decoder.decode();
+      if (trailing) onChunk(trailing);
+      return;
+    }
+
+    const chunk = decoder.decode(value, { stream: true });
+    if (chunk) onChunk(chunk);
+  }
+};
+
 const toRows = (payload: unknown): PaperRow[] => {
   if (Array.isArray(payload)) {
     return payload.filter(
@@ -288,4 +327,12 @@ const resolvePaperId = (row: PaperRow) => {
 export const extractPaper = async (row: PaperRow) => {
   const paperId = resolvePaperId(row);
   return postJson(EXTRACT_PATH, { paper_id: paperId });
+};
+
+export const streamExtractPaper = async (
+  row: PaperRow,
+  onChunk: (chunk: string) => void,
+) => {
+  const paperId = resolvePaperId(row);
+  return postJsonStream(EXTRACT_PATH, { paper_id: paperId }, onChunk);
 };
