@@ -319,7 +319,7 @@ export default function PapersTableManager({
                     <button
                       type="button"
                       onClick={() => openEditor(rowIndex)}
-                      className="rounded-lg border border-white/15 px-2 py-1 text-xs font-semibold text-[#e5e5e5] hover:border-white/35"
+                      className="w-20 rounded-lg border border-white/15 px-2 py-1 text-xs font-semibold text-[#e5e5e5] hover:border-white/35"
                     >
                       Edit
                     </button>
@@ -328,9 +328,11 @@ export default function PapersTableManager({
                         type="button"
                         onClick={() => extract(rowIndex)}
                         disabled={extractingIndex === rowIndex}
-                        className="rounded-lg border border-sky-300/35 px-2 py-1 text-xs font-semibold text-sky-200 hover:border-sky-200/60 disabled:opacity-70"
+                        className="w-20 rounded-lg border border-sky-300/35 px-2 py-1 text-xs font-semibold text-sky-200 hover:border-sky-200/60 disabled:opacity-70"
                       >
-                        {extractingIndex === rowIndex ? "Extracting..." : "Extract"}
+                        {extractingIndex === rowIndex
+                          ? "Extracting..."
+                          : "Extract"}
                       </button>
                     ) : null}
                   </div>
@@ -523,7 +525,6 @@ export default function PapersTableManager({
           </div>
         </div>
       ) : null}
-
     </section>
   );
 }
