@@ -77,8 +77,10 @@
       transform-origin: center;
     }
 
-    .stream-breathe {
-      animation: stream-breathe 1400ms ease-in-out infinite;
+    @media (max-width: 767px) {
+      .stream-breathe {
+        animation: stream-breathe 1400ms ease-in-out infinite;
+      }
     }
   }
 }

@@ -445,6 +445,12 @@ const statusToneClass = (status: ExtractionStatus) => {
   return "text-[#f3f1ea] border-amber-200/20";
 };
 
+const SCROLL_BOTTOM_THRESHOLD = 2;
+
+const isAtBottom = (element: HTMLElement) =>
+  element.scrollHeight - element.clientHeight - element.scrollTop <=
+  SCROLL_BOTTOM_THRESHOLD;
+
 export function ExtractionDock() {
   const {
     sessions,
@@ -460,15 +466,38 @@ export function ExtractionDock() {
     sessions.find((session) => session.id === expandedSessionId) ?? null;
   const visibleSessions = sessions.filter((session) => !session.hidden);
   const chipBodyRefs = useRef<Record<string, HTMLPreElement | null>>({});
+  const chipAutoScrollRefs = useRef<Record<string, boolean>>({});
+  const expandedBodyRef = useRef<HTMLPreElement | null>(null);
+  const expandedAutoScrollRef = useRef(true);
 
   useEffect(() => {
     visibleSessions.forEach((session) => {
       if (session.minimized || session.status !== "extracting") return;
       const element = chipBodyRefs.current[session.id];
       if (!element) return;
+      if (chipAutoScrollRefs.current[session.id] === false) return;
       element.scrollTop = element.scrollHeight;
     });
   }, [visibleSessions]);
+
+  useEffect(() => {
+    if (!expandedSession || expandedSession.status !== "extracting") return;
+    const element = expandedBodyRef.current;
+    if (!element || !expandedAutoScrollRef.current) return;
+    element.scrollTop = element.scrollHeight;
+  }, [expandedSession]);
+
+  useEffect(() => {
+    if (!expandedSessionId) {
+      expandedAutoScrollRef.current = true;
+      return;
+    }
+
+    const element = expandedBodyRef.current;
+    if (!element) return;
+    expandedAutoScrollRef.current = true;
+    element.scrollTop = element.scrollHeight;
+  }, [expandedSessionId]);
 
   if (!visibleSessions.length && !expandedSession) return null;
 
@@ -537,7 +566,16 @@ export function ExtractionDock() {
                 <div className="mt-3 rounded-2xl border border-white/10 bg-black/30 p-3">
                   <pre
                     ref={(element) => {
+                      if (!element) return;
                       chipBodyRefs.current[session.id] = element;
+                      if (!(session.id in chipAutoScrollRefs.current)) {
+                        chipAutoScrollRefs.current[session.id] = true;
+                      }
+                    }}
+                    onScroll={(event) => {
+                      chipAutoScrollRefs.current[session.id] = isAtBottom(
+                        event.currentTarget,
+                      );
                     }}
                     className={`no-scrollbar h-20 overflow-y-auto whitespace-pre-wrap break-words font-mono text-[11px] leading-5 text-[#f7f3ea] ${
                       session.status === "extracting" ? "stream-breathe" : ""
@@ -577,6 +615,12 @@ export function ExtractionDock() {
             <div className="min-h-0 flex-1 p-4 md:p-6">
               <div className="h-full rounded-[1.5rem] border border-white/10 bg-black/35 p-4 md:p-5">
                 <pre
+                  ref={expandedBodyRef}
+                  onScroll={(event) => {
+                    expandedAutoScrollRef.current = isAtBottom(
+                      event.currentTarget,
+                    );
+                  }}
                   className={`h-full overflow-auto whitespace-pre-wrap break-words font-mono text-xs leading-6 text-[#f7f3ea] ${
                     expandedSession.status === "extracting"
                       ? "stream-breathe"
