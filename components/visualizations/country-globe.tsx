@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
@@ -13,6 +13,9 @@ export type CountryCount = {
 type GlobeMeta = {
   paperCount: number;
   extractionCount: number;
+  topCountry: string | null;
+  topCountryCount: number;
+  missingCountryCount: number;
 };
 
 type CountryPoint = CountryCount & {
@@ -220,6 +223,8 @@ function CountryCountBubbles({
   const [hovered, setHovered] = useState<CountryPoint | null>(null);
   const groupRef = useRef<THREE.Group>(null);
   const maxCount = Math.max(1, ...points.map((point) => point.count));
+  const maxRadiusBase = Math.sqrt(maxCount);
+  const { camera } = useThree();
 
   useEffect(() => {
     onHoverChange?.(hovered);
@@ -243,9 +248,9 @@ function CountryCountBubbles({
       {points.map((point, index) => {
         const base = latLonToVector3(point.lat, point.lon, radius);
         const normal = base.clone().normalize();
-        const strength = point.count / maxCount;
-        const bubbleRadius = 0.05 + strength * 0.08;
-        const ringRadius = 0.09 + strength * 0.08;
+        const strength = Math.sqrt(point.count) / Math.max(1, maxRadiusBase);
+        const bubbleRadius = 0.035 + strength * 0.115;
+        const ringRadius = 0.07 + strength * 0.12;
         const color = new THREE.Color().setHSL(0.14 - strength * 0.04, 0.92, 0.63);
         const haloColor = new THREE.Color().setHSL(0.14, 0.98, 0.76);
 
@@ -270,6 +275,13 @@ function CountryCountBubbles({
               position={[0, bubbleRadius * 0.9 + 0.012, 0]}
               onPointerOver={(event) => {
                 event.stopPropagation();
+                const worldPosition = event.object.getWorldPosition(
+                  new THREE.Vector3(),
+                );
+                const cameraDirection = camera.position.clone().normalize();
+                const markerDirection = worldPosition.normalize();
+                const visibility = markerDirection.dot(cameraDirection);
+                if (visibility < 0.18) return;
                 setHovered(point);
               }}
               onPointerOut={() => {
@@ -350,7 +362,7 @@ function EarthScene({
   useFrame((_, delta) => {
     if (!earthGroupRef.current) return;
     if (isHoveringMarker) return;
-    earthGroupRef.current.rotation.y += delta * 0.035;
+    earthGroupRef.current.rotation.y += delta * 0.022;
   });
 
   return (
@@ -393,20 +405,13 @@ export function CountryGlobe({
       .sort((a, b) => b.count - a.count);
   }, [countries]);
 
-  const missing = useMemo(() => {
-    const names = countries
-      .map((item) => item.country)
-      .filter((country) => !COUNTRY_CENTROIDS[country]);
-    return Array.from(new Set(names));
-  }, [countries]);
-
   return (
-    <div className="relative h-[78vh] min-h-[720px] w-full overflow-hidden bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.08),transparent_26%),linear-gradient(180deg,#000000_0%,#010103_55%,#000000_100%)]">
+    <div className="relative h-dvh w-full overflow-hidden bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.08),transparent_26%),linear-gradient(180deg,#000000_0%,#010103_55%,#000000_100%)]">
 
       <Canvas
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
-        camera={{ position: [0, 0.08, 4.85], fov: 38 }}
+        camera={{ position: [0, 0.08, 5.55], fov: 38 }}
       >
         <color attach="background" args={["#010103"]} />
         <fog attach="fog" args={["#010103", 6.8, 13.5]} />
@@ -424,53 +429,63 @@ export function CountryGlobe({
 
         <OrbitControls
           enablePan={false}
-          minDistance={3.1}
-          maxDistance={6.8}
+          minDistance={3.7}
+          maxDistance={7.6}
           rotateSpeed={0.58}
           zoomSpeed={0.75}
           autoRotate={!hoveredPoint}
-          autoRotateSpeed={0.45}
+          autoRotateSpeed={0.28}
         />
       </Canvas>
 
-      <div className="pointer-events-none absolute bottom-6 right-6 text-[11px] leading-4 text-slate-200">
+      <div className="pointer-events-none absolute bottom-7 right-7 flex h-[146px] w-[232px] flex-col justify-start text-right text-[13px] leading-5 text-slate-200">
         {hoveredPoint ? (
           <div className="space-y-1">
-            <div className="text-[9px] uppercase tracking-[0.18em] text-amber-200/70">
+            <div className="text-[10px] uppercase tracking-[0.18em] text-amber-200/70">
               Country count
             </div>
-            <div className="font-medium text-white">{hoveredPoint.country}</div>
-            <div className="text-[10px] text-slate-300">
+            <div className="text-base font-medium text-white">{hoveredPoint.country}</div>
+            <div className="text-xs text-slate-300">
               {hoveredPoint.count} study{hoveredPoint.count === 1 ? "" : "ies"}
             </div>
-            <div className="pt-2 text-[10px] text-slate-500">
+            <div className="pt-3 text-xs text-slate-500">
               {points.length} mapped countries
             </div>
-            <div className="text-[10px] text-slate-500">{meta.paperCount} papers</div>
-            <div className="text-[10px] text-slate-500">
+            <div className="text-xs text-slate-500">{meta.paperCount} papers</div>
+            <div className="text-xs text-slate-500">
               {meta.extractionCount} extractions
             </div>
+            {meta.topCountry ? (
+              <div className="text-xs text-slate-500">
+                top: {meta.topCountry} ({meta.topCountryCount})
+              </div>
+            ) : null}
           </div>
         ) : (
           <div className="space-y-1 text-right">
-            <div className="text-[9px] uppercase tracking-[0.18em] text-slate-500">
+            <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">
               Globe view
             </div>
-            <div className="text-[10px] text-slate-400">
+            <div className="text-xs text-slate-400">
               Drag to rotate. Hover a marker to inspect counts.
             </div>
-            {missing.length ? (
-              <div className="pt-2 text-[10px] text-slate-500">
-                Missing: {missing.length}
-              </div>
-            ) : null}
-            <div className="pt-2 text-[10px] text-slate-500">
+            <div className="pt-3 text-xs text-slate-500">
               {points.length} mapped countries
             </div>
-            <div className="text-[10px] text-slate-500">{meta.paperCount} papers</div>
-            <div className="text-[10px] text-slate-500">
+            <div className="text-xs text-slate-500">{meta.paperCount} papers</div>
+            <div className="text-xs text-slate-500">
               {meta.extractionCount} extractions
             </div>
+            {meta.topCountry ? (
+              <div className="text-xs text-slate-500">
+                top: {meta.topCountry} ({meta.topCountryCount})
+              </div>
+            ) : null}
+            {meta.missingCountryCount ? (
+              <div className="text-xs text-slate-500">
+                unmapped: {meta.missingCountryCount}
+              </div>
+            ) : null}
           </div>
         )}
       </div>

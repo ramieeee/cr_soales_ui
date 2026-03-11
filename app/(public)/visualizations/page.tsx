@@ -45,18 +45,19 @@ const toCountryCounts = (counts: Map<string, number>) => {
 export default function VisualizationsPage() {
   const extractions = asExtractions(sample);
   const paperCount = new Set(extractions.map((row) => row.paper_id)).size;
-
-  const countries = toCountryCounts(
-    countBy(
-      extractions.map(
-        (row) => row.sample_jsonb.population?.country_setting ?? null,
-      ),
+  const allCountryCounts = countBy(
+    extractions.map(
+      (row) => row.sample_jsonb.population?.country_setting ?? null,
     ),
   );
 
+  const countries = toCountryCounts(allCountryCounts);
+  const topCountry = countries[0] ?? null;
+  const missingCountryCount = allCountryCounts.get("(missing)") ?? 0;
+
   return (
     <div className="min-h-dvh bg-[linear-gradient(180deg,#000000_0%,#020308_100%)] text-neutral-100">
-      <div className="mx-auto grid min-h-dvh w-full max-w-[1600px] grid-cols-1 px-4 py-6 md:grid-cols-[180px_minmax(0,1fr)] md:px-6 md:py-8">
+      <div className="mx-auto grid min-h-dvh w-full max-w-none grid-cols-1 px-4 py-4 md:grid-cols-[180px_minmax(0,1fr)] md:px-6 md:py-4">
         <aside className="hidden md:flex md:flex-col md:justify-between">
           <div className="space-y-8 pt-3">
             <div className="space-y-2">
@@ -82,6 +83,9 @@ export default function VisualizationsPage() {
             meta={{
               paperCount,
               extractionCount: extractions.length,
+              topCountry: topCountry?.country ?? null,
+              topCountryCount: topCountry?.count ?? 0,
+              missingCountryCount,
             }}
           />
         </main>
