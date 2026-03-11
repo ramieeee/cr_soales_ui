@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, useTexture } from "@react-three/drei";
+import { Html, OrbitControls, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
 export type CountryCount = {
@@ -76,6 +76,98 @@ const latLonToVector3 = (lat: number, lon: number, radius: number) => {
 
   return new THREE.Vector3(x, y, z);
 };
+
+function AtmosphereGlow({ radius }: { radius: number }) {
+  const innerShader = useMemo(
+    () => ({
+      uniforms: {
+        glowColor: { value: new THREE.Color("#c0daf4") },
+        intensityPower: { value: 5.4 },
+        intensityBase: { value: 0.8 },
+        opacityScale: { value: 0.5 },
+      },
+      vertexShader: `
+        varying vec3 vNormal;
+
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 glowColor;
+        uniform float intensityPower;
+        uniform float intensityBase;
+        uniform float opacityScale;
+        varying vec3 vNormal;
+
+        void main() {
+          float intensity = pow(intensityBase - dot(vNormal, vec3(0.0, 0.0, 1.0)), intensityPower);
+          gl_FragColor = vec4(glowColor * intensity, intensity * opacityScale);
+        }
+      `,
+    }),
+    [],
+  );
+
+  const outerShader = useMemo(
+    () => ({
+      uniforms: {
+        glowColor: { value: new THREE.Color("#8abcee") },
+        intensityPower: { value: 3.4 },
+        intensityBase: { value: 0.8 },
+        opacityScale: { value: 0.055 },
+      },
+      vertexShader: `
+        varying vec3 vNormal;
+
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 glowColor;
+        uniform float intensityPower;
+        uniform float intensityBase;
+        uniform float opacityScale;
+        varying vec3 vNormal;
+
+        void main() {
+          float intensity = pow(intensityBase - dot(vNormal, vec3(0.0, 0.0, 1.0)), intensityPower);
+          gl_FragColor = vec4(glowColor * intensity, intensity * opacityScale);
+        }
+      `,
+    }),
+    [],
+  );
+
+  return (
+    <group>
+      <mesh scale={1.04}>
+        <sphereGeometry args={[radius, 96, 96]} />
+        <shaderMaterial
+          args={[innerShader]}
+          transparent
+          blending={THREE.AdditiveBlending}
+          side={THREE.BackSide}
+          depthWrite={false}
+        />
+      </mesh>
+
+      <mesh scale={1.09}>
+        <sphereGeometry args={[radius, 96, 96]} />
+        <shaderMaterial
+          args={[outerShader]}
+          transparent
+          blending={THREE.AdditiveBlending}
+          side={THREE.BackSide}
+          depthWrite={false}
+        />
+      </mesh>
+    </group>
+  );
+}
 
 function Starfield() {
   const ref = useRef<THREE.Points>(null);
@@ -207,6 +299,8 @@ function GlobeShell({ radius }: { radius: number }) {
           side={THREE.DoubleSide}
         />
       </mesh>
+
+      <AtmosphereGlow radius={radius} />
     </group>
   );
 }
@@ -237,7 +331,7 @@ function CountryCountBubbles({
       const point = points[index];
       const isHovered = hovered?.country === point?.country;
       const pulse = isHovered
-        ? 1.04
+        ? 1
         : 1 + Math.sin(clock.elapsedTime * 1.5 + index * 0.8) * 0.04;
       mesh.scale.setScalar(pulse);
     });
@@ -249,14 +343,34 @@ function CountryCountBubbles({
         const base = latLonToVector3(point.lat, point.lon, radius);
         const normal = base.clone().normalize();
         const strength = Math.sqrt(point.count) / Math.max(1, maxRadiusBase);
-        const bubbleRadius = 0.035 + strength * 0.115;
-        const ringRadius = 0.07 + strength * 0.12;
-        const color = new THREE.Color().setHSL(0.14 - strength * 0.04, 0.92, 0.63);
-        const haloColor = new THREE.Color().setHSL(0.14, 0.98, 0.76);
+        const bubbleRadius = 0.009 + strength * 0.024;
+        const ringRadius = 0.055 + strength * 0.065;
+        const color = new THREE.Color().setHSL(
+          0.13 - strength * 0.03,
+          0.92,
+          0.72,
+        );
+        const haloColor = new THREE.Color().setHSL(0.14, 0.98, 0.8);
+        const nearViewportEdge = Math.abs(normal.x) > 0.52;
+        const labelSide = nearViewportEdge
+          ? normal.x >= 0
+            ? -1
+            : 1
+          : normal.x >= 0
+            ? 1
+            : -1;
+        const labelOffsetX =
+          labelSide *
+          (nearViewportEdge
+            ? 0.12 + ringRadius * 0.75
+            : 0.16 + ringRadius * 1.2);
+        const labelOffsetY =
+          bubbleRadius +
+          0.02 +
+          Math.abs(normal.y) * 0.025 +
+          (nearViewportEdge ? 0.012 : 0);
 
-        const position = normal
-          .clone()
-          .multiplyScalar(radius + 0.008);
+        const position = normal.clone().multiplyScalar(radius + 0.008);
         const quaternion = new THREE.Quaternion().setFromUnitVectors(
           new THREE.Vector3(0, 1, 0),
           normal,
@@ -290,56 +404,77 @@ function CountryCountBubbles({
                 );
               }}
             >
-              <sphereGeometry args={[bubbleRadius * 1.8, 20, 20]} />
+              <sphereGeometry args={[bubbleRadius * 1.9, 18, 18]} />
               <meshBasicMaterial transparent opacity={0} depthWrite={false} />
             </mesh>
 
-            <mesh rotation={[-Math.PI / 2, 0, 0]}>
-              <ringGeometry args={[ringRadius * 0.72, ringRadius, 48]} />
-              <meshBasicMaterial
-                color={color}
-                transparent
-                opacity={isHovered ? 0.82 : 0.34}
-                side={THREE.DoubleSide}
-              />
-            </mesh>
-
             <mesh position={[0, bubbleRadius * 0.9 + 0.012, 0]}>
-              <sphereGeometry args={[bubbleRadius, 28, 28]} />
+              <sphereGeometry args={[bubbleRadius, 20, 20]} />
               <meshStandardMaterial
                 color={color}
                 emissive={haloColor}
-                emissiveIntensity={isHovered ? 1.2 : 0.72}
+                emissiveIntensity={isHovered ? 1.05 : 0.55}
                 transparent
-                opacity={isHovered ? 0.98 : 0.86}
+                opacity={0.95}
                 metalness={0.02}
-                roughness={0.18}
+                roughness={0.14}
               />
             </mesh>
 
-            <mesh position={[0, bubbleRadius * 0.9 + 0.012, 0]}>
-              <sphereGeometry args={[bubbleRadius * 1.55, 24, 24]} />
-              <meshBasicMaterial
-                color={haloColor}
-                transparent
-                opacity={isHovered ? 0.18 : 0.08}
-                blending={THREE.AdditiveBlending}
-                depthWrite={false}
-              />
-            </mesh>
+            {isHovered ? (
+              <>
+                <mesh rotation={[-Math.PI / 2, 0, 0]}>
+                  <ringGeometry args={[ringRadius * 0.86, ringRadius, 48]} />
+                  <meshBasicMaterial
+                    color="#f5f0df"
+                    transparent
+                    opacity={0.92}
+                    side={THREE.DoubleSide}
+                  />
+                </mesh>
 
-            <mesh rotation={[-Math.PI / 2, 0, 0]}>
-              <ringGeometry args={[ringRadius * 1.08, ringRadius * 1.32, 48]} />
-              <meshBasicMaterial
-                color="#fff1d6"
-                transparent
-                opacity={isHovered ? 0.24 : 0.1}
-                side={THREE.DoubleSide}
-                blending={THREE.AdditiveBlending}
-                depthWrite={false}
-              />
-            </mesh>
+                <mesh rotation={[-Math.PI / 2, 0, 0]}>
+                  <ringGeometry
+                    args={[ringRadius * 1.18, ringRadius * 1.38, 48]}
+                  />
+                  <meshBasicMaterial
+                    color={haloColor}
+                    transparent
+                    opacity={0.22}
+                    side={THREE.DoubleSide}
+                    blending={THREE.AdditiveBlending}
+                    depthWrite={false}
+                  />
+                </mesh>
 
+                <mesh position={[0, bubbleRadius * 0.9 + 0.012, 0]}>
+                  <sphereGeometry args={[bubbleRadius * 3.2, 22, 22]} />
+                  <meshBasicMaterial
+                    color={haloColor}
+                    transparent
+                    opacity={0.12}
+                    blending={THREE.AdditiveBlending}
+                    depthWrite={false}
+                  />
+                </mesh>
+
+                <Html
+                  position={[labelOffsetX, labelOffsetY, 0]}
+                  distanceFactor={12}
+                >
+                  <div
+                    className={`pointer-events-none min-w-[104px] max-w-[132px] text-[9px] leading-3 text-white ${
+                      labelSide > 0 ? "text-left" : "text-right"
+                    }`}
+                  >
+                    <div className="font-medium">{point.country}</div>
+                    <div className="mt-0.5 text-[8px] text-slate-300">
+                      {point.count} study{point.count === 1 ? "" : "ies"}
+                    </div>
+                  </div>
+                </Html>
+              </>
+            ) : null}
           </group>
         );
       })}
@@ -407,7 +542,6 @@ export function CountryGlobe({
 
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.08),transparent_26%),linear-gradient(180deg,#000000_0%,#010103_55%,#000000_100%)]">
-
       <Canvas
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
@@ -418,7 +552,11 @@ export function CountryGlobe({
         <ambientLight intensity={0.46} />
         <hemisphereLight args={["#d8f0ff", "#010103", 0.42]} />
         <pointLight position={[4.5, 2.8, 3.2]} intensity={50} color="#8fd4ff" />
-        <directionalLight position={[-4, -1.5, -5]} intensity={0.72} color="#c0dcff" />
+        <directionalLight
+          position={[-4, -1.5, -5]}
+          intensity={0.72}
+          color="#c0dcff"
+        />
 
         <Starfield />
         <EarthScene
@@ -438,56 +576,32 @@ export function CountryGlobe({
         />
       </Canvas>
 
-      <div className="pointer-events-none absolute bottom-7 right-7 flex h-[146px] w-[232px] flex-col justify-start text-right text-[13px] leading-5 text-slate-200">
-        {hoveredPoint ? (
-          <div className="space-y-1">
-            <div className="text-[10px] uppercase tracking-[0.18em] text-amber-200/70">
-              Country count
-            </div>
-            <div className="text-base font-medium text-white">{hoveredPoint.country}</div>
-            <div className="text-xs text-slate-300">
-              {hoveredPoint.count} study{hoveredPoint.count === 1 ? "" : "ies"}
-            </div>
-            <div className="pt-3 text-xs text-slate-500">
-              {points.length} mapped countries
-            </div>
-            <div className="text-xs text-slate-500">{meta.paperCount} papers</div>
-            <div className="text-xs text-slate-500">
-              {meta.extractionCount} extractions
-            </div>
-            {meta.topCountry ? (
-              <div className="text-xs text-slate-500">
-                top: {meta.topCountry} ({meta.topCountryCount})
-              </div>
-            ) : null}
+      <div className="pointer-events-none absolute bottom-7 right-7 flex h-[140px] w-[240px] flex-col justify-end text-right text-[13px] leading-5 text-slate-200">
+        <div className="space-y-1 text-right">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">
+            Sample meta
           </div>
-        ) : (
-          <div className="space-y-1 text-right">
-            <div className="text-[10px] uppercase tracking-[0.18em] text-slate-500">
-              Globe view
-            </div>
-            <div className="text-xs text-slate-400">
-              Drag to rotate. Hover a marker to inspect counts.
-            </div>
-            <div className="pt-3 text-xs text-slate-500">
-              {points.length} mapped countries
-            </div>
-            <div className="text-xs text-slate-500">{meta.paperCount} papers</div>
-            <div className="text-xs text-slate-500">
-              {meta.extractionCount} extractions
-            </div>
-            {meta.topCountry ? (
-              <div className="text-xs text-slate-500">
-                top: {meta.topCountry} ({meta.topCountryCount})
-              </div>
-            ) : null}
-            {meta.missingCountryCount ? (
-              <div className="text-xs text-slate-500">
-                unmapped: {meta.missingCountryCount}
-              </div>
-            ) : null}
+          <div className="text-xs text-slate-400">
+            Drag to rotate. Hover a marker to inspect counts.
           </div>
-        )}
+          <div className="pt-3 text-xs text-slate-500">
+            {points.length} mapped countries
+          </div>
+          <div className="text-xs text-slate-500">{meta.paperCount} papers</div>
+          <div className="text-xs text-slate-500">
+            {meta.extractionCount} extractions
+          </div>
+          {meta.topCountry ? (
+            <div className="text-xs text-slate-500">
+              top: {meta.topCountry} ({meta.topCountryCount})
+            </div>
+          ) : null}
+          {meta.missingCountryCount ? (
+            <div className="text-xs text-slate-500">
+              unmapped: {meta.missingCountryCount}
+            </div>
+          ) : null}
+        </div>
       </div>
     </div>
   );
