@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Html, OrbitControls, useTexture } from "@react-three/drei";
+import { OrbitControls, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 
 export type CountryCount = {
@@ -175,19 +175,29 @@ function GlobeShell({ radius }: { radius: number }) {
 function CountryCountBubbles({
   radius,
   points,
+  onHoverChange,
 }: {
   radius: number;
   points: CountryPoint[];
+  onHoverChange?: (point: CountryPoint | null) => void;
 }) {
   const [hovered, setHovered] = useState<CountryPoint | null>(null);
   const groupRef = useRef<THREE.Group>(null);
   const maxCount = Math.max(1, ...points.map((point) => point.count));
 
+  useEffect(() => {
+    onHoverChange?.(hovered);
+  }, [hovered, onHoverChange]);
+
   useFrame(({ clock }) => {
     if (!groupRef.current) return;
     groupRef.current.children.forEach((child, index) => {
       const mesh = child as THREE.Group;
-      const pulse = 1 + Math.sin(clock.elapsedTime * 1.5 + index * 0.8) * 0.04;
+      const point = points[index];
+      const isHovered = hovered?.country === point?.country;
+      const pulse = isHovered
+        ? 1.04
+        : 1 + Math.sin(clock.elapsedTime * 1.5 + index * 0.8) * 0.04;
       mesh.scale.setScalar(pulse);
     });
   });
@@ -220,6 +230,22 @@ function CountryCountBubbles({
             quaternion={quaternion}
             renderOrder={index + 1}
           >
+            <mesh
+              position={[0, bubbleRadius * 0.9 + 0.012, 0]}
+              onPointerOver={(event) => {
+                event.stopPropagation();
+                setHovered(point);
+              }}
+              onPointerOut={() => {
+                setHovered((current) =>
+                  current?.country === point.country ? null : current,
+                );
+              }}
+            >
+              <sphereGeometry args={[bubbleRadius * 1.8, 20, 20]} />
+              <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+            </mesh>
+
             <mesh rotation={[-Math.PI / 2, 0, 0]}>
               <ringGeometry args={[ringRadius * 0.72, ringRadius, 48]} />
               <meshBasicMaterial
@@ -230,18 +256,7 @@ function CountryCountBubbles({
               />
             </mesh>
 
-            <mesh
-              position={[0, bubbleRadius * 0.9 + 0.012, 0]}
-              onPointerOver={(event) => {
-                event.stopPropagation();
-                setHovered(point);
-              }}
-              onPointerOut={() =>
-                setHovered((current) =>
-                  current?.country === point.country ? null : current,
-                )
-              }
-            >
+            <mesh position={[0, bubbleRadius * 0.9 + 0.012, 0]}>
               <sphereGeometry args={[bubbleRadius, 28, 28]} />
               <meshStandardMaterial
                 color={color}
@@ -277,19 +292,6 @@ function CountryCountBubbles({
               />
             </mesh>
 
-            {isHovered ? (
-              <Html distanceFactor={10} position={[0, bubbleRadius * 2.2 + 0.04, 0]}>
-                <div className="ui-pop min-w-[156px] rounded-2xl border border-amber-100/15 bg-slate-950/90 px-3 py-2 text-xs text-slate-100 shadow-[0_14px_40px_rgba(2,6,23,0.5)] backdrop-blur-md">
-                  <div className="text-[10px] uppercase tracking-[0.22em] text-amber-200/70">
-                    Country count
-                  </div>
-                  <div className="mt-1 font-semibold tracking-[0.01em]">{point.country}</div>
-                  <div className="mt-1 text-slate-300">
-                    {point.count} study{point.count === 1 ? "" : "ies"}
-                  </div>
-                </div>
-              </Html>
-            ) : null}
           </group>
         );
       })}
@@ -300,27 +302,39 @@ function CountryCountBubbles({
 function EarthScene({
   radius,
   points,
+  onHoverChange,
 }: {
   radius: number;
   points: CountryPoint[];
+  onHoverChange?: (point: CountryPoint | null) => void;
 }) {
   const earthGroupRef = useRef<THREE.Group>(null);
+  const [isHoveringMarker, setIsHoveringMarker] = useState(false);
 
   useFrame((_, delta) => {
     if (!earthGroupRef.current) return;
+    if (isHoveringMarker) return;
     earthGroupRef.current.rotation.y += delta * 0.035;
   });
 
   return (
     <group ref={earthGroupRef}>
       <GlobeShell radius={radius} />
-      <CountryCountBubbles radius={radius} points={points} />
+      <CountryCountBubbles
+        radius={radius}
+        points={points}
+        onHoverChange={(point) => {
+          setIsHoveringMarker(point !== null);
+          onHoverChange?.(point);
+        }}
+      />
     </group>
   );
 }
 
 export function CountryGlobe({ countries }: { countries: CountryCount[] }) {
   const radius = 1.5;
+  const [hoveredPoint, setHoveredPoint] = useState<CountryPoint | null>(null);
 
   const points = useMemo(() => {
     return countries
@@ -361,7 +375,11 @@ export function CountryGlobe({ countries }: { countries: CountryCount[] }) {
         <directionalLight position={[-4, -1.5, -5]} intensity={0.6} color="#93c5fd" />
 
         <Starfield />
-        <EarthScene radius={radius} points={points} />
+        <EarthScene
+          radius={radius}
+          points={points}
+          onHoverChange={setHoveredPoint}
+        />
 
         <OrbitControls
           enablePan={false}
@@ -369,7 +387,7 @@ export function CountryGlobe({ countries }: { countries: CountryCount[] }) {
           maxDistance={6.8}
           rotateSpeed={0.58}
           zoomSpeed={0.75}
-          autoRotate
+          autoRotate={!hoveredPoint}
           autoRotateSpeed={0.45}
         />
       </Canvas>
@@ -387,6 +405,29 @@ export function CountryGlobe({ countries }: { countries: CountryCount[] }) {
             {missing.length > 4 ? ` +${missing.length - 4}` : ""}
           </p>
         ) : null}
+      </div>
+
+      <div className="pointer-events-none absolute bottom-5 left-5 min-w-[160px] rounded-2xl border border-white/10 bg-slate-950/70 px-3 py-2.5 text-[11px] leading-4 text-slate-200 backdrop-blur-md">
+        {hoveredPoint ? (
+          <>
+            <div className="text-[9px] uppercase tracking-[0.18em] text-amber-200/70">
+              Country count
+            </div>
+            <div className="mt-1 font-medium text-white">{hoveredPoint.country}</div>
+            <div className="mt-0.5 text-[10px] text-slate-300">
+              {hoveredPoint.count} study{hoveredPoint.count === 1 ? "" : "ies"}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="text-[9px] uppercase tracking-[0.18em] text-slate-500">
+              Hover state
+            </div>
+            <div className="mt-1 text-[10px] text-slate-400">
+              Hover a marker to inspect country counts.
+            </div>
+          </>
+        )}
       </div>
 
       <div className="pointer-events-none absolute bottom-5 right-5 rounded-full border border-cyan-200/15 bg-slate-950/65 px-4 py-2 text-xs text-slate-300 backdrop-blur-md">
