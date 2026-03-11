@@ -1,0 +1,3174 @@
+{
+  "extractions": [
+    {
+      "id": "2020608d-400c-4fdf-9019-9e97cc3897e5",
+      "paper_id": "098fd849-570a-4eed-bbab-cb68f09dfd35",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_001"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Community-dwelling older adults without dementia.",
+          "target_population": "older_adults",
+          "age_band": "older",
+          "clinical_condition_tags": [],
+          "country_setting": "Italy",
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "Participants were community-dwelling adults aged 65–85 years."
+            }
+          ],
+          "confidence": 0.84
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Index questionnaire",
+          "instrument_family": [
+            "CRIq"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure"
+          ],
+          "scoring_method": null,
+          "time_administration": "10–15 minutes",
+          "evidence": [
+            {
+              "page": 6,
+              "quote": "Cognitive reserve was measured using the Cognitive Reserve Index questionnaire (CRIq)."
+            }
+          ],
+          "confidence": 0.9
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T09:00:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "b9053d2a-8282-4d55-816a-b1219abe1b5b",
+      "paper_id": "dbc89681-0d88-488f-99b0-cc00b9a80aa7",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_002"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Older adults with mild cognitive impairment recruited from memory clinics.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "mild_cognitive_impairment"
+          ],
+          "country_setting": "Canada",
+          "evidence": [
+            {
+              "page": 5,
+              "quote": "Individuals with mild cognitive impairment were included if they met Petersen criteria."
+            }
+          ],
+          "confidence": 0.9
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Questionnaire",
+          "instrument_family": [
+            "CRQ"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": "Total score was calculated by summing item responses.",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 6,
+              "quote": "The Cognitive Reserve Questionnaire (CRQ) was completed during the first visit."
+            }
+          ],
+          "confidence": 0.84
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T09:05:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "b33cc3b6-558f-4012-8bb2-2ff3b92e2a70",
+      "paper_id": "83e41b17-e10a-4505-9805-ea6ee388ae78",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_003"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Middle-aged primary care patients with major depressive disorder.",
+          "target_population": "patients",
+          "age_band": "middle",
+          "clinical_condition_tags": [
+            "depression"
+          ],
+          "country_setting": "Spain",
+          "evidence": [
+            {
+              "page": 4,
+              "quote": "Patients with major depressive disorder were eligible if they met DSM-5 criteria."
+            }
+          ],
+          "confidence": 0.86
+        },
+        "instrument": {
+          "instrument_name": "Lifetime of Experiences Questionnaire",
+          "instrument_family": [
+            "LEQ"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 10,
+              "quote": "Cognitive reserve was assessed with the Lifetime of Experiences Questionnaire (LEQ)."
+            }
+          ],
+          "confidence": 0.86
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T09:10:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "af74641e-6ea6-4c21-80d4-8ddbfb0d931e",
+      "paper_id": "fe23d979-4bf5-438e-b13e-44eaf3a46db8",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_004"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Young adult undergraduate volunteers.",
+          "target_population": "young_adults",
+          "age_band": "young",
+          "clinical_condition_tags": [],
+          "country_setting": null,
+          "evidence": [
+            {
+              "page": 1,
+              "quote": "Participants aged 18–30 years were undergraduate volunteers."
+            }
+          ],
+          "confidence": 0.78
+        },
+        "instrument": {
+          "instrument_name": "National Adult Reading Test",
+          "instrument_family": [
+            "NART"
+          ],
+          "detected_proxy_labels": [
+            "iq_proxy"
+          ],
+          "scoring_method": "Premorbid intelligence estimated from pronunciation accuracy of irregular words.",
+          "time_administration": "5–10 minutes",
+          "evidence": [
+            {
+              "page": 7,
+              "quote": "Premorbid IQ was estimated using the National Adult Reading Test."
+            }
+          ],
+          "confidence": 0.88
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T09:15:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "3614e247-2d99-450d-92bc-5d720ea032dc",
+      "paper_id": "1c47b573-db7a-4ebe-900b-3f65a672b572",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_005"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults recruited through community advertisements spanning adulthood.",
+          "target_population": "general_population",
+          "age_band": "mixed",
+          "clinical_condition_tags": [],
+          "country_setting": "United Kingdom",
+          "evidence": [
+            {
+              "page": 2,
+              "quote": "Participants aged 25–80 years were recruited through community advertisements."
+            }
+          ],
+          "confidence": 0.81
+        },
+        "instrument": {
+          "instrument_name": "Mehrfachwahl-Wortschatz-Intelligenztest",
+          "instrument_family": [
+            "MWT-B"
+          ],
+          "detected_proxy_labels": [
+            "iq_proxy"
+          ],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 11,
+              "quote": "The Mehrfachwahl-Wortschatz-Intelligenztest (MWT-B) was administered as an estimate of premorbid intelligence."
+            }
+          ],
+          "confidence": 0.84
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T09:20:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "4e5e5abe-dd35-4b5e-bc8b-c04af07e99e4",
+      "paper_id": "197a5e85-0083-4e60-be8a-6d6d040b57a3",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_006"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults with Parkinson disease recruited from a university hospital.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "parkinson_disease"
+          ],
+          "country_setting": "South Korea",
+          "evidence": [
+            {
+              "page": 9,
+              "quote": "We enrolled patients with Parkinson’s disease (Hoehn and Yahr stages 1–3)."
+            }
+          ],
+          "confidence": 0.88
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Scale",
+          "instrument_family": [
+            "mCRS"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": "approximately 12 minutes",
+          "evidence": [
+            {
+              "page": 4,
+              "quote": "Cognitive reserve was measured using the Cognitive Reserve Scale (mCRS)."
+            }
+          ],
+          "confidence": 0.83
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T09:25:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "2e475a6a-da9c-4290-9849-5ca73402b74d",
+      "paper_id": "0b48c660-fea2-4132-885b-34c76e724a4a",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_007"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Older adults with Alzheimer disease recruited from memory clinics.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "alzheimer_disease"
+          ],
+          "country_setting": "United States",
+          "evidence": [
+            {
+              "page": 10,
+              "quote": "Participants were individuals with clinically diagnosed Alzheimer’s disease (NIA-AA criteria)."
+            }
+          ],
+          "confidence": 0.9
+        },
+        "instrument": {
+          "instrument_name": "CRASH",
+          "instrument_family": [
+            "CRASH"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": "10 minutes",
+          "evidence": [
+            {
+              "page": 12,
+              "quote": "Cognitive reserve was assessed with CRASH."
+            }
+          ],
+          "confidence": 0.82
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T09:30:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "11b3f3ed-a19e-4dfb-bf54-befcaa841662",
+      "paper_id": "b617972e-4c8f-4fe7-b618-3162984d9e11",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_008"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Stroke survivors recruited during outpatient rehabilitation follow-up.",
+          "target_population": "patients",
+          "age_band": "mixed",
+          "clinical_condition_tags": [
+            "stroke"
+          ],
+          "country_setting": "Netherlands",
+          "evidence": [
+            {
+              "page": 13,
+              "quote": "We included stroke survivors recruited during outpatient rehabilitation follow-up."
+            }
+          ],
+          "confidence": 0.85
+        },
+        "instrument": {
+          "instrument_name": "CR-interview",
+          "instrument_family": [
+            "CR-interview"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure"
+          ],
+          "scoring_method": "derived from structured questions",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 5,
+              "quote": "Cognitive reserve interview scores (CR-interview) were derived from structured questions."
+            }
+          ],
+          "confidence": 0.74
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T09:35:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "7dd2763e-6fe4-4a3e-99af-ba182793f551",
+      "paper_id": "65fe1788-f804-4398-bc8c-febf7b02df44",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_009"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Independently living older adults with dementia excluded.",
+          "target_population": "older_adults",
+          "age_band": "older",
+          "clinical_condition_tags": [],
+          "country_setting": "Japan",
+          "evidence": [
+            {
+              "page": 4,
+              "quote": "We excluded those with a diagnosis of dementia."
+            }
+          ],
+          "confidence": 0.83
+        },
+        "instrument": {
+          "instrument_name": null,
+          "instrument_family": [
+            "multi_proxy_custom"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "multilingualism"
+          ],
+          "scoring_method": "Composite reserve score computed by summing standardized proxy variables.",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 6,
+              "quote": "A composite reserve score was computed by summing standardized proxy variables."
+            }
+          ],
+          "confidence": 0.78
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T09:40:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "8b9c9752-6971-4b29-b8d8-129818e0f63d",
+      "paper_id": "78237fa0-bb74-4b80-b4ef-b05355972232",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_010"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults with multiple sclerosis from an outpatient clinic.",
+          "target_population": "patients",
+          "age_band": "young",
+          "clinical_condition_tags": [
+            "multiple_sclerosis"
+          ],
+          "country_setting": "Norway",
+          "evidence": [
+            {
+              "page": 2,
+              "quote": "We included patients with multiple sclerosis aged 22–49 years."
+            }
+          ],
+          "confidence": 0.86
+        },
+        "instrument": {
+          "instrument_name": null,
+          "instrument_family": [
+            "not_detected"
+          ],
+          "detected_proxy_labels": [],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "No cognitive reserve instrument was reported in the Methods section."
+            }
+          ],
+          "confidence": 0.65
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T09:45:00.000Z",
+      "status": "partial"
+    },
+    {
+      "id": "597d2673-4e38-4257-aa32-0d0f8b351caf",
+      "paper_id": "19a7aad6-b6ae-4738-8369-0a366783d592",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_011"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults with HIV recruited from an infectious disease clinic.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "hiv"
+          ],
+          "country_setting": "South Africa",
+          "evidence": [
+            {
+              "page": 10,
+              "quote": "Participants were adults with HIV recruited from an infectious disease clinic."
+            }
+          ],
+          "confidence": 0.82
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Index questionnaire",
+          "instrument_family": [
+            "CRIq"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure"
+          ],
+          "scoring_method": null,
+          "time_administration": "10–15 minutes",
+          "evidence": [
+            {
+              "page": 8,
+              "quote": "Cognitive reserve was measured using the Cognitive Reserve Index questionnaire (CRIq)."
+            }
+          ],
+          "confidence": 0.9
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T09:50:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "aaa9e2ec-cbfb-4e15-b964-72c616a706d2",
+      "paper_id": "41dec3a7-1459-4454-80f7-c6d62502e597",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_012"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Community adults with hypertension recruited via primary care.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "hypertension"
+          ],
+          "country_setting": "Mexico",
+          "evidence": [
+            {
+              "page": 5,
+              "quote": "Participants were adults aged 60–76 years with hypertension recruited via primary care."
+            }
+          ],
+          "confidence": 0.84
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Questionnaire",
+          "instrument_family": [
+            "CRQ"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": "Total score was calculated by summing item responses.",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 8,
+              "quote": "The Cognitive Reserve Questionnaire (CRQ) was completed during the first visit."
+            }
+          ],
+          "confidence": 0.84
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T09:55:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "2eb2add4-e5cf-461d-8dd1-f1d3652a69b5",
+      "paper_id": "3d152d43-7a72-489e-a1a4-cc6273c34ea2",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_013"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Working-age adults recruited from workplace wellness programs.",
+          "target_population": "general_population",
+          "age_band": "middle",
+          "clinical_condition_tags": [],
+          "country_setting": "Kenya",
+          "evidence": [
+            {
+              "page": 1,
+              "quote": "Participants were adults recruited from workplace wellness programs."
+            }
+          ],
+          "confidence": 0.74
+        },
+        "instrument": {
+          "instrument_name": "Lifetime of Experiences Questionnaire",
+          "instrument_family": [
+            "LEQ"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 8,
+              "quote": "Cognitive reserve was assessed with the Lifetime of Experiences Questionnaire (LEQ)."
+            }
+          ],
+          "confidence": 0.86
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T10:00:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "5f03e18a-eb61-45ab-9565-d0066513ae59",
+      "paper_id": "f7478d32-ab79-4bd1-8ca8-97200c85b986",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_014"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Older adults from nationwide registries.",
+          "target_population": "older_adults",
+          "age_band": "older",
+          "clinical_condition_tags": [],
+          "country_setting": "Sweden",
+          "evidence": [
+            {
+              "page": 2,
+              "quote": "We recruited community-dwelling adults aged 55–90 years from nationwide registries."
+            }
+          ],
+          "confidence": 0.8
+        },
+        "instrument": {
+          "instrument_name": "National Adult Reading Test",
+          "instrument_family": [
+            "NART"
+          ],
+          "detected_proxy_labels": [
+            "iq_proxy"
+          ],
+          "scoring_method": "Premorbid intelligence estimated from pronunciation accuracy of irregular words.",
+          "time_administration": "5–10 minutes",
+          "evidence": [
+            {
+              "page": 5,
+              "quote": "Premorbid IQ was estimated using the National Adult Reading Test."
+            }
+          ],
+          "confidence": 0.88
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T10:05:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "a3dde0ed-d9c1-403f-aab3-c52697d7e568",
+      "paper_id": "5a04d91e-c17c-4cd6-892b-1ba4f5210ce4",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_015"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Community-dwelling older adults without dementia.",
+          "target_population": "older_adults",
+          "age_band": "older",
+          "clinical_condition_tags": [],
+          "country_setting": "Italy",
+          "evidence": [
+            {
+              "page": 5,
+              "quote": "Participants were community-dwelling adults aged 65–85 years."
+            }
+          ],
+          "confidence": 0.84
+        },
+        "instrument": {
+          "instrument_name": "Mehrfachwahl-Wortschatz-Intelligenztest",
+          "instrument_family": [
+            "MWT-B"
+          ],
+          "detected_proxy_labels": [
+            "iq_proxy"
+          ],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 13,
+              "quote": "The Mehrfachwahl-Wortschatz-Intelligenztest (MWT-B) was administered as an estimate of premorbid intelligence."
+            }
+          ],
+          "confidence": 0.84
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T10:10:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "3675db9e-28eb-4504-b407-2ddc073dfd1f",
+      "paper_id": "3051ef31-a0c6-4c4f-9363-d605a7d53abf",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_016"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Older adults with mild cognitive impairment recruited from memory clinics.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "mild_cognitive_impairment"
+          ],
+          "country_setting": "Canada",
+          "evidence": [
+            {
+              "page": 4,
+              "quote": "Individuals with mild cognitive impairment were included if they met Petersen criteria."
+            }
+          ],
+          "confidence": 0.9
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Scale",
+          "instrument_family": [
+            "mCRS"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": "approximately 12 minutes",
+          "evidence": [
+            {
+              "page": 6,
+              "quote": "Cognitive reserve was measured using the Cognitive Reserve Scale (mCRS)."
+            }
+          ],
+          "confidence": 0.83
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T10:15:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "d1dd4cfd-de8a-4589-b242-935e3eba3dbd",
+      "paper_id": "b06a3c6f-d956-4498-9ffd-8f5fee6b5c1a",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_017"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Middle-aged primary care patients with major depressive disorder.",
+          "target_population": "patients",
+          "age_band": "middle",
+          "clinical_condition_tags": [
+            "depression"
+          ],
+          "country_setting": "Spain",
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "Patients with major depressive disorder were eligible if they met DSM-5 criteria."
+            }
+          ],
+          "confidence": 0.86
+        },
+        "instrument": {
+          "instrument_name": "CRASH",
+          "instrument_family": [
+            "CRASH"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": "10 minutes",
+          "evidence": [
+            {
+              "page": 10,
+              "quote": "Cognitive reserve was assessed with CRASH."
+            }
+          ],
+          "confidence": 0.82
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T10:20:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "5beb86d2-fcee-49af-9e91-c82a5211f095",
+      "paper_id": "cf175452-d7dd-4a02-81f5-e626dcf1ad36",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_018"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Young adult undergraduate volunteers.",
+          "target_population": "young_adults",
+          "age_band": "young",
+          "clinical_condition_tags": [],
+          "country_setting": null,
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "Participants aged 18–30 years were undergraduate volunteers."
+            }
+          ],
+          "confidence": 0.78
+        },
+        "instrument": {
+          "instrument_name": "CR-interview",
+          "instrument_family": [
+            "CR-interview"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure"
+          ],
+          "scoring_method": "derived from structured questions",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "Cognitive reserve interview scores (CR-interview) were derived from structured questions."
+            }
+          ],
+          "confidence": 0.74
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T10:25:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "f1c2d526-8568-42ca-b331-9bdbb04e7200",
+      "paper_id": "64cb9fb9-b225-41eb-bb9b-636066d1e0eb",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_019"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults recruited through community advertisements spanning adulthood.",
+          "target_population": "general_population",
+          "age_band": "mixed",
+          "clinical_condition_tags": [],
+          "country_setting": "United Kingdom",
+          "evidence": [
+            {
+              "page": 1,
+              "quote": "Participants aged 25–80 years were recruited through community advertisements."
+            }
+          ],
+          "confidence": 0.81
+        },
+        "instrument": {
+          "instrument_name": null,
+          "instrument_family": [
+            "multi_proxy_custom"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "multilingualism"
+          ],
+          "scoring_method": "Composite reserve score computed by summing standardized proxy variables.",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 8,
+              "quote": "A composite reserve score was computed by summing standardized proxy variables."
+            }
+          ],
+          "confidence": 0.78
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T10:30:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "b3c2fccc-e724-4ccc-8c32-cf05fc846719",
+      "paper_id": "3b72e68b-87f5-4c15-a537-6b05330898e3",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_020"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults with Parkinson disease recruited from a university hospital.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "parkinson_disease"
+          ],
+          "country_setting": "South Korea",
+          "evidence": [
+            {
+              "page": 8,
+              "quote": "We enrolled patients with Parkinson’s disease (Hoehn and Yahr stages 1–3)."
+            }
+          ],
+          "confidence": 0.88
+        },
+        "instrument": {
+          "instrument_name": null,
+          "instrument_family": [
+            "not_detected"
+          ],
+          "detected_proxy_labels": [],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 5,
+              "quote": "No cognitive reserve instrument was reported in the Methods section."
+            }
+          ],
+          "confidence": 0.65
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T10:35:00.000Z",
+      "status": "partial"
+    },
+    {
+      "id": "6eb86fc5-7e9e-490d-a32e-802a1bdc9f56",
+      "paper_id": "4c68fa84-3569-454d-b25a-c48381767bf4",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_021"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Older adults with Alzheimer disease recruited from memory clinics.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "alzheimer_disease"
+          ],
+          "country_setting": "United States",
+          "evidence": [
+            {
+              "page": 12,
+              "quote": "Participants were individuals with clinically diagnosed Alzheimer’s disease (NIA-AA criteria)."
+            }
+          ],
+          "confidence": 0.9
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Index questionnaire",
+          "instrument_family": [
+            "CRIq"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure"
+          ],
+          "scoring_method": null,
+          "time_administration": "10–15 minutes",
+          "evidence": [
+            {
+              "page": 6,
+              "quote": "Cognitive reserve was measured using the Cognitive Reserve Index questionnaire (CRIq)."
+            }
+          ],
+          "confidence": 0.9
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T10:40:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "74585987-b4aa-48dc-8584-07b630e982ed",
+      "paper_id": "29bc1051-6dfe-461b-952e-cecabc29a14f",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_022"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Stroke survivors recruited during outpatient rehabilitation follow-up.",
+          "target_population": "patients",
+          "age_band": "mixed",
+          "clinical_condition_tags": [
+            "stroke"
+          ],
+          "country_setting": "Netherlands",
+          "evidence": [
+            {
+              "page": 12,
+              "quote": "We included stroke survivors recruited during outpatient rehabilitation follow-up."
+            }
+          ],
+          "confidence": 0.85
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Questionnaire",
+          "instrument_family": [
+            "CRQ"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": "Total score was calculated by summing item responses.",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 6,
+              "quote": "The Cognitive Reserve Questionnaire (CRQ) was completed during the first visit."
+            }
+          ],
+          "confidence": 0.84
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T10:45:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "28e27f13-6d8b-4982-a99f-51398318290b",
+      "paper_id": "6954ffd0-58f8-496b-baf8-a170c9367435",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_023"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Independently living older adults with dementia excluded.",
+          "target_population": "older_adults",
+          "age_band": "older",
+          "clinical_condition_tags": [],
+          "country_setting": "Japan",
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "We excluded those with a diagnosis of dementia."
+            }
+          ],
+          "confidence": 0.83
+        },
+        "instrument": {
+          "instrument_name": "Lifetime of Experiences Questionnaire",
+          "instrument_family": [
+            "LEQ"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 10,
+              "quote": "Cognitive reserve was assessed with the Lifetime of Experiences Questionnaire (LEQ)."
+            }
+          ],
+          "confidence": 0.86
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T10:50:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "7389dbe0-d072-4505-81d4-a4c9cc2f7e7b",
+      "paper_id": "46464f4d-2999-4bfd-95f2-29ec69dfb939",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_024"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults with multiple sclerosis from an outpatient clinic.",
+          "target_population": "patients",
+          "age_band": "young",
+          "clinical_condition_tags": [
+            "multiple_sclerosis"
+          ],
+          "country_setting": "Norway",
+          "evidence": [
+            {
+              "page": 4,
+              "quote": "We included patients with multiple sclerosis aged 22–49 years."
+            }
+          ],
+          "confidence": 0.86
+        },
+        "instrument": {
+          "instrument_name": "National Adult Reading Test",
+          "instrument_family": [
+            "NART"
+          ],
+          "detected_proxy_labels": [
+            "iq_proxy"
+          ],
+          "scoring_method": "Premorbid intelligence estimated from pronunciation accuracy of irregular words.",
+          "time_administration": "5–10 minutes",
+          "evidence": [
+            {
+              "page": 7,
+              "quote": "Premorbid IQ was estimated using the National Adult Reading Test."
+            }
+          ],
+          "confidence": 0.88
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T10:55:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "0a847baf-2c84-43aa-b24b-5417c4583c77",
+      "paper_id": "b8d607bd-1534-4e0e-bb92-76666f6e09b1",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_025"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults with HIV recruited from an infectious disease clinic.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "hiv"
+          ],
+          "country_setting": "South Africa",
+          "evidence": [
+            {
+              "page": 9,
+              "quote": "Participants were adults with HIV recruited from an infectious disease clinic."
+            }
+          ],
+          "confidence": 0.82
+        },
+        "instrument": {
+          "instrument_name": "Mehrfachwahl-Wortschatz-Intelligenztest",
+          "instrument_family": [
+            "MWT-B"
+          ],
+          "detected_proxy_labels": [
+            "iq_proxy"
+          ],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 11,
+              "quote": "The Mehrfachwahl-Wortschatz-Intelligenztest (MWT-B) was administered as an estimate of premorbid intelligence."
+            }
+          ],
+          "confidence": 0.84
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T11:00:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "4d136061-1751-4c0a-84d9-7cc9fbba52e3",
+      "paper_id": "b7083df6-55d7-4380-87bc-417eaddd5f2e",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_026"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Community adults with hypertension recruited via primary care.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "hypertension"
+          ],
+          "country_setting": "Mexico",
+          "evidence": [
+            {
+              "page": 4,
+              "quote": "Participants were adults aged 60–76 years with hypertension recruited via primary care."
+            }
+          ],
+          "confidence": 0.84
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Scale",
+          "instrument_family": [
+            "mCRS"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": "approximately 12 minutes",
+          "evidence": [
+            {
+              "page": 4,
+              "quote": "Cognitive reserve was measured using the Cognitive Reserve Scale (mCRS)."
+            }
+          ],
+          "confidence": 0.83
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T11:05:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "265376b8-5642-407e-b58f-42d5c643e9ae",
+      "paper_id": "5ed579a6-d724-495f-8f45-e2dc86563f0c",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_027"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Working-age adults recruited from workplace wellness programs.",
+          "target_population": "general_population",
+          "age_band": "middle",
+          "clinical_condition_tags": [],
+          "country_setting": "Kenya",
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "Participants were adults recruited from workplace wellness programs."
+            }
+          ],
+          "confidence": 0.74
+        },
+        "instrument": {
+          "instrument_name": "CRASH",
+          "instrument_family": [
+            "CRASH"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": "10 minutes",
+          "evidence": [
+            {
+              "page": 12,
+              "quote": "Cognitive reserve was assessed with CRASH."
+            }
+          ],
+          "confidence": 0.82
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T11:10:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "217761b1-9ea7-4030-a0cc-f41fc4a37231",
+      "paper_id": "b568d4cc-a56e-4573-9d1b-d6d58d417bef",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_028"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Older adults from nationwide registries.",
+          "target_population": "older_adults",
+          "age_band": "older",
+          "clinical_condition_tags": [],
+          "country_setting": "Sweden",
+          "evidence": [
+            {
+              "page": 1,
+              "quote": "We recruited community-dwelling adults aged 55–90 years from nationwide registries."
+            }
+          ],
+          "confidence": 0.8
+        },
+        "instrument": {
+          "instrument_name": "CR-interview",
+          "instrument_family": [
+            "CR-interview"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure"
+          ],
+          "scoring_method": "derived from structured questions",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 5,
+              "quote": "Cognitive reserve interview scores (CR-interview) were derived from structured questions."
+            }
+          ],
+          "confidence": 0.74
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T11:15:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "e32414e6-8afa-4c8d-a569-e68cdb9ed170",
+      "paper_id": "13e034b4-062c-4af5-931a-39c8312e69e6",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_029"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Community-dwelling older adults without dementia.",
+          "target_population": "older_adults",
+          "age_band": "older",
+          "clinical_condition_tags": [],
+          "country_setting": "Italy",
+          "evidence": [
+            {
+              "page": 4,
+              "quote": "Participants were community-dwelling adults aged 65–85 years."
+            }
+          ],
+          "confidence": 0.84
+        },
+        "instrument": {
+          "instrument_name": null,
+          "instrument_family": [
+            "multi_proxy_custom"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "multilingualism"
+          ],
+          "scoring_method": "Composite reserve score computed by summing standardized proxy variables.",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 6,
+              "quote": "A composite reserve score was computed by summing standardized proxy variables."
+            }
+          ],
+          "confidence": 0.78
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T11:20:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "96f74ca1-eac4-4437-b6b3-93344e35a8fc",
+      "paper_id": "6cf19f70-c41a-403c-b105-2903086dd269",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_030"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Older adults with mild cognitive impairment recruited from memory clinics.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "mild_cognitive_impairment"
+          ],
+          "country_setting": "Canada",
+          "evidence": [
+            {
+              "page": 6,
+              "quote": "Individuals with mild cognitive impairment were included if they met Petersen criteria."
+            }
+          ],
+          "confidence": 0.9
+        },
+        "instrument": {
+          "instrument_name": null,
+          "instrument_family": [
+            "not_detected"
+          ],
+          "detected_proxy_labels": [],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "No cognitive reserve instrument was reported in the Methods section."
+            }
+          ],
+          "confidence": 0.65
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T11:25:00.000Z",
+      "status": "partial"
+    },
+    {
+      "id": "8b6efb0c-9709-4160-a1fa-1b1557053375",
+      "paper_id": "0205f7eb-a238-4131-b6b4-e5b59cb2b25a",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_031"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Middle-aged primary care patients with major depressive disorder.",
+          "target_population": "patients",
+          "age_band": "middle",
+          "clinical_condition_tags": [
+            "depression"
+          ],
+          "country_setting": "Spain",
+          "evidence": [
+            {
+              "page": 2,
+              "quote": "Patients with major depressive disorder were eligible if they met DSM-5 criteria."
+            }
+          ],
+          "confidence": 0.86
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Index questionnaire",
+          "instrument_family": [
+            "CRIq"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure"
+          ],
+          "scoring_method": null,
+          "time_administration": "10–15 minutes",
+          "evidence": [
+            {
+              "page": 8,
+              "quote": "Cognitive reserve was measured using the Cognitive Reserve Index questionnaire (CRIq)."
+            }
+          ],
+          "confidence": 0.9
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T11:30:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "c64490c6-0425-4453-b138-0b505ce57ba7",
+      "paper_id": "b469b798-89f7-4a9d-be1e-2a590c32caff",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_032"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Young adult undergraduate volunteers.",
+          "target_population": "young_adults",
+          "age_band": "young",
+          "clinical_condition_tags": [],
+          "country_setting": null,
+          "evidence": [
+            {
+              "page": 2,
+              "quote": "Participants aged 18–30 years were undergraduate volunteers."
+            }
+          ],
+          "confidence": 0.78
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Questionnaire",
+          "instrument_family": [
+            "CRQ"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": "Total score was calculated by summing item responses.",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 8,
+              "quote": "The Cognitive Reserve Questionnaire (CRQ) was completed during the first visit."
+            }
+          ],
+          "confidence": 0.84
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T11:35:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "14d97353-c0cb-465a-b24a-f55579f74041",
+      "paper_id": "02f3531c-6349-48ac-868e-4ba7de299075",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_033"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults recruited through community advertisements spanning adulthood.",
+          "target_population": "general_population",
+          "age_band": "mixed",
+          "clinical_condition_tags": [],
+          "country_setting": "United Kingdom",
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "Participants aged 25–80 years were recruited through community advertisements."
+            }
+          ],
+          "confidence": 0.81
+        },
+        "instrument": {
+          "instrument_name": "Lifetime of Experiences Questionnaire",
+          "instrument_family": [
+            "LEQ"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 8,
+              "quote": "Cognitive reserve was assessed with the Lifetime of Experiences Questionnaire (LEQ)."
+            }
+          ],
+          "confidence": 0.86
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T11:40:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "c9dc89cb-ce6a-41be-bc35-14aa559f4232",
+      "paper_id": "477375f4-d63c-4e51-a09e-7df0ea816e0e",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_034"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults with Parkinson disease recruited from a university hospital.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "parkinson_disease"
+          ],
+          "country_setting": "South Korea",
+          "evidence": [
+            {
+              "page": 7,
+              "quote": "We enrolled patients with Parkinson’s disease (Hoehn and Yahr stages 1–3)."
+            }
+          ],
+          "confidence": 0.88
+        },
+        "instrument": {
+          "instrument_name": "National Adult Reading Test",
+          "instrument_family": [
+            "NART"
+          ],
+          "detected_proxy_labels": [
+            "iq_proxy"
+          ],
+          "scoring_method": "Premorbid intelligence estimated from pronunciation accuracy of irregular words.",
+          "time_administration": "5–10 minutes",
+          "evidence": [
+            {
+              "page": 5,
+              "quote": "Premorbid IQ was estimated using the National Adult Reading Test."
+            }
+          ],
+          "confidence": 0.88
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T11:45:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "38ad08b6-60a0-4853-be98-1675bc85bb4c",
+      "paper_id": "32df6488-5ab9-422e-8a7c-7b17909495d3",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_035"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Older adults with Alzheimer disease recruited from memory clinics.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "alzheimer_disease"
+          ],
+          "country_setting": "United States",
+          "evidence": [
+            {
+              "page": 11,
+              "quote": "Participants were individuals with clinically diagnosed Alzheimer’s disease (NIA-AA criteria)."
+            }
+          ],
+          "confidence": 0.9
+        },
+        "instrument": {
+          "instrument_name": "Mehrfachwahl-Wortschatz-Intelligenztest",
+          "instrument_family": [
+            "MWT-B"
+          ],
+          "detected_proxy_labels": [
+            "iq_proxy"
+          ],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 13,
+              "quote": "The Mehrfachwahl-Wortschatz-Intelligenztest (MWT-B) was administered as an estimate of premorbid intelligence."
+            }
+          ],
+          "confidence": 0.84
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T11:50:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "a100569b-8144-49ae-94ef-0db545167b9c",
+      "paper_id": "a0af99c9-c02b-4ad0-bd04-76624159adbc",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_036"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Stroke survivors recruited during outpatient rehabilitation follow-up.",
+          "target_population": "patients",
+          "age_band": "mixed",
+          "clinical_condition_tags": [
+            "stroke"
+          ],
+          "country_setting": "Netherlands",
+          "evidence": [
+            {
+              "page": 14,
+              "quote": "We included stroke survivors recruited during outpatient rehabilitation follow-up."
+            }
+          ],
+          "confidence": 0.85
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Scale",
+          "instrument_family": [
+            "mCRS"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": "approximately 12 minutes",
+          "evidence": [
+            {
+              "page": 6,
+              "quote": "Cognitive reserve was measured using the Cognitive Reserve Scale (mCRS)."
+            }
+          ],
+          "confidence": 0.83
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T11:55:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "114a949b-2f37-4b73-baf5-f24391c6d5ed",
+      "paper_id": "8ef35db8-8dc8-456e-bf0a-e878fa103b83",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_037"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Independently living older adults with dementia excluded.",
+          "target_population": "older_adults",
+          "age_band": "older",
+          "clinical_condition_tags": [],
+          "country_setting": "Japan",
+          "evidence": [
+            {
+              "page": 2,
+              "quote": "We excluded those with a diagnosis of dementia."
+            }
+          ],
+          "confidence": 0.83
+        },
+        "instrument": {
+          "instrument_name": "CRASH",
+          "instrument_family": [
+            "CRASH"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": "10 minutes",
+          "evidence": [
+            {
+              "page": 10,
+              "quote": "Cognitive reserve was assessed with CRASH."
+            }
+          ],
+          "confidence": 0.82
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T12:00:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "35cc58d0-582e-41a8-bf5b-2ed602bcc312",
+      "paper_id": "9decf46c-82c9-42dc-9eb6-07ca14fe447d",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_038"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults with multiple sclerosis from an outpatient clinic.",
+          "target_population": "patients",
+          "age_band": "young",
+          "clinical_condition_tags": [
+            "multiple_sclerosis"
+          ],
+          "country_setting": "Norway",
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "We included patients with multiple sclerosis aged 22–49 years."
+            }
+          ],
+          "confidence": 0.86
+        },
+        "instrument": {
+          "instrument_name": "CR-interview",
+          "instrument_family": [
+            "CR-interview"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure"
+          ],
+          "scoring_method": "derived from structured questions",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "Cognitive reserve interview scores (CR-interview) were derived from structured questions."
+            }
+          ],
+          "confidence": 0.74
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T12:05:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "36f1b4be-d09b-4aa1-83a0-ae096301aad0",
+      "paper_id": "5e431925-0457-49e0-8e31-a277beaf50d6",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_039"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults with HIV recruited from an infectious disease clinic.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "hiv"
+          ],
+          "country_setting": "South Africa",
+          "evidence": [
+            {
+              "page": 11,
+              "quote": "Participants were adults with HIV recruited from an infectious disease clinic."
+            }
+          ],
+          "confidence": 0.82
+        },
+        "instrument": {
+          "instrument_name": null,
+          "instrument_family": [
+            "multi_proxy_custom"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "multilingualism"
+          ],
+          "scoring_method": "Composite reserve score computed by summing standardized proxy variables.",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 8,
+              "quote": "A composite reserve score was computed by summing standardized proxy variables."
+            }
+          ],
+          "confidence": 0.78
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T12:10:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "90899b8e-cb23-449d-b150-f7c35cd40132",
+      "paper_id": "984659f1-cf91-4018-9678-1306d0eef9b5",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_040"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Community adults with hypertension recruited via primary care.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "hypertension"
+          ],
+          "country_setting": "Mexico",
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "Participants were adults aged 60–76 years with hypertension recruited via primary care."
+            }
+          ],
+          "confidence": 0.84
+        },
+        "instrument": {
+          "instrument_name": null,
+          "instrument_family": [
+            "not_detected"
+          ],
+          "detected_proxy_labels": [],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 5,
+              "quote": "No cognitive reserve instrument was reported in the Methods section."
+            }
+          ],
+          "confidence": 0.65
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T12:15:00.000Z",
+      "status": "partial"
+    },
+    {
+      "id": "7f37a3c3-596c-499d-9b44-23d7f594b37a",
+      "paper_id": "139111eb-f436-43fd-87c5-4839a8ca22a2",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_041"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Working-age adults recruited from workplace wellness programs.",
+          "target_population": "general_population",
+          "age_band": "middle",
+          "clinical_condition_tags": [],
+          "country_setting": "Kenya",
+          "evidence": [
+            {
+              "page": 2,
+              "quote": "Participants were adults recruited from workplace wellness programs."
+            }
+          ],
+          "confidence": 0.74
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Index questionnaire",
+          "instrument_family": [
+            "CRIq"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure"
+          ],
+          "scoring_method": null,
+          "time_administration": "10–15 minutes",
+          "evidence": [
+            {
+              "page": 6,
+              "quote": "Cognitive reserve was measured using the Cognitive Reserve Index questionnaire (CRIq)."
+            }
+          ],
+          "confidence": 0.9
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T12:20:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "679650a3-360b-4773-9748-38bdcf203b59",
+      "paper_id": "31aa35a4-29e3-4de5-bb1d-45f9db6b1bc5",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_042"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Older adults from nationwide registries.",
+          "target_population": "older_adults",
+          "age_band": "older",
+          "clinical_condition_tags": [],
+          "country_setting": "Sweden",
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "We recruited community-dwelling adults aged 55–90 years from nationwide registries."
+            }
+          ],
+          "confidence": 0.8
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Questionnaire",
+          "instrument_family": [
+            "CRQ"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": "Total score was calculated by summing item responses.",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 6,
+              "quote": "The Cognitive Reserve Questionnaire (CRQ) was completed during the first visit."
+            }
+          ],
+          "confidence": 0.84
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T12:25:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "cd32ff83-e36c-47e0-909b-c48aa4c1f0f9",
+      "paper_id": "f10ba5ce-e4e4-4340-be8e-9fd82115f6ce",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_043"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Community-dwelling older adults without dementia.",
+          "target_population": "older_adults",
+          "age_band": "older",
+          "clinical_condition_tags": [],
+          "country_setting": "Italy",
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "Participants were community-dwelling adults aged 65–85 years."
+            }
+          ],
+          "confidence": 0.84
+        },
+        "instrument": {
+          "instrument_name": "Lifetime of Experiences Questionnaire",
+          "instrument_family": [
+            "LEQ"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 10,
+              "quote": "Cognitive reserve was assessed with the Lifetime of Experiences Questionnaire (LEQ)."
+            }
+          ],
+          "confidence": 0.86
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T12:30:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "da1a9b61-e0b1-40be-89d0-3cf30b8e8216",
+      "paper_id": "79aaa689-7a12-4ad0-849f-ab39adc86131",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_044"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Older adults with mild cognitive impairment recruited from memory clinics.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "mild_cognitive_impairment"
+          ],
+          "country_setting": "Canada",
+          "evidence": [
+            {
+              "page": 5,
+              "quote": "Individuals with mild cognitive impairment were included if they met Petersen criteria."
+            }
+          ],
+          "confidence": 0.9
+        },
+        "instrument": {
+          "instrument_name": "National Adult Reading Test",
+          "instrument_family": [
+            "NART"
+          ],
+          "detected_proxy_labels": [
+            "iq_proxy"
+          ],
+          "scoring_method": "Premorbid intelligence estimated from pronunciation accuracy of irregular words.",
+          "time_administration": "5–10 minutes",
+          "evidence": [
+            {
+              "page": 7,
+              "quote": "Premorbid IQ was estimated using the National Adult Reading Test."
+            }
+          ],
+          "confidence": 0.88
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T12:35:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "13ba7d58-78a8-4b7f-83de-a685bd033827",
+      "paper_id": "9b400fd2-ef87-4f47-b8d8-96b423f46f75",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_045"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Middle-aged primary care patients with major depressive disorder.",
+          "target_population": "patients",
+          "age_band": "middle",
+          "clinical_condition_tags": [
+            "depression"
+          ],
+          "country_setting": "Spain",
+          "evidence": [
+            {
+              "page": 4,
+              "quote": "Patients with major depressive disorder were eligible if they met DSM-5 criteria."
+            }
+          ],
+          "confidence": 0.86
+        },
+        "instrument": {
+          "instrument_name": "Mehrfachwahl-Wortschatz-Intelligenztest",
+          "instrument_family": [
+            "MWT-B"
+          ],
+          "detected_proxy_labels": [
+            "iq_proxy"
+          ],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 11,
+              "quote": "The Mehrfachwahl-Wortschatz-Intelligenztest (MWT-B) was administered as an estimate of premorbid intelligence."
+            }
+          ],
+          "confidence": 0.84
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T12:40:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "82112fbf-1a68-400c-b1a3-de49e57e7596",
+      "paper_id": "16f9826e-59b8-42c8-9d4e-78d29aa1c3a5",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_046"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Young adult undergraduate volunteers.",
+          "target_population": "young_adults",
+          "age_band": "young",
+          "clinical_condition_tags": [],
+          "country_setting": null,
+          "evidence": [
+            {
+              "page": 1,
+              "quote": "Participants aged 18–30 years were undergraduate volunteers."
+            }
+          ],
+          "confidence": 0.78
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Scale",
+          "instrument_family": [
+            "mCRS"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": "approximately 12 minutes",
+          "evidence": [
+            {
+              "page": 4,
+              "quote": "Cognitive reserve was measured using the Cognitive Reserve Scale (mCRS)."
+            }
+          ],
+          "confidence": 0.83
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T12:45:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "38b1d84d-0101-4864-9cbc-b3e5b665eca3",
+      "paper_id": "4d5b3d63-7630-4bd5-b855-7fa03a4d38fc",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_047"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults recruited through community advertisements spanning adulthood.",
+          "target_population": "general_population",
+          "age_band": "mixed",
+          "clinical_condition_tags": [],
+          "country_setting": "United Kingdom",
+          "evidence": [
+            {
+              "page": 2,
+              "quote": "Participants aged 25–80 years were recruited through community advertisements."
+            }
+          ],
+          "confidence": 0.81
+        },
+        "instrument": {
+          "instrument_name": "CRASH",
+          "instrument_family": [
+            "CRASH"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": "10 minutes",
+          "evidence": [
+            {
+              "page": 12,
+              "quote": "Cognitive reserve was assessed with CRASH."
+            }
+          ],
+          "confidence": 0.82
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T12:50:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "cf07d1b9-2324-401a-84ff-0987290ef004",
+      "paper_id": "f1f73975-c2ce-4310-9bff-afd07e4e441d",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_048"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults with Parkinson disease recruited from a university hospital.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "parkinson_disease"
+          ],
+          "country_setting": "South Korea",
+          "evidence": [
+            {
+              "page": 9,
+              "quote": "We enrolled patients with Parkinson’s disease (Hoehn and Yahr stages 1–3)."
+            }
+          ],
+          "confidence": 0.88
+        },
+        "instrument": {
+          "instrument_name": "CR-interview",
+          "instrument_family": [
+            "CR-interview"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure"
+          ],
+          "scoring_method": "derived from structured questions",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 5,
+              "quote": "Cognitive reserve interview scores (CR-interview) were derived from structured questions."
+            }
+          ],
+          "confidence": 0.74
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T12:55:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "6113fbf3-fed7-40c7-8c15-a3f2a327c161",
+      "paper_id": "c6c49e1c-d9d9-4189-8151-fa30aa6c05b6",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_049"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Older adults with Alzheimer disease recruited from memory clinics.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "alzheimer_disease"
+          ],
+          "country_setting": "United States",
+          "evidence": [
+            {
+              "page": 10,
+              "quote": "Participants were individuals with clinically diagnosed Alzheimer’s disease (NIA-AA criteria)."
+            }
+          ],
+          "confidence": 0.9
+        },
+        "instrument": {
+          "instrument_name": null,
+          "instrument_family": [
+            "multi_proxy_custom"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "multilingualism"
+          ],
+          "scoring_method": "Composite reserve score computed by summing standardized proxy variables.",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 6,
+              "quote": "A composite reserve score was computed by summing standardized proxy variables."
+            }
+          ],
+          "confidence": 0.78
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T13:00:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "cb944db6-091a-4730-b88a-a578b02b033f",
+      "paper_id": "d59ee79b-b3b3-440f-9b26-63c29e6cd057",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_050"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Stroke survivors recruited during outpatient rehabilitation follow-up.",
+          "target_population": "patients",
+          "age_band": "mixed",
+          "clinical_condition_tags": [
+            "stroke"
+          ],
+          "country_setting": "Netherlands",
+          "evidence": [
+            {
+              "page": 13,
+              "quote": "We included stroke survivors recruited during outpatient rehabilitation follow-up."
+            }
+          ],
+          "confidence": 0.85
+        },
+        "instrument": {
+          "instrument_name": null,
+          "instrument_family": [
+            "not_detected"
+          ],
+          "detected_proxy_labels": [],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "No cognitive reserve instrument was reported in the Methods section."
+            }
+          ],
+          "confidence": 0.65
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T13:05:00.000Z",
+      "status": "partial"
+    },
+    {
+      "id": "522401a0-584b-4ae7-b98b-2f1ea3b8db06",
+      "paper_id": "7e0cc042-ef66-4dc5-984b-5205708e97a1",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_051"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Independently living older adults with dementia excluded.",
+          "target_population": "older_adults",
+          "age_band": "older",
+          "clinical_condition_tags": [],
+          "country_setting": "Japan",
+          "evidence": [
+            {
+              "page": 4,
+              "quote": "We excluded those with a diagnosis of dementia."
+            }
+          ],
+          "confidence": 0.83
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Index questionnaire",
+          "instrument_family": [
+            "CRIq"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure"
+          ],
+          "scoring_method": null,
+          "time_administration": "10–15 minutes",
+          "evidence": [
+            {
+              "page": 8,
+              "quote": "Cognitive reserve was measured using the Cognitive Reserve Index questionnaire (CRIq)."
+            }
+          ],
+          "confidence": 0.9
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T13:10:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "40b6d114-d313-426d-bd39-2bcafd5729b5",
+      "paper_id": "a5b6365f-8983-4311-830c-d05949b39fb5",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_052"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults with multiple sclerosis from an outpatient clinic.",
+          "target_population": "patients",
+          "age_band": "young",
+          "clinical_condition_tags": [
+            "multiple_sclerosis"
+          ],
+          "country_setting": "Norway",
+          "evidence": [
+            {
+              "page": 2,
+              "quote": "We included patients with multiple sclerosis aged 22–49 years."
+            }
+          ],
+          "confidence": 0.86
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Questionnaire",
+          "instrument_family": [
+            "CRQ"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": "Total score was calculated by summing item responses.",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 8,
+              "quote": "The Cognitive Reserve Questionnaire (CRQ) was completed during the first visit."
+            }
+          ],
+          "confidence": 0.84
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T13:15:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "f23906d7-156f-452f-b3d1-3cc5b0d729e9",
+      "paper_id": "370d0cde-f516-41fc-a979-c971b8a47195",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_053"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Adults with HIV recruited from an infectious disease clinic.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "hiv"
+          ],
+          "country_setting": "South Africa",
+          "evidence": [
+            {
+              "page": 10,
+              "quote": "Participants were adults with HIV recruited from an infectious disease clinic."
+            }
+          ],
+          "confidence": 0.82
+        },
+        "instrument": {
+          "instrument_name": "Lifetime of Experiences Questionnaire",
+          "instrument_family": [
+            "LEQ"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 8,
+              "quote": "Cognitive reserve was assessed with the Lifetime of Experiences Questionnaire (LEQ)."
+            }
+          ],
+          "confidence": 0.86
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T13:20:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "a3268c89-30be-4d64-83ff-bbda9f26a126",
+      "paper_id": "7132a347-e598-4b90-9b1a-3e64aaefdec1",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_054"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Community adults with hypertension recruited via primary care.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "hypertension"
+          ],
+          "country_setting": "Mexico",
+          "evidence": [
+            {
+              "page": 5,
+              "quote": "Participants were adults aged 60–76 years with hypertension recruited via primary care."
+            }
+          ],
+          "confidence": 0.84
+        },
+        "instrument": {
+          "instrument_name": "National Adult Reading Test",
+          "instrument_family": [
+            "NART"
+          ],
+          "detected_proxy_labels": [
+            "iq_proxy"
+          ],
+          "scoring_method": "Premorbid intelligence estimated from pronunciation accuracy of irregular words.",
+          "time_administration": "5–10 minutes",
+          "evidence": [
+            {
+              "page": 5,
+              "quote": "Premorbid IQ was estimated using the National Adult Reading Test."
+            }
+          ],
+          "confidence": 0.88
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T13:25:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "3a374b71-35cb-4af3-919a-a4f35317ea30",
+      "paper_id": "1bb3a2c2-5dea-4457-931e-47b3d4c7001b",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_055"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Working-age adults recruited from workplace wellness programs.",
+          "target_population": "general_population",
+          "age_band": "middle",
+          "clinical_condition_tags": [],
+          "country_setting": "Kenya",
+          "evidence": [
+            {
+              "page": 1,
+              "quote": "Participants were adults recruited from workplace wellness programs."
+            }
+          ],
+          "confidence": 0.74
+        },
+        "instrument": {
+          "instrument_name": "Mehrfachwahl-Wortschatz-Intelligenztest",
+          "instrument_family": [
+            "MWT-B"
+          ],
+          "detected_proxy_labels": [
+            "iq_proxy"
+          ],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 13,
+              "quote": "The Mehrfachwahl-Wortschatz-Intelligenztest (MWT-B) was administered as an estimate of premorbid intelligence."
+            }
+          ],
+          "confidence": 0.84
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T13:30:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "e23a4eda-e4cf-4cb7-8c3d-5abe112da1f7",
+      "paper_id": "d6507f14-f46e-4e4a-b548-5cad17234dbb",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_056"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Older adults from nationwide registries.",
+          "target_population": "older_adults",
+          "age_band": "older",
+          "clinical_condition_tags": [],
+          "country_setting": "Sweden",
+          "evidence": [
+            {
+              "page": 2,
+              "quote": "We recruited community-dwelling adults aged 55–90 years from nationwide registries."
+            }
+          ],
+          "confidence": 0.8
+        },
+        "instrument": {
+          "instrument_name": "Cognitive Reserve Scale",
+          "instrument_family": [
+            "mCRS"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": "approximately 12 minutes",
+          "evidence": [
+            {
+              "page": 6,
+              "quote": "Cognitive reserve was measured using the Cognitive Reserve Scale (mCRS)."
+            }
+          ],
+          "confidence": 0.83
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T13:35:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "0dddb1d7-f24c-4fc9-bd55-417554600c9d",
+      "paper_id": "a39a2c40-c9f1-4480-add5-1a579656b9a4",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_057"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Community-dwelling older adults without dementia.",
+          "target_population": "older_adults",
+          "age_band": "older",
+          "clinical_condition_tags": [],
+          "country_setting": "Italy",
+          "evidence": [
+            {
+              "page": 5,
+              "quote": "Participants were community-dwelling adults aged 65–85 years."
+            }
+          ],
+          "confidence": 0.84
+        },
+        "instrument": {
+          "instrument_name": "CRASH",
+          "instrument_family": [
+            "CRASH"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "social"
+          ],
+          "scoring_method": null,
+          "time_administration": "10 minutes",
+          "evidence": [
+            {
+              "page": 10,
+              "quote": "Cognitive reserve was assessed with CRASH."
+            }
+          ],
+          "confidence": 0.82
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T13:40:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "5b8294a5-604e-44d4-919e-619f2db0fb33",
+      "paper_id": "c5d033fb-df46-4b90-ada2-858bc71cdcce",
+      "extraction_version": "v1",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_058"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Older adults with mild cognitive impairment recruited from memory clinics.",
+          "target_population": "patients",
+          "age_band": "older",
+          "clinical_condition_tags": [
+            "mild_cognitive_impairment"
+          ],
+          "country_setting": "Canada",
+          "evidence": [
+            {
+              "page": 4,
+              "quote": "Individuals with mild cognitive impairment were included if they met Petersen criteria."
+            }
+          ],
+          "confidence": 0.9
+        },
+        "instrument": {
+          "instrument_name": "CR-interview",
+          "instrument_family": [
+            "CR-interview"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure"
+          ],
+          "scoring_method": "derived from structured questions",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "Cognitive reserve interview scores (CR-interview) were derived from structured questions."
+            }
+          ],
+          "confidence": 0.74
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T13:45:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "7a806031-dbfa-4843-aa86-49325caa418d",
+      "paper_id": "b4b4630a-f693-4a52-9c7f-903786892ec0",
+      "extraction_version": "v2",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_059"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Middle-aged primary care patients with major depressive disorder.",
+          "target_population": "patients",
+          "age_band": "middle",
+          "clinical_condition_tags": [
+            "depression"
+          ],
+          "country_setting": "Spain",
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "Patients with major depressive disorder were eligible if they met DSM-5 criteria."
+            }
+          ],
+          "confidence": 0.86
+        },
+        "instrument": {
+          "instrument_name": null,
+          "instrument_family": [
+            "multi_proxy_custom"
+          ],
+          "detected_proxy_labels": [
+            "education",
+            "occupation",
+            "leisure",
+            "multilingualism"
+          ],
+          "scoring_method": "Composite reserve score computed by summing standardized proxy variables.",
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 8,
+              "quote": "A composite reserve score was computed by summing standardized proxy variables."
+            }
+          ],
+          "confidence": 0.78
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T13:50:00.000Z",
+      "status": "success"
+    },
+    {
+      "id": "40cfe8ca-096f-421c-8595-76dca3fce8c6",
+      "paper_id": "e99d7c81-6fdf-43c7-91a8-de70a13e479e",
+      "extraction_version": "prompt_hash:dev_sample",
+      "metadata_jsonb": {
+        "pipeline": "cr_extraction",
+        "model": "gpt-5.2",
+        "prompt_family": "population_instrument",
+        "run_id": "sample_run_060"
+      },
+      "study_design_jsonb": {},
+      "sample_jsonb": {
+        "population": {
+          "population_summary": "Young adult undergraduate volunteers.",
+          "target_population": "young_adults",
+          "age_band": "young",
+          "clinical_condition_tags": [],
+          "country_setting": null,
+          "evidence": [
+            {
+              "page": 3,
+              "quote": "Participants aged 18–30 years were undergraduate volunteers."
+            }
+          ],
+          "confidence": 0.78
+        },
+        "instrument": {
+          "instrument_name": null,
+          "instrument_family": [
+            "not_detected"
+          ],
+          "detected_proxy_labels": [],
+          "scoring_method": null,
+          "time_administration": null,
+          "evidence": [
+            {
+              "page": 5,
+              "quote": "No cognitive reserve instrument was reported in the Methods section."
+            }
+          ],
+          "confidence": 0.65
+        }
+      },
+      "outcomes_jsonb": {},
+      "risk_of_bias_jsonb": {},
+      "extraction_timestamp": "2026-03-11T13:55:00.000Z",
+      "status": "partial"
+    }
+  ]
+}
