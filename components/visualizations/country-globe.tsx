@@ -10,6 +10,11 @@ export type CountryCount = {
   count: number;
 };
 
+type GlobeMeta = {
+  paperCount: number;
+  extractionCount: number;
+};
+
 type CountryPoint = CountryCount & {
   lat: number;
   lon: number;
@@ -71,6 +76,33 @@ const latLonToVector3 = (lat: number, lon: number, radius: number) => {
 
 function Starfield() {
   const ref = useRef<THREE.Points>(null);
+  const sprite = useMemo(() => {
+    const size = 64;
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    const gradient = ctx.createRadialGradient(
+      size / 2,
+      size / 2,
+      0,
+      size / 2,
+      size / 2,
+      size / 2,
+    );
+    gradient.addColorStop(0, "rgba(255,255,255,1)");
+    gradient.addColorStop(0.45, "rgba(255,255,255,0.9)");
+    gradient.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.needsUpdate = true;
+    return texture;
+  }, []);
+
   const positions = useMemo(() => {
     const count = 1800;
     const array = new Float32Array(count * 3);
@@ -105,12 +137,14 @@ function Starfield() {
         />
       </bufferGeometry>
       <pointsMaterial
-        color="#dff7ff"
-        size={0.035}
+        map={sprite ?? undefined}
+        color="#f8fbff"
+        size={0.06}
         sizeAttenuation
         transparent
-        opacity={0.9}
+        opacity={0.72}
         depthWrite={false}
+        alphaTest={0.08}
       />
     </points>
   );
@@ -153,8 +187,10 @@ function GlobeShell({ radius }: { radius: number }) {
           map={colorMap}
           normalMap={normalMap}
           specularMap={specularMap}
-          specular="#476282"
-          shininess={14}
+          specular="#5e7897"
+          emissive="#07101e"
+          emissiveIntensity={0.12}
+          shininess={18}
         />
       </mesh>
 
@@ -163,7 +199,7 @@ function GlobeShell({ radius }: { radius: number }) {
         <meshPhongMaterial
           map={cloudMap}
           transparent
-          opacity={0.2}
+          opacity={0.16}
           depthWrite={false}
           side={THREE.DoubleSide}
         />
@@ -332,7 +368,13 @@ function EarthScene({
   );
 }
 
-export function CountryGlobe({ countries }: { countries: CountryCount[] }) {
+export function CountryGlobe({
+  countries,
+  meta,
+}: {
+  countries: CountryCount[];
+  meta: GlobeMeta;
+}) {
   const radius = 1.5;
   const [hoveredPoint, setHoveredPoint] = useState<CountryPoint | null>(null);
 
@@ -359,20 +401,19 @@ export function CountryGlobe({ countries }: { countries: CountryCount[] }) {
   }, [countries]);
 
   return (
-    <div className="relative h-[620px] w-full overflow-hidden rounded-[32px] border border-white/10 bg-[radial-gradient(circle_at_top,rgba(56,189,248,0.12),transparent_34%),linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,0.98))] shadow-[0_30px_120px_rgba(2,6,23,0.55)]">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(125,211,252,0.18),transparent_30%),radial-gradient(circle_at_80%_10%,rgba(59,130,246,0.16),transparent_24%)]" />
+    <div className="relative h-[78vh] min-h-[720px] w-full overflow-hidden bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.08),transparent_26%),linear-gradient(180deg,#000000_0%,#010103_55%,#000000_100%)]">
 
       <Canvas
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
         camera={{ position: [0, 0.08, 4.85], fov: 38 }}
       >
-        <color attach="background" args={["#020617"]} />
-        <fog attach="fog" args={["#020617", 5.6, 12]} />
-        <ambientLight intensity={0.38} />
-        <hemisphereLight args={["#c4f1ff", "#020617", 0.35]} />
-        <pointLight position={[4.5, 2.8, 3.2]} intensity={44} color="#7dd3fc" />
-        <directionalLight position={[-4, -1.5, -5]} intensity={0.6} color="#93c5fd" />
+        <color attach="background" args={["#010103"]} />
+        <fog attach="fog" args={["#010103", 6.8, 13.5]} />
+        <ambientLight intensity={0.46} />
+        <hemisphereLight args={["#d8f0ff", "#010103", 0.42]} />
+        <pointLight position={[4.5, 2.8, 3.2]} intensity={50} color="#8fd4ff" />
+        <directionalLight position={[-4, -1.5, -5]} intensity={0.72} color="#c0dcff" />
 
         <Starfield />
         <EarthScene
@@ -392,46 +433,46 @@ export function CountryGlobe({ countries }: { countries: CountryCount[] }) {
         />
       </Canvas>
 
-      <div className="pointer-events-none absolute left-5 top-5 max-w-[280px] rounded-2xl border border-white/10 bg-slate-950/55 px-4 py-3 backdrop-blur-md">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-cyan-200/80">
-          Global sample map
-        </p>
-        <p className="mt-2 text-sm text-slate-200">
-          Country frequency by extraction sample. Drag to inspect clusters, hover bars for exact counts.
-        </p>
-        {missing.length ? (
-          <p className="mt-2 text-xs text-slate-400">
-            Missing coordinates: {missing.slice(0, 4).join(", ")}
-            {missing.length > 4 ? ` +${missing.length - 4}` : ""}
-          </p>
-        ) : null}
-      </div>
-
-      <div className="pointer-events-none absolute bottom-5 left-5 min-w-[160px] rounded-2xl border border-white/10 bg-slate-950/70 px-3 py-2.5 text-[11px] leading-4 text-slate-200 backdrop-blur-md">
+      <div className="pointer-events-none absolute bottom-6 right-6 text-[11px] leading-4 text-slate-200">
         {hoveredPoint ? (
-          <>
+          <div className="space-y-1">
             <div className="text-[9px] uppercase tracking-[0.18em] text-amber-200/70">
               Country count
             </div>
-            <div className="mt-1 font-medium text-white">{hoveredPoint.country}</div>
-            <div className="mt-0.5 text-[10px] text-slate-300">
+            <div className="font-medium text-white">{hoveredPoint.country}</div>
+            <div className="text-[10px] text-slate-300">
               {hoveredPoint.count} study{hoveredPoint.count === 1 ? "" : "ies"}
             </div>
-          </>
+            <div className="pt-2 text-[10px] text-slate-500">
+              {points.length} mapped countries
+            </div>
+            <div className="text-[10px] text-slate-500">{meta.paperCount} papers</div>
+            <div className="text-[10px] text-slate-500">
+              {meta.extractionCount} extractions
+            </div>
+          </div>
         ) : (
-          <>
+          <div className="space-y-1 text-right">
             <div className="text-[9px] uppercase tracking-[0.18em] text-slate-500">
-              Hover state
+              Globe view
             </div>
-            <div className="mt-1 text-[10px] text-slate-400">
-              Hover a marker to inspect country counts.
+            <div className="text-[10px] text-slate-400">
+              Drag to rotate. Hover a marker to inspect counts.
             </div>
-          </>
+            {missing.length ? (
+              <div className="pt-2 text-[10px] text-slate-500">
+                Missing: {missing.length}
+              </div>
+            ) : null}
+            <div className="pt-2 text-[10px] text-slate-500">
+              {points.length} mapped countries
+            </div>
+            <div className="text-[10px] text-slate-500">{meta.paperCount} papers</div>
+            <div className="text-[10px] text-slate-500">
+              {meta.extractionCount} extractions
+            </div>
+          </div>
         )}
-      </div>
-
-      <div className="pointer-events-none absolute bottom-5 right-5 rounded-full border border-cyan-200/15 bg-slate-950/65 px-4 py-2 text-xs text-slate-300 backdrop-blur-md">
-        {points.length} mapped countries
       </div>
     </div>
   );
