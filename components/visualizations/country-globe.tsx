@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, OrbitControls, useTexture } from "@react-three/drei";
 import * as THREE from "three";
@@ -308,176 +308,133 @@ function GlobeShell({ radius }: { radius: number }) {
 function CountryCountBubbles({
   radius,
   points,
-  onHoverChange,
 }: {
   radius: number;
   points: CountryPoint[];
-  onHoverChange?: (point: CountryPoint | null) => void;
 }) {
-  const [hovered, setHovered] = useState<CountryPoint | null>(null);
   const groupRef = useRef<THREE.Group>(null);
   const maxCount = Math.max(1, ...points.map((point) => point.count));
   const maxRadiusBase = Math.sqrt(maxCount);
-  const { camera } = useThree();
-
-  useEffect(() => {
-    onHoverChange?.(hovered);
-  }, [hovered, onHoverChange]);
 
   useFrame(({ clock }) => {
     if (!groupRef.current) return;
     groupRef.current.children.forEach((child, index) => {
       const mesh = child as THREE.Group;
-      const point = points[index];
-      const isHovered = hovered?.country === point?.country;
-      const pulse = isHovered
-        ? 1
-        : 1 + Math.sin(clock.elapsedTime * 1.5 + index * 0.8) * 0.04;
+      const pulse = 1 + Math.sin(clock.elapsedTime * 1.5 + index * 0.8) * 0.025;
       mesh.scale.setScalar(pulse);
     });
   });
 
   return (
     <group ref={groupRef}>
-      {points.map((point, index) => {
-        const base = latLonToVector3(point.lat, point.lon, radius);
-        const normal = base.clone().normalize();
-        const strength = Math.sqrt(point.count) / Math.max(1, maxRadiusBase);
-        const bubbleRadius = 0.009 + strength * 0.024;
-        const ringRadius = 0.055 + strength * 0.065;
-        const color = new THREE.Color().setHSL(
-          0.13 - strength * 0.03,
-          0.92,
-          0.72,
-        );
-        const haloColor = new THREE.Color().setHSL(0.14, 0.98, 0.8);
-        const nearViewportEdge = Math.abs(normal.x) > 0.52;
-        const labelSide = nearViewportEdge
-          ? normal.x >= 0
-            ? -1
-            : 1
-          : normal.x >= 0
-            ? 1
-            : -1;
-        const labelOffsetX =
-          labelSide *
-          (nearViewportEdge
-            ? 0.12 + ringRadius * 0.75
-            : 0.16 + ringRadius * 1.2);
-        const labelOffsetY =
-          bubbleRadius +
-          0.02 +
-          Math.abs(normal.y) * 0.025 +
-          (nearViewportEdge ? 0.012 : 0);
+      {points.map((point, index) => (
+        <CountryMarker
+          key={point.country}
+          index={index}
+          point={point}
+          radius={radius}
+          maxRadiusBase={maxRadiusBase}
+        />
+      ))}
+    </group>
+  );
+}
 
-        const position = normal.clone().multiplyScalar(radius + 0.008);
-        const quaternion = new THREE.Quaternion().setFromUnitVectors(
-          new THREE.Vector3(0, 1, 0),
-          normal,
-        );
+function CountryMarker({
+  index,
+  point,
+  radius,
+  maxRadiusBase,
+}: {
+  index: number;
+  point: CountryPoint;
+  radius: number;
+  maxRadiusBase: number;
+}) {
+  const groupRef = useRef<THREE.Group>(null);
+  const { camera } = useThree();
+  const [labelVisible, setLabelVisible] = useState(true);
+  const strength = Math.sqrt(point.count) / Math.max(1, maxRadiusBase);
+  const bubbleRadius = 0.0035 + strength * 0.0065;
+  const color = new THREE.Color().setHSL(0.13 - strength * 0.03, 0.92, 0.72);
+  const base = latLonToVector3(point.lat, point.lon, radius);
+  const normal = base.clone().normalize();
+  const nearViewportEdge = Math.abs(normal.x) > 0.52;
+  const labelSide = nearViewportEdge
+    ? normal.x >= 0
+      ? -1
+      : 1
+    : normal.x >= 0
+      ? 1
+      : -1;
+  const labelOffsetX =
+    labelSide *
+    (nearViewportEdge
+      ? 0.055 + bubbleRadius * 2.5
+      : 0.075 + bubbleRadius * 3.4);
+  const labelOffsetY =
+    bubbleRadius +
+    0.006 +
+    Math.abs(normal.y) * 0.014 +
+    (nearViewportEdge ? 0.006 : 0);
+  const position = normal.clone().multiplyScalar(radius + 0.008);
+  const quaternion = new THREE.Quaternion().setFromUnitVectors(
+    new THREE.Vector3(0, 1, 0),
+    normal,
+  );
 
-        const isHovered = hovered?.country === point.country;
+  useFrame(({ clock }) => {
+    if (!groupRef.current) return;
 
-        return (
-          <group
-            key={point.country}
-            position={position}
-            quaternion={quaternion}
-            renderOrder={index + 1}
+    const pulse = 1 + Math.sin(clock.elapsedTime * 1.5 + index * 0.8) * 0.025;
+    groupRef.current.scale.setScalar(pulse);
+
+    const worldPosition = groupRef.current.getWorldPosition(
+      new THREE.Vector3(),
+    );
+    const markerDirection = worldPosition.normalize();
+    const cameraDirection = camera.position.clone().normalize();
+    const isFrontFacing = markerDirection.dot(cameraDirection) > 0.12;
+
+    setLabelVisible((current) =>
+      current === isFrontFacing ? current : isFrontFacing,
+    );
+  });
+
+  return (
+    <group
+      ref={groupRef}
+      position={position}
+      quaternion={quaternion}
+      renderOrder={index + 1}
+    >
+      <mesh position={[0, bubbleRadius * 0.9 + 0.012, 0]}>
+        <sphereGeometry args={[bubbleRadius, 16, 16]} />
+        <meshStandardMaterial
+          color={color}
+          emissive={color}
+          emissiveIntensity={0.32}
+          transparent
+          opacity={0.9}
+          metalness={0.02}
+          roughness={0.22}
+        />
+      </mesh>
+
+      {labelVisible ? (
+        <Html position={[labelOffsetX, labelOffsetY, 0]} distanceFactor={18}>
+          <div
+            className={`pointer-events-none whitespace-nowrap text-[3px] font-medium tracking-[0.04em] text-white/68 ${
+              labelSide > 0 ? "text-left" : "text-right"
+            }`}
           >
-            <mesh
-              position={[0, bubbleRadius * 0.9 + 0.012, 0]}
-              onPointerOver={(event) => {
-                event.stopPropagation();
-                const worldPosition = event.object.getWorldPosition(
-                  new THREE.Vector3(),
-                );
-                const cameraDirection = camera.position.clone().normalize();
-                const markerDirection = worldPosition.normalize();
-                const visibility = markerDirection.dot(cameraDirection);
-                if (visibility < 0.18) return;
-                setHovered(point);
-              }}
-              onPointerOut={() => {
-                setHovered((current) =>
-                  current?.country === point.country ? null : current,
-                );
-              }}
-            >
-              <sphereGeometry args={[bubbleRadius * 1.9, 18, 18]} />
-              <meshBasicMaterial transparent opacity={0} depthWrite={false} />
-            </mesh>
-
-            <mesh position={[0, bubbleRadius * 0.9 + 0.012, 0]}>
-              <sphereGeometry args={[bubbleRadius, 20, 20]} />
-              <meshStandardMaterial
-                color={color}
-                emissive={haloColor}
-                emissiveIntensity={isHovered ? 1.05 : 0.55}
-                transparent
-                opacity={0.95}
-                metalness={0.02}
-                roughness={0.14}
-              />
-            </mesh>
-
-            {isHovered ? (
-              <>
-                <mesh rotation={[-Math.PI / 2, 0, 0]}>
-                  <ringGeometry args={[ringRadius * 0.86, ringRadius, 48]} />
-                  <meshBasicMaterial
-                    color="#f5f0df"
-                    transparent
-                    opacity={0.92}
-                    side={THREE.DoubleSide}
-                  />
-                </mesh>
-
-                <mesh rotation={[-Math.PI / 2, 0, 0]}>
-                  <ringGeometry
-                    args={[ringRadius * 1.18, ringRadius * 1.38, 48]}
-                  />
-                  <meshBasicMaterial
-                    color={haloColor}
-                    transparent
-                    opacity={0.22}
-                    side={THREE.DoubleSide}
-                    blending={THREE.AdditiveBlending}
-                    depthWrite={false}
-                  />
-                </mesh>
-
-                <mesh position={[0, bubbleRadius * 0.9 + 0.012, 0]}>
-                  <sphereGeometry args={[bubbleRadius * 3.2, 22, 22]} />
-                  <meshBasicMaterial
-                    color={haloColor}
-                    transparent
-                    opacity={0.12}
-                    blending={THREE.AdditiveBlending}
-                    depthWrite={false}
-                  />
-                </mesh>
-
-                <Html
-                  position={[labelOffsetX, labelOffsetY, 0]}
-                  distanceFactor={12}
-                >
-                  <div
-                    className={`pointer-events-none min-w-[104px] max-w-[132px] text-[9px] leading-3 text-white ${
-                      labelSide > 0 ? "text-left" : "text-right"
-                    }`}
-                  >
-                    <div className="font-medium">{point.country}</div>
-                    <div className="mt-0.5 text-[8px] text-slate-300">
-                      {point.count} study{point.count === 1 ? "" : "ies"}
-                    </div>
-                  </div>
-                </Html>
-              </>
-            ) : null}
-          </group>
-        );
-      })}
+            {point.country}{" "}
+            <span className="text-[3px] text-slate-500">
+              {point.count} studies
+            </span>
+          </div>
+        </Html>
+      ) : null}
     </group>
   );
 }
@@ -485,32 +442,21 @@ function CountryCountBubbles({
 function EarthScene({
   radius,
   points,
-  onHoverChange,
 }: {
   radius: number;
   points: CountryPoint[];
-  onHoverChange?: (point: CountryPoint | null) => void;
 }) {
   const earthGroupRef = useRef<THREE.Group>(null);
-  const [isHoveringMarker, setIsHoveringMarker] = useState(false);
 
   useFrame((_, delta) => {
     if (!earthGroupRef.current) return;
-    if (isHoveringMarker) return;
     earthGroupRef.current.rotation.y += delta * 0.022;
   });
 
   return (
     <group ref={earthGroupRef}>
       <GlobeShell radius={radius} />
-      <CountryCountBubbles
-        radius={radius}
-        points={points}
-        onHoverChange={(point) => {
-          setIsHoveringMarker(point !== null);
-          onHoverChange?.(point);
-        }}
-      />
+      <CountryCountBubbles radius={radius} points={points} />
     </group>
   );
 }
@@ -523,7 +469,6 @@ export function CountryGlobe({
   meta: GlobeMeta;
 }) {
   const radius = 1.5;
-  const [hoveredPoint, setHoveredPoint] = useState<CountryPoint | null>(null);
 
   const points = useMemo(() => {
     return countries
@@ -545,7 +490,7 @@ export function CountryGlobe({
       <Canvas
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
-        camera={{ position: [0, 0.08, 5.55], fov: 38 }}
+        camera={{ position: [0, 0.1, 7.75], fov: 38 }}
       >
         <color attach="background" args={["#010103"]} />
         <fog attach="fog" args={["#010103", 6.8, 13.5]} />
@@ -559,19 +504,15 @@ export function CountryGlobe({
         />
 
         <Starfield />
-        <EarthScene
-          radius={radius}
-          points={points}
-          onHoverChange={setHoveredPoint}
-        />
+        <EarthScene radius={radius} points={points} />
 
         <OrbitControls
           enablePan={false}
-          minDistance={3.7}
-          maxDistance={7.6}
+          minDistance={5.8}
+          maxDistance={10.5}
           rotateSpeed={0.58}
           zoomSpeed={0.75}
-          autoRotate={!hoveredPoint}
+          autoRotate
           autoRotateSpeed={0.28}
         />
       </Canvas>
@@ -582,7 +523,7 @@ export function CountryGlobe({
             Sample meta
           </div>
           <div className="text-xs text-slate-400">
-            Drag to rotate. Hover a marker to inspect counts.
+            Drag to rotate. Back-side labels are hidden.
           </div>
           <div className="pt-3 text-xs text-slate-500">
             {points.length} mapped countries
