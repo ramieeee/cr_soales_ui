@@ -57,8 +57,8 @@ export default function VisualizationsPage() {
 
   return (
     <div className="min-h-dvh bg-[linear-gradient(180deg,#000000_0%,#020308_100%)] text-neutral-100">
-      <div className="mx-auto grid min-h-dvh w-full max-w-none grid-cols-1 px-4 py-4 md:grid-cols-[180px_minmax(0,1fr)] md:px-6 md:py-4">
-        <aside className="hidden md:flex md:flex-col md:justify-between">
+      <div className="relative min-h-dvh w-full">
+        <div className="pointer-events-none absolute left-4 top-4 z-10 md:left-6 md:top-6">
           <div className="space-y-8 pt-3">
             <div className="space-y-2">
               <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-slate-500">
@@ -69,13 +69,16 @@ export default function VisualizationsPage() {
               </h1>
             </div>
 
-            <nav className="space-y-2 text-sm">
-              <a href="#globe" className="block text-slate-400 transition-colors hover:text-white">
+            <nav className="pointer-events-auto space-y-2 text-sm">
+              <a
+                href="#globe"
+                className="block text-slate-400 transition-colors hover:text-white"
+              >
                 Globe
               </a>
             </nav>
           </div>
-        </aside>
+        </div>
 
         <main id="globe" className="min-w-0">
           <CountryGlobe
