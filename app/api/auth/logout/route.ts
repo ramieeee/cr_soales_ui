@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const COOKIE_NAME = "cr_soles_access";
+const COOKIE_NAME = "cr_soales_access";
 
 export async function POST(request: Request) {
   const response = NextResponse.redirect(new URL("/login", request.url), 303);

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { createAccessToken } from "@/lib/access-token";
 
-const COOKIE_NAME = "cr_soles_access";
+const COOKIE_NAME = "cr_soales_access";
 const SESSION_TTL_SECONDS = 60 * 60 * 8;
 
 export async function POST(request: Request) {
