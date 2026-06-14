@@ -10,39 +10,29 @@ const EDITABLE_KEYS = [
   "ingestion_source",
 ] as const;
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost";
-const API_PORT = process.env.NEXT_PUBLIC_API_PORT ?? "8000";
-const PAPER_REVIEW_PREFIX =
-  process.env.NEXT_PUBLIC_PAPER_REVIEW_PREFIX ?? "/paper_review";
+const API_BASE_URL = (
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000"
+).replace(/\/+$/g, "");
+const API_PREFIX = process.env.NEXT_PUBLIC_API_PREFIX ?? "/api/v1";
 
-const UPLOAD_PATH =
-  process.env.NEXT_PUBLIC_UPLOAD_PATH ??
-  process.env.NEXT_PUBLIC_PROCESS_PATH ??
-  `${PAPER_REVIEW_PREFIX}/upload_pdf`;
-
-const FETCH_PAPERS_PATH =
-  process.env.NEXT_PUBLIC_FETCH_PAPERS_PATH ??
-  `${PAPER_REVIEW_PREFIX}/fetch/papers`;
-
-const UPDATE_STAGING_PATH =
-  process.env.NEXT_PUBLIC_UPDATE_STAGING_PATH ??
-  `${PAPER_REVIEW_PREFIX}/update/paper_staging`;
-
-const UPDATE_PAPERS_PATH =
-  process.env.NEXT_PUBLIC_UPDATE_PAPERS_PATH ??
-  `${PAPER_REVIEW_PREFIX}/update/paper`;
-
-const APPROVE_STAGING_PATH =
-  process.env.NEXT_PUBLIC_APPROVE_STAGING_PATH ??
-  `${PAPER_REVIEW_PREFIX}/approve/paper_staging`;
-
-const EXTRACT_PATH =
-  process.env.NEXT_PUBLIC_EXTRACT_PATH ?? "/cr_extraction/extract";
-
-const buildUrl = (path: string) => {
-  const normalized = path.startsWith("/") ? path : `/${path}`;
-  return `${API_BASE_URL}:${API_PORT}${normalized}`;
+const joinPath = (...parts: string[]) => {
+  const joined = parts
+    .map((part) => part.trim().replace(/^\/+|\/+$/g, ""))
+    .filter(Boolean)
+    .join("/");
+  return `/${joined}`;
 };
+
+const apiPath = (...parts: string[]) => joinPath(API_PREFIX, ...parts);
+
+const UPLOAD_PATH = apiPath("multimodal_extraction", "extract");
+const FETCH_PAPERS_PATH = apiPath("paper_review", "fetch", "papers");
+const UPDATE_STAGING_PATH = apiPath("paper_review", "update", "paper_staging");
+const UPDATE_PAPERS_PATH = apiPath("paper_review", "update", "paper");
+const APPROVE_STAGING_PATH = apiPath("paper_review", "approve", "paper_staging");
+const EXTRACT_PATH = apiPath("cr_extraction", "extract", "stream");
+
+const buildUrl = (path: string) => `${API_BASE_URL}${joinPath(path)}`;
 
 const getWithQuery = async (
   path: string,
