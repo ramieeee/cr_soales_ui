@@ -15,7 +15,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-[#0b0b0b] px-4 py-10 text-[#f2f2f2]">
       <section className="w-full max-w-md rounded-3xl border border-white/15 bg-[rgba(18,18,18,0.82)] p-8 shadow-[0_18px_55px_rgba(0,0,0,0.45)] backdrop-blur-md">
-        <h1 className="text-xl font-semibold tracking-tight">CR Soles Login</h1>
+        <h1 className="text-xl font-semibold tracking-tight">
+          CR Soales Login
+        </h1>
         <p className="mt-2 text-sm text-[#a5a5a5]">
           Enter the password to access
         </p>
