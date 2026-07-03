@@ -477,13 +477,12 @@ export function CountryGlobe({
   }, [countries]);
 
   return (
-    <div className="relative h-dvh w-full overflow-hidden bg-[#010103]">
+    <div className="relative h-dvh w-full overflow-hidden">
       <Canvas
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}
         camera={{ position: [0, 0.1, 7.75], fov: 38 }}
       >
-        <color attach="background" args={["#010103"]} />
         <fog attach="fog" args={["#010103", 6.8, 13.5]} />
         <ambientLight intensity={0.46} />
         <hemisphereLight args={["#d8f0ff", "#010103", 0.42]} />

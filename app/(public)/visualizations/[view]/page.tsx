@@ -148,14 +148,8 @@ export default async function VisualizationModulePage({
         </header>
 
         <section className="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-8 xl:grid-cols-12">
-          <div className="soales-panel relative min-h-[560px] overflow-hidden p-6 xl:col-span-8">
-            <div
-              className="absolute inset-0"
-              style={{
-                backgroundColor: "#01030b",
-              }}
-            />
-            <div className="relative h-full min-h-[510px] overflow-hidden rounded-lg bg-[#070b16] shadow-[inset_0_0_60px_rgba(56,189,248,0.08)]">
+          <div className="relative min-h-[560px] overflow-hidden xl:col-span-8">
+            <div className="relative h-full min-h-[510px] overflow-hidden">
               {key === "methodology" ? (
                 <Pipeline accent={module.accent} />
               ) : key === "temporal" ? (
@@ -249,7 +243,7 @@ function Pipeline({ accent }: { accent: string }) {
         ].map(([step, title, copy]) => (
           <div
             key={step}
-            className="rounded-lg bg-[#111827] p-6"
+            className="rounded-lg p-6"
             style={{ boxShadow: `0 0 34px ${accent}22` }}
           >
             <p className="soales-mono" style={{ color: accent }}>

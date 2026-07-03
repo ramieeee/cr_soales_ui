@@ -31,13 +31,6 @@ export default function RootPage() {
             ))}
           </div>
           <div className="flex items-center gap-4">
-            <button
-              type="button"
-              className="hidden rounded-full p-2 text-[#9ca3af] transition-colors hover:bg-[#1f2937]/70 hover:text-[#93c5fd] md:flex"
-              aria-label="Search"
-            >
-              <span className="material-symbols-outlined">search</span>
-            </button>
             <Link href="/login" className="soales-button-primary px-4 py-2">
               Login
             </Link>
@@ -70,7 +63,7 @@ export default function RootPage() {
                 href="/visualizations/connectomics"
                 className="soales-button-primary"
               >
-                Initialize Array
+                View Data
               </Link>
               <Link
                 href="/visualizations/connectomics"
