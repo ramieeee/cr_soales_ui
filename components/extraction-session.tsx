@@ -356,7 +356,7 @@ export const useExtractionSession = () => {
 };
 
 const iconButtonClass =
-  "grid h-6 w-6 place-items-center rounded-full border border-[#6a6a6a]/45 bg-white/[0.03] text-[#d8d8d8] transition-colors duration-150 ease-out hover:border-[#878787]/55 hover:bg-white/[0.06]";
+  "grid h-7 w-7 place-items-center rounded border border-[#475569]/70 bg-[#111827] text-[#e5e7eb] transition-colors duration-150 ease-out hover:border-[#93c5fd] hover:text-[#93c5fd]";
 
 function MinimizeIcon() {
   return (
@@ -440,9 +440,9 @@ const statusLabel = (status: ExtractionStatus) => {
 };
 
 const statusToneClass = (status: ExtractionStatus) => {
-  if (status === "error") return "text-red-200 border-red-300/30";
-  if (status === "success") return "text-emerald-100 border-emerald-300/25";
-  return "text-[#f3f1ea] border-amber-200/20";
+  if (status === "error") return "text-[#ffdad6] bg-[#7f1d1d]/35";
+  if (status === "success") return "text-[#bfdbfe] bg-[#111827]";
+  return "text-[#ffddb8] bg-[#111827]";
 };
 
 const SCROLL_BOTTOM_THRESHOLD = 2;
@@ -510,16 +510,16 @@ export function ExtractionDock() {
           return (
             <article
               key={session.id}
-              className={`pointer-events-auto overflow-hidden rounded-[1.35rem] border bg-[linear-gradient(180deg,rgba(28,26,22,0.96),rgba(14,14,14,0.96))] shadow-[0_18px_60px_rgba(0,0,0,0.45)] backdrop-blur ${
+              className={`pointer-events-auto overflow-hidden rounded-lg shadow-[0_18px_60px_rgba(0,0,0,0.45)] backdrop-blur ${
                 minimized ? "p-3" : "p-4"
               } ${statusToneClass(session.status)}`}
             >
               <div className="flex items-start gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-[#f5f0e6]">
+                  <p className="truncate text-sm font-semibold text-[#dae2fd]">
                     {session.paperTitle}
                   </p>
-                  <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-[#c7bca7]">
+                  <p className="soales-mono mt-1 text-[11px] uppercase text-[#ccc3d8]">
                     {statusLabel(session.status)}
                   </p>
                 </div>
@@ -563,7 +563,7 @@ export function ExtractionDock() {
               </div>
 
               {!minimized ? (
-                <div className="mt-3 rounded-2xl border border-white/10 bg-black/30 p-3">
+                <div className="mt-3 rounded bg-[#070b16] p-3">
                   <pre
                     ref={(element) => {
                       if (!element) return;
@@ -577,7 +577,7 @@ export function ExtractionDock() {
                         event.currentTarget,
                       );
                     }}
-                    className={`no-scrollbar h-20 overflow-y-auto whitespace-pre-wrap break-words font-mono text-[11px] leading-5 text-[#f7f3ea] ${
+                    className={`no-scrollbar h-20 overflow-y-auto whitespace-pre-wrap break-words font-mono text-[11px] leading-5 text-[#dae2fd] ${
                       session.status === "extracting" ? "stream-breathe" : ""
                     }`}
                   >
@@ -591,14 +591,14 @@ export function ExtractionDock() {
       </div>
 
       {expandedSession ? (
-        <div className="ui-fade-in fixed inset-0 z-50 bg-black/70 p-4 md:p-6">
-          <div className="ui-pop mx-auto flex h-full max-h-[96dvh] w-full max-w-6xl flex-col overflow-hidden rounded-[2rem] border border-white/12 bg-[linear-gradient(180deg,rgba(24,22,19,0.98),rgba(10,10,10,0.98))] shadow-[0_24px_80px_rgba(0,0,0,0.55)]">
-            <div className="flex items-start justify-between gap-4 border-b border-white/10 px-5 py-4 md:px-7">
+        <div className="ui-fade-in fixed inset-0 z-50 bg-[#060e20]/75 p-4 backdrop-blur-xl md:p-6">
+          <div className="soales-panel ui-pop mx-auto flex h-full max-h-[96dvh] w-full max-w-6xl flex-col overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.55)]">
+            <div className="flex items-start justify-between gap-4 bg-[#1f2937] px-5 py-4 md:px-7">
               <div className="min-w-0">
-                <p className="truncate text-lg font-semibold text-[#f8f1e5]">
+                <p className="truncate text-lg font-semibold text-[#dae2fd]">
                   {expandedSession.paperTitle}
                 </p>
-                <p className="mt-1 text-xs uppercase tracking-[0.2em] text-[#c7bca7]">
+                <p className="soales-mono mt-1 text-xs uppercase text-[#ccc3d8]">
                   {statusLabel(expandedSession.status)}
                 </p>
               </div>
@@ -613,7 +613,7 @@ export function ExtractionDock() {
             </div>
 
             <div className="min-h-0 flex-1 p-4 md:p-6">
-              <div className="h-full rounded-[1.5rem] border border-white/10 bg-black/35 p-4 md:p-5">
+              <div className="h-full rounded bg-[#070b16] p-4 md:p-5">
                 <pre
                   ref={expandedBodyRef}
                   onScroll={(event) => {
@@ -621,7 +621,7 @@ export function ExtractionDock() {
                       event.currentTarget,
                     );
                   }}
-                  className={`h-full overflow-auto whitespace-pre-wrap break-words font-mono text-xs leading-6 text-[#f7f3ea] ${
+                  className={`h-full overflow-auto whitespace-pre-wrap break-words font-mono text-xs leading-6 text-[#dae2fd] ${
                     expandedSession.status === "extracting"
                       ? "stream-breathe"
                       : ""

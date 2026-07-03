@@ -7,7 +7,7 @@ const COOKIE_NAME = "cr_soales_access";
 
 const isProtectedPath = (pathname: string) => {
   return (
-    pathname === "/" ||
+    pathname.startsWith("/admin") ||
     pathname.startsWith("/upload") ||
     pathname.startsWith("/papers-staging") ||
     pathname.startsWith("/papers")
@@ -27,7 +27,7 @@ export async function proxy(request: NextRequest) {
 
   if (pathname === "/login" || pathname === "/access") {
     if (authenticated) {
-      return NextResponse.redirect(new URL("/upload", request.url));
+      return NextResponse.redirect(new URL("/admin", request.url));
     }
     return NextResponse.next();
   }
@@ -40,5 +40,12 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/login", "/access", "/upload/:path*", "/papers-staging/:path*", "/papers/:path*"],
+  matcher: [
+    "/login",
+    "/access",
+    "/admin/:path*",
+    "/upload/:path*",
+    "/papers-staging/:path*",
+    "/papers/:path*",
+  ],
 };

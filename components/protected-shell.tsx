@@ -46,10 +46,10 @@ export default function ProtectedShell({
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`rounded-[22px] border px-4 py-3 transition duration-200 ease-out ${
+                  className={`rounded-[22px] px-4 py-3 transition duration-200 ease-out ${
                     isActive
-                      ? "border-[rgba(182,255,122,0.34)] bg-[rgba(182,255,122,0.12)] text-[#f6ffe7] shadow-[0_14px_32px_rgba(127,214,77,0.12)]"
-                      : "border-white/10 bg-white/[0.025] text-[var(--text-secondary)] hover:border-white/18 hover:bg-white/[0.05] hover:text-[var(--text-primary)]"
+                      ? "bg-[#1f2937]/80 text-[#dbeafe] opacity-85"
+                      : "bg-white/[0.025] text-[var(--text-secondary)] hover:bg-white/[0.05] hover:text-[var(--text-primary)]"
                   }`}
                 >
                   <span className="block text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)] xl:hidden">

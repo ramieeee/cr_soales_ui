@@ -78,20 +78,20 @@ export function UploadStatusCard() {
 
   const toneClass =
     status === "error"
-      ? "text-[#f0b8a6] border-red-300/30"
+      ? "text-[#ffdad6] bg-[#7f1d1d]/35"
       : status === "success"
-        ? "text-[#d8d8d8] border-emerald-300/20"
+        ? "text-[#bfdbfe] bg-[#1f2937]"
         : status === "uploading"
-          ? "text-[#e6e6e6] border-white/30"
-          : "text-[#a5a5a5] border-white/12";
+          ? "text-[#93c5fd] bg-[#1f2937]"
+          : "text-[#9ca3af] bg-[#111827]";
 
   return (
     <div
-      className={`mt-5 rounded-xl border bg-[rgba(12,12,12,0.75)] p-3 transition-colors duration-200 ease-out ${
+      className={`mx-3 min-w-[10.75rem] rounded-lg p-3 transition-colors duration-200 ease-out ${
         status === "uploading" ? "animate-pulse" : ""
       } ${toneClass}`}
     >
-      <p className="text-xs font-semibold uppercase tracking-[0.14em]">Upload Status</p>
+      <p className="soales-mono uppercase">Upload Status</p>
       <p className="mt-2 line-clamp-4 text-xs whitespace-pre-wrap break-words">
         {message || "No upload has been started yet."}
       </p>

@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 
 import { useExtractionSession } from "@/components/extraction-session";
+import { LoadingSignal } from "@/components/loading-signal";
 import {
   approveStagingPaper,
   fetchPapers,
@@ -257,33 +258,55 @@ export default function PapersTableManager({
   };
 
   return (
-    <section className="grid gap-5">
-      <header>
-        <h1 className="text-xl font-semibold">{title}</h1>
-        <p className="mt-1 text-sm text-[#a5a5a5]">{description}</p>
+    <section className="grid gap-6">
+      {loading ? (
+        <LoadingSignal
+          label="Fetching Records"
+          detail="Loading paper nodes from the review API..."
+        />
+      ) : null}
+
+      <header className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div>
+          <p className="soales-mono uppercase text-[#ccc3d8]/80">
+            {variant === "papers-staging" ? "Review Queue" : "Client Dataset"}
+          </p>
+          <h1 className="soales-subheading mt-3 text-3xl tracking-[-0.02em] text-[#dae2fd] md:text-5xl">
+            {title}
+          </h1>
+          <p className="mt-4 max-w-2xl text-sm leading-6 text-[#ccc3d8] md:text-base">
+            {description}
+          </p>
+        </div>
+        <div className="soales-panel px-5 py-4">
+          <p className="soales-subheading text-3xl text-[#dae2fd]">{rows.length}</p>
+          <p className="soales-mono mt-2 text-[10px] uppercase text-[#ccc3d8]">
+            Loaded Rows
+          </p>
+        </div>
       </header>
 
-      <div className="flex flex-wrap items-end gap-3 rounded-2xl border border-white/12 bg-[rgba(14,14,14,0.72)] p-4">
+      <div className="soales-panel flex flex-wrap items-end gap-4 p-4">
         <label className="grid gap-1 text-sm">
-          <span className="text-[#a5a5a5]">Offset</span>
+          <span className="soales-mono text-[#ccc3d8]">Offset</span>
           <input
             type="number"
             min={0}
             value={offset}
             onChange={(event) => setOffset(Number(event.target.value))}
-            className="w-28 rounded-lg border border-white/15 bg-[rgba(10,10,10,0.9)] px-2 py-1 transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
+            className="soales-input w-28"
           />
         </label>
 
         <label className="grid gap-1 text-sm">
-          <span className="text-[#a5a5a5]">Limit</span>
+          <span className="soales-mono text-[#ccc3d8]">Limit</span>
           <input
             type="number"
             min={1}
             max={1000}
             value={limit}
             onChange={(event) => setLimit(Number(event.target.value))}
-            className="w-28 rounded-lg border border-white/15 bg-[rgba(10,10,10,0.9)] px-2 py-1 transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
+            className="soales-input w-28"
           />
         </label>
 
@@ -291,58 +314,49 @@ export default function PapersTableManager({
           type="button"
           onClick={load}
           disabled={loading}
-          className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b] transition-transform duration-150 ease-out hover:-translate-y-px active:translate-y-0 disabled:opacity-70"
+          className="soales-button-primary disabled:opacity-70"
         >
           {loading ? "Loading..." : "Fetch"}
         </button>
       </div>
 
       {error ? (
-        <p className="ui-fade-in rounded-xl border border-red-300/30 bg-red-200/10 px-3 py-2 text-sm text-red-200">
+        <p className="ui-fade-in rounded bg-[#93000a]/20 px-3 py-2 text-sm text-[#ffdad6]">
           {error}
         </p>
       ) : null}
 
-      <div className="overflow-x-auto rounded-2xl border border-white/12 bg-[rgba(14,14,14,0.72)]">
-        <table className="min-w-full text-left text-sm">
+      <div className="soales-panel overflow-x-auto">
+        <table className="soales-table">
           <thead>
-            <tr className="border-b border-white/10 bg-white/[0.03]">
+            <tr>
               {columns.map((column) => (
-                <th
-                  key={column}
-                  className="whitespace-nowrap px-3 py-2 font-semibold text-[#d8d8d8]"
-                >
+                <th key={column}>
                   {column}
                 </th>
               ))}
-              <th className="px-3 py-2 font-semibold text-[#d8d8d8]">
-                Actions
-              </th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row, rowIndex) => (
               <tr
                 key={`${rowIndex}-${toCellText(row.id) || toCellText(row.idx)}`}
-                className="border-b border-white/5 align-top transition-colors duration-150 ease-out hover:bg-white/[0.02]"
               >
                 {columns.map((column) => (
-                  <td
-                    key={column}
-                    className="max-w-[280px] px-3 py-2 text-[#cfcfcf]"
-                  >
+                  <td key={column} className="max-w-[280px]">
                     <div className="line-clamp-4 break-words">
                       {toCellText(row[column])}
                     </div>
                   </td>
                 ))}
-                <td className="px-3 py-2">
+                <td>
                   <div className="flex flex-col gap-2">
                     {variant === "papers-staging" ? (
                       <button
                         type="button"
                         onClick={() => setApproveIndex(rowIndex)}
-                        className="rounded-lg border border-emerald-300/35 px-2 py-1 text-xs font-semibold text-emerald-200 transition-colors duration-150 ease-out hover:border-emerald-200/60"
+                        className="rounded border border-[#38bdf8]/35 px-2 py-1 text-xs font-semibold text-[#93c5fd] transition-colors duration-150 ease-out hover:border-[#93c5fd]/70"
                       >
                         Approve
                       </button>
@@ -350,7 +364,7 @@ export default function PapersTableManager({
                     <button
                       type="button"
                       onClick={() => openEditor(rowIndex)}
-                      className="w-20 rounded-lg border border-white/15 px-2 py-1 text-xs font-semibold text-[#e5e5e5] transition-colors duration-150 ease-out hover:border-white/35"
+                      className="w-20 rounded border border-[#475569]/70 px-2 py-1 text-xs font-semibold text-[#e5e7eb] transition-colors duration-150 ease-out hover:border-[#93c5fd]"
                     >
                       Edit
                     </button>
@@ -359,7 +373,7 @@ export default function PapersTableManager({
                         type="button"
                         onClick={() => openExtractConfirm(rowIndex)}
                         disabled={extractingPaperIds.has(resolvePaperId(row))}
-                        className="w-20 rounded-lg border border-sky-300/35 px-2 py-1 text-xs font-semibold text-sky-200 transition-colors duration-150 ease-out hover:border-sky-200/60 disabled:opacity-70"
+                        className="w-20 rounded border border-[#93c5fd]/35 px-2 py-1 text-xs font-semibold text-[#93c5fd] transition-colors duration-150 ease-out hover:border-[#93c5fd]/70 disabled:opacity-70"
                       >
                         {extractingPaperIds.has(resolvePaperId(row))
                           ? "Extracting..."
@@ -374,7 +388,7 @@ export default function PapersTableManager({
               <tr>
                 <td
                   colSpan={Math.max(columns.length + 1, 2)}
-                  className="px-3 py-5 text-center text-[#9a9a9a]"
+                  className="px-3 py-5 text-center text-[#ccc3d8]"
                 >
                   Click Fetch to load rows.
                 </td>
@@ -385,23 +399,23 @@ export default function PapersTableManager({
       </div>
 
       {editingIndex !== null ? (
-        <div className="ui-pop grid gap-3 rounded-2xl border border-white/12 bg-[rgba(14,14,14,0.72)] p-4">
-          <p className="text-sm font-semibold">Edit Allowed Fields</p>
+        <div className="soales-panel ui-pop grid gap-5 p-5">
+          <p className="soales-mono uppercase text-[#93c5fd]">Edit Allowed Fields</p>
 
           <label className="grid gap-1 text-sm">
-            <span className="text-[#a5a5a5]">title</span>
+            <span className="text-[#ccc3d8]">title</span>
             <input
               type="text"
               value={editForm.title}
               onChange={(event) =>
                 setEditForm((prev) => ({ ...prev, title: event.target.value }))
               }
-              className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2 transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
+              className="soales-input"
             />
           </label>
 
           <label className="grid gap-1 text-sm">
-            <span className="text-[#a5a5a5]">authors (one per line)</span>
+            <span className="text-[#ccc3d8]">authors (one per line)</span>
             <textarea
               value={editForm.authorsText}
               onChange={(event) =>
@@ -410,12 +424,12 @@ export default function PapersTableManager({
                   authorsText: event.target.value,
                 }))
               }
-              className="min-h-28 rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] p-3 text-xs transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
+              className="soales-input min-h-28 text-xs"
             />
           </label>
 
           <label className="grid gap-1 text-sm">
-            <span className="text-[#a5a5a5]">journal</span>
+            <span className="text-[#ccc3d8]">journal</span>
             <input
               type="text"
               value={editForm.journal}
@@ -425,24 +439,24 @@ export default function PapersTableManager({
                   journal: event.target.value,
                 }))
               }
-              className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2 transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
+              className="soales-input"
             />
           </label>
 
           <label className="grid gap-1 text-sm">
-            <span className="text-[#a5a5a5]">year</span>
+            <span className="text-[#ccc3d8]">year</span>
             <input
               type="number"
               value={editForm.year}
               onChange={(event) =>
                 setEditForm((prev) => ({ ...prev, year: event.target.value }))
               }
-              className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2 transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
+              className="soales-input"
             />
           </label>
 
           <label className="grid gap-1 text-sm">
-            <span className="text-[#a5a5a5]">abstract</span>
+            <span className="text-[#ccc3d8]">abstract</span>
             <textarea
               value={editForm.abstract}
               onChange={(event) =>
@@ -451,24 +465,24 @@ export default function PapersTableManager({
                   abstract: event.target.value,
                 }))
               }
-              className="min-h-40 rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] p-3 text-xs transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
+              className="soales-input min-h-40 text-xs"
             />
           </label>
 
           <label className="grid gap-1 text-sm">
-            <span className="text-[#a5a5a5]">pdf_url</span>
+            <span className="text-[#ccc3d8]">pdf_url</span>
             <input
               type="text"
               value={editForm.pdfUrl}
               onChange={(event) =>
                 setEditForm((prev) => ({ ...prev, pdfUrl: event.target.value }))
               }
-              className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2 transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
+              className="soales-input"
             />
           </label>
 
           <label className="grid gap-1 text-sm">
-            <span className="text-[#a5a5a5]">ingestion_source</span>
+            <span className="text-[#ccc3d8]">ingestion_source</span>
             <input
               type="text"
               value={editForm.ingestionSource}
@@ -478,7 +492,7 @@ export default function PapersTableManager({
                   ingestionSource: event.target.value,
                 }))
               }
-              className="rounded-xl border border-white/15 bg-[rgba(10,10,10,0.9)] px-3 py-2 transition-[border-color,box-shadow] duration-200 ease-out focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)]"
+              className="soales-input"
             />
           </label>
 
@@ -487,14 +501,14 @@ export default function PapersTableManager({
               type="button"
               onClick={save}
               disabled={saving}
-              className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b] transition-transform duration-150 ease-out hover:-translate-y-px active:translate-y-0 disabled:opacity-70"
+              className="soales-button-primary disabled:opacity-70"
             >
               {saving ? "Saving..." : "Save"}
             </button>
             <button
               type="button"
               onClick={() => setEditingIndex(null)}
-              className="rounded-full border border-white/20 px-5 py-2 text-sm transition-colors duration-150 ease-out hover:border-white/35"
+              className="soales-button-secondary"
             >
               Cancel
             </button>
@@ -503,9 +517,9 @@ export default function PapersTableManager({
       ) : null}
 
       {approveIndex !== null ? (
-        <div className="ui-fade-in fixed inset-0 z-40 grid place-items-center bg-black/55 px-4">
-          <div className="ui-pop w-full max-w-md rounded-2xl border border-white/15 bg-[rgba(18,18,18,0.96)] p-5">
-            <p className="text-sm text-[#e5e5e5]">
+        <div className="ui-fade-in fixed inset-0 z-40 grid place-items-center bg-[#060e20]/70 px-4 backdrop-blur-xl">
+          <div className="soales-panel ui-pop w-full max-w-md p-5">
+            <p className="text-sm text-[#dae2fd]">
               Are you sure you want to approve this paper&apos;s bibliographic
               information?
             </p>
@@ -514,7 +528,7 @@ export default function PapersTableManager({
                 type="button"
                 onClick={approve}
                 disabled={approving}
-                className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b] transition-transform duration-150 ease-out hover:-translate-y-px active:translate-y-0 disabled:opacity-70"
+                className="soales-button-primary disabled:opacity-70"
               >
                 {approving ? "Approving..." : "Approve"}
               </button>
@@ -522,7 +536,7 @@ export default function PapersTableManager({
                 type="button"
                 onClick={() => setApproveIndex(null)}
                 disabled={approving}
-                className="rounded-full border border-white/20 px-5 py-2 text-sm transition-colors duration-150 ease-out hover:border-white/35 disabled:opacity-70"
+                className="soales-button-secondary disabled:opacity-70"
               >
                 Cancel
               </button>
@@ -532,15 +546,15 @@ export default function PapersTableManager({
       ) : null}
 
       {confirmSaveOpen ? (
-        <div className="ui-fade-in fixed inset-0 z-40 grid place-items-center bg-black/55 px-4">
-          <div className="ui-pop w-full max-w-md rounded-2xl border border-white/15 bg-[rgba(18,18,18,0.96)] p-5">
-            <p className="text-sm text-[#e5e5e5]">Approve the edited data?</p>
+        <div className="ui-fade-in fixed inset-0 z-40 grid place-items-center bg-[#060e20]/70 px-4 backdrop-blur-xl">
+          <div className="soales-panel ui-pop w-full max-w-md p-5">
+            <p className="text-sm text-[#dae2fd]">Approve the edited data?</p>
             <div className="mt-4 flex justify-end gap-2">
               <button
                 type="button"
                 onClick={confirmSave}
                 disabled={saving}
-                className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b] transition-transform duration-150 ease-out hover:-translate-y-px active:translate-y-0 disabled:opacity-70"
+                className="soales-button-primary disabled:opacity-70"
               >
                 {saving ? "Saving..." : "Approve"}
               </button>
@@ -548,7 +562,7 @@ export default function PapersTableManager({
                 type="button"
                 onClick={cancelSaveConfirm}
                 disabled={saving}
-                className="rounded-full border border-white/20 px-5 py-2 text-sm transition-colors duration-150 ease-out hover:border-white/35 disabled:opacity-70"
+                className="soales-button-secondary disabled:opacity-70"
               >
                 Cancel
               </button>
@@ -558,23 +572,23 @@ export default function PapersTableManager({
       ) : null}
 
       {extractIndex !== null ? (
-        <div className="ui-fade-in fixed inset-0 z-40 grid place-items-center bg-black/55 px-4">
-          <div className="ui-pop w-full max-w-md rounded-2xl border border-white/15 bg-[rgba(18,18,18,0.96)] p-5">
-            <p className="text-sm text-[#e5e5e5]">
+        <div className="ui-fade-in fixed inset-0 z-40 grid place-items-center bg-[#060e20]/70 px-4 backdrop-blur-xl">
+          <div className="soales-panel ui-pop w-full max-w-md p-5">
+            <p className="text-sm text-[#dae2fd]">
               Extract data from the paper?
             </p>
             <div className="mt-4 flex justify-end gap-2">
               <button
                 type="button"
                 onClick={confirmExtract}
-                className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-5 py-2 text-sm font-semibold text-[#0b0b0b] transition-transform duration-150 ease-out hover:-translate-y-px active:translate-y-0"
+                className="soales-button-primary"
               >
                 Extract
               </button>
               <button
                 type="button"
                 onClick={() => setExtractIndex(null)}
-                className="rounded-full border border-white/20 px-5 py-2 text-sm transition-colors duration-150 ease-out hover:border-white/35"
+                className="soales-button-secondary"
               >
                 Cancel
               </button>

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Login | CR Soles",
+  title: "Login | SOALES",
 };
 
 type LoginPageProps = {
@@ -13,47 +14,95 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const hasError = params.error === "1";
 
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-[#0b0b0b] px-4 py-10 text-[#f2f2f2]">
-      <section className="w-full max-w-md rounded-3xl border border-white/15 bg-[rgba(18,18,18,0.82)] p-8 shadow-[0_18px_55px_rgba(0,0,0,0.45)] backdrop-blur-md">
-        <h1 className="text-xl font-semibold tracking-tight">
-          CR Soales Login
-        </h1>
-        <p className="mt-2 text-sm text-[#a5a5a5]">
-          Enter the password to access
-        </p>
+    <main className="soales-page relative grid min-h-dvh place-items-center overflow-hidden px-6 py-10">
+      <Link
+        href="/"
+        className="soales-button-secondary fixed left-6 top-6 z-20 px-4 py-2"
+      >
+        <span className="material-symbols-outlined text-[18px]">home</span>
+        Home
+      </Link>
 
-        <form
-          action="/api/auth/login"
-          method="post"
-          className="mt-6 grid gap-4"
-        >
-          <label className="grid gap-2 text-sm font-semibold">
-            <span className="text-[#a5a5a5]">Password</span>
-            <input
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              className='rounded-xl border border-white/[0.18] bg-[rgba(12,12,12,0.9)] px-[14px] py-3 text-sm text-[#f2f2f2] transition-[border-color,box-shadow] duration-200 ease-in focus:border-white/45 focus:outline-none focus:shadow-[0_0_0_3px_rgba(255,255,255,0.12)] [font-family:var(--font-body),"Helvetica_Neue",Arial,sans-serif]'
-            />
-          </label>
+      <div className="absolute inset-0 pointer-events-none z-0 flex items-center justify-center overflow-hidden">
+        <div className="absolute h-[800px] w-[800px] rounded-full bg-[#38bdf8]/5 blur-[120px] mix-blend-screen" />
+        <div className="absolute h-[600px] w-[600px] translate-x-1/2 -translate-y-1/4 rounded-full bg-[#93c5fd]/5 blur-[100px] mix-blend-screen" />
+      </div>
 
-          {hasError ? (
-            <p
-              className="text-xs font-semibold text-[rgba(255,170,170,0.95)]"
-              role="alert"
-            >
-              비밀번호가 올바르지 않습니다.
-            </p>
-          ) : null}
+      <section className="relative z-10 flex w-full max-w-[480px] flex-col items-center gap-8">
+        <div className="flex w-full flex-col items-center gap-4">
+          <div className="text-center">
+            <h1 className="soales-heading mb-2 hidden text-5xl leading-[56px] tracking-[-0.02em] text-[#e5e7eb] md:block">
+              SOALES PROJECT
+            </h1>
+          </div>
+        </div>
 
-          <button
-            type="submit"
-            className="rounded-full bg-[linear-gradient(120deg,#f0f0f0,#cfcfcf)] px-6 py-3 text-sm font-semibold text-[#0b0b0b] transition-transform duration-150 ease-in hover:-translate-y-px"
+        <div className="soales-panel soales-light-leak relative w-full rounded-xl bg-[#0b1326]/80 p-8 shadow-2xl backdrop-blur-xl">
+          <form
+            action="/api/auth/login"
+            method="post"
+            className="relative z-10 flex flex-col gap-6"
           >
-            Enter
-          </button>
-        </form>
+            <div className="flex flex-col gap-2">
+              <label className="soales-mono text-[#ccc3d8]" htmlFor="email">
+                Email Address
+              </label>
+              <div className="soales-input-wrap">
+                <input
+                  className="soales-input"
+                  id="email"
+                  name="email"
+                  placeholder="sample@sample.com"
+                  required
+                  type="email"
+                  autoComplete="username"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <label
+                  className="soales-mono text-[#ccc3d8]"
+                  htmlFor="password"
+                >
+                  Password
+                </label>
+              </div>
+              <div className="soales-input-wrap">
+                <input
+                  className="soales-input tracking-widest"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  required
+                  type="password"
+                  autoComplete="current-password"
+                />
+              </div>
+            </div>
+
+            {hasError ? (
+              <p className="rounded bg-[#93000a]/20 px-3 py-2 text-sm text-[#ffdad6]">
+                이메일 또는 비밀번호가 올바르지 않습니다.
+              </p>
+            ) : null}
+
+            <button
+              className="soales-button-primary mt-4 w-full text-[18px]"
+              type="submit"
+            >
+              <span>Sign In</span>
+              <span className="material-symbols-outlined text-[20px]">
+                arrow_forward
+              </span>
+            </button>
+          </form>
+
+          <div className="relative z-10 mt-8 bg-[#070b16] p-4 text-center">
+            <p className="text-sm leading-6 text-[#ccc3d8]">Access required</p>
+          </div>
+        </div>
       </section>
     </main>
   );

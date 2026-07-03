@@ -179,19 +179,10 @@ function Starfield() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return null;
 
-    const gradient = ctx.createRadialGradient(
-      size / 2,
-      size / 2,
-      0,
-      size / 2,
-      size / 2,
-      size / 2,
-    );
-    gradient.addColorStop(0, "rgba(255,255,255,1)");
-    gradient.addColorStop(0.45, "rgba(255,255,255,0.9)");
-    gradient.addColorStop(1, "rgba(255,255,255,0)");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, size, size);
+    ctx.fillStyle = "rgba(255,255,255,1)";
+    ctx.beginPath();
+    ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+    ctx.fill();
 
     const texture = new THREE.CanvasTexture(canvas);
     texture.needsUpdate = true;
@@ -486,7 +477,7 @@ export function CountryGlobe({
   }, [countries]);
 
   return (
-    <div className="relative h-dvh w-full overflow-hidden bg-[radial-gradient(circle_at_top,rgba(37,99,235,0.08),transparent_26%),linear-gradient(180deg,#000000_0%,#010103_55%,#000000_100%)]">
+    <div className="relative h-dvh w-full overflow-hidden bg-[#010103]">
       <Canvas
         dpr={[1, 2]}
         gl={{ antialias: true, alpha: true }}

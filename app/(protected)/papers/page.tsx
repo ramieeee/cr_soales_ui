@@ -1,11 +1,5 @@
-import PapersTableManager from "@/components/papers-table-manager";
+import { redirect } from "next/navigation";
 
 export default function PapersPage() {
-  return (
-    <PapersTableManager
-      variant="papers"
-      title="papers"
-      description="GET /paper_review/fetch/papers (offset, limit)"
-    />
-  );
+  redirect("/admin/papers");
 }

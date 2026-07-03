@@ -1,20 +1,28 @@
 import type { Metadata } from "next";
-import { Manrope, Space_Grotesk } from "next/font/google";
+import { Hanken_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import { RouteTransitionLoader } from "@/components/route-transition-loader";
 import "./globals.css";
 
-const bodyFont = Manrope({
+const bodyFont = Inter({
   variable: "--font-body",
   subsets: ["latin"],
 });
 
-const displayFont = Space_Grotesk({
+const displayFont = Hanken_Grotesk({
   variable: "--font-display",
   subsets: ["latin"],
+  weight: ["600", "700"],
+});
+
+const monoFont = JetBrains_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
-  title: "CR Soles | Document Intake",
-  description: "Upload a PDF and send it to the processing API.",
+  title: "CR SOALES",
+  description: "Clinical research extraction and visualization system.",
 };
 
 export default function RootLayout({
@@ -24,7 +32,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${bodyFont.variable} ${displayFont.variable}`}>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        />
+      </head>
+      <body
+        className={`${bodyFont.variable} ${displayFont.variable} ${monoFont.variable}`}
+      >
+        <RouteTransitionLoader />
         {children}
       </body>
     </html>
