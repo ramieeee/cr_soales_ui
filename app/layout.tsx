@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Hanken_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import { RouteTransitionLoader } from "@/components/route-transition-loader";
+// @ts-expect-error CSS module declarations are provided by Next.js build tooling.
 import "./globals.css";
 
 const bodyFont = Inter({

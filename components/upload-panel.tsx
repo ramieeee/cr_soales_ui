@@ -112,12 +112,17 @@ export default function UploadPanel() {
               </span>
             </div>
             <h3 className="soales-subheading mb-2 text-2xl text-[#dae2fd]">
-              {file ? file.name : "Initialize Transfer Protocol"}
+              {file ? file.name : "Send PDF to OCR"}
             </h3>
             <p className="mb-6 max-w-md text-[#ccc3d8]">
-              {isDragging
-                ? "Release the PDF to bind it to this ingestion node."
-                : "Drag and drop raw neuro-data PDF sets here, or click to securely browse local nodes."}
+              {isDragging ? (
+                "Release the PDF here to start the upload"
+              ) : (
+                <>
+                  <p>Drag and drop PDF sets here</p>
+                  <p>or click to browse your local files</p>
+                </>
+              )}
             </p>
             <div className="flex items-center gap-4 text-[#ccc3d8]/60">
               <span className="soales-mono rounded bg-[#1f2937] px-3 py-1">
@@ -133,7 +138,7 @@ export default function UploadPanel() {
         <aside className="soales-panel flex h-[400px] flex-col rounded-2xl shadow-lg xl:col-span-4">
           <div className="flex items-center justify-between bg-[#1f2937] p-6">
             <h3 className="soales-mono uppercase tracking-widest text-[#93c5fd]">
-              Ingestion Control
+              Other settings
             </h3>
           </div>
           <div className="flex-1 space-y-5 overflow-y-auto p-6">
