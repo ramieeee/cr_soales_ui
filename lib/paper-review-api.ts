@@ -6,7 +6,7 @@ const EDITABLE_KEYS = [
   "year",
   "abstract",
   "pdf_url",
-  "ingestion_source",
+  "source_type",
 ] as const;
 
 const API_BASE_URL = (
@@ -193,13 +193,9 @@ const toRows = (payload: unknown): PaperRow[] => {
 
 export const uploadDocument = async (params: {
   pdf: File;
-  prompt: string;
-  ingestionSource: string;
 }) => {
   return postForm(UPLOAD_PATH, {
     pdf: params.pdf,
-    prompt: params.prompt,
-    ingestion_source: params.ingestionSource,
   });
 };
 

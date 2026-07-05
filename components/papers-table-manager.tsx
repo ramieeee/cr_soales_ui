@@ -22,7 +22,7 @@ const VISIBLE_KEYS = [
   "year",
   "abstract",
   "pdf_url",
-  "ingestion_source",
+  "source_type",
 ] as const;
 
 type EditForm = {
@@ -32,7 +32,7 @@ type EditForm = {
   year: string;
   abstract: string;
   pdfUrl: string;
-  ingestionSource: string;
+  sourceType: string;
 };
 
 const toCellText = (value: unknown) => {
@@ -61,8 +61,7 @@ const toEditForm = (row: PaperRow): EditForm => {
           : String(row.year),
     abstract: typeof row.abstract === "string" ? row.abstract : "",
     pdfUrl: typeof row.pdf_url === "string" ? row.pdf_url : "",
-    ingestionSource:
-      typeof row.ingestion_source === "string" ? row.ingestion_source : "",
+    sourceType: typeof row.source_type === "string" ? row.source_type : "",
   };
 };
 
@@ -90,7 +89,7 @@ export default function PapersTableManager({
     year: "",
     abstract: "",
     pdfUrl: "",
-    ingestionSource: "",
+    sourceType: "",
   });
 
   const columns = useMemo(() => Array.from(VISIBLE_KEYS), []);
@@ -159,7 +158,7 @@ export default function PapersTableManager({
       year: editForm.year.trim() ? Number(editForm.year) : null,
       abstract: editForm.abstract,
       pdf_url: editForm.pdfUrl.trim() || null,
-      ingestion_source: editForm.ingestionSource,
+      source_type: editForm.sourceType,
     };
 
     setPendingSaveRow(nextRow);
@@ -428,14 +427,14 @@ export default function PapersTableManager({
           </label>
 
           <label className="grid gap-1 text-sm">
-            <span className="text-[#ccc3d8]">ingestion_source</span>
+            <span className="text-[#ccc3d8]">source_type</span>
             <input
               type="text"
-              value={editForm.ingestionSource}
+              value={editForm.sourceType}
               onChange={(event) =>
                 setEditForm((prev) => ({
                   ...prev,
-                  ingestionSource: event.target.value,
+                  sourceType: event.target.value,
                 }))
               }
               className="soales-input"

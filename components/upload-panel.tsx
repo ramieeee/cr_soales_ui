@@ -13,8 +13,6 @@ const isPdfFile = (file: File) => {
 
 export default function UploadPanel() {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [prompt, setPrompt] = useState("Describe the document");
-  const [ingestionSource, setIngestionSource] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [formError, setFormError] = useState("");
@@ -34,15 +32,8 @@ export default function UploadPanel() {
       return;
     }
 
-    if (!ingestionSource.trim()) {
-      setFormError("Ingestion source is required.");
-      return;
-    }
-
     await startUpload({
       pdf: file,
-      prompt: prompt || "Describe the document",
-      ingestionSource: ingestionSource.trim(),
     });
   };
 
@@ -140,35 +131,14 @@ export default function UploadPanel() {
         <aside className="soales-panel flex h-[400px] flex-col rounded-2xl shadow-lg xl:col-span-4">
           <div className="flex items-center justify-between bg-[#1f2937] p-6">
             <h3 className="soales-mono uppercase tracking-widest text-[#93c5fd]">
-              Other settings
+              Upload
             </h3>
           </div>
           <div className="flex-1 space-y-5 overflow-y-auto p-6">
-            <label className="flex flex-col gap-2">
-              <span className="soales-mono text-[#ccc3d8]">Prompt</span>
-              <div className="soales-input-wrap">
-                <input
-                  type="text"
-                  value={prompt}
-                  onChange={(event) => setPrompt(event.target.value)}
-                  className="soales-input"
-                />
-              </div>
-            </label>
-            <label className="flex flex-col gap-2">
-              <span className="soales-mono text-[#ccc3d8]">
-                Ingestion Source
-              </span>
-              <div className="soales-input-wrap">
-                <input
-                  type="text"
-                  value={ingestionSource}
-                  onChange={(event) => setIngestionSource(event.target.value)}
-                  placeholder="source name"
-                  className="soales-input"
-                />
-              </div>
-            </label>
+            <div className="rounded-xl bg-[#0b1220] p-4 text-sm leading-6 text-[#ccc3d8]">
+              Bibliographic metadata and source type are extracted automatically
+              from the PDF.
+            </div>
 
             {formError ? (
               <div className="rounded bg-[#93000a]/20 p-3 text-sm text-[#ffdad6]">

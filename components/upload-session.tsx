@@ -15,11 +15,7 @@ type UploadStatus = "idle" | "uploading" | "success" | "error";
 type UploadSessionContextValue = {
   status: UploadStatus;
   message: string;
-  startUpload: (params: {
-    pdf: File;
-    prompt: string;
-    ingestionSource: string;
-  }) => Promise<void>;
+  startUpload: (params: { pdf: File }) => Promise<void>;
 };
 
 const UploadSessionContext = createContext<UploadSessionContextValue | null>(null);
@@ -31,7 +27,7 @@ export function UploadSessionProvider({
   const [message, setMessage] = useState("");
 
   const startUpload = useCallback(
-    async (params: { pdf: File; prompt: string; ingestionSource: string }) => {
+    async (params: { pdf: File }) => {
       setStatus("uploading");
       setMessage("Uploading to Python server...");
 
