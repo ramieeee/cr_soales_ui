@@ -51,7 +51,7 @@ export default function UploadPanel() {
       {status === "uploading" ? (
         <LoadingSignal
           label="Uploading Dataset"
-          detail="Binding PDF source to the ingestion pipeline..."
+          detail="Sending PDF to the server to extract data..."
         />
       ) : null}
 
@@ -117,10 +117,12 @@ export default function UploadPanel() {
             <p className="mb-6 max-w-md text-[#ccc3d8]">
               {isDragging ? (
                 "Release the PDF here to start the upload"
-              ) : (
+              ) : file ? null : (
                 <>
-                  <p>Drag and drop PDF sets here</p>
-                  <p>or click to browse your local files</p>
+                  <span className="block">Drag and drop PDF sets here</span>
+                  <span className="block">
+                    or click to browse your local files
+                  </span>
                 </>
               )}
             </p>
