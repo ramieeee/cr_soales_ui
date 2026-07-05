@@ -1,5 +1,4 @@
 export type PaperRow = Record<string, unknown>;
-export type ReviewTableType = "papers_staging" | "papers";
 const EDITABLE_KEYS = [
   "title",
   "authors",
@@ -27,9 +26,7 @@ const apiPath = (...parts: string[]) => joinPath(API_PREFIX, ...parts);
 
 const UPLOAD_PATH = apiPath("multimodal_extraction", "extract");
 const FETCH_PAPERS_PATH = apiPath("paper_review", "fetch", "papers");
-const UPDATE_STAGING_PATH = apiPath("paper_review", "update", "paper_staging");
 const UPDATE_PAPERS_PATH = apiPath("paper_review", "update", "paper");
-const APPROVE_STAGING_PATH = apiPath("paper_review", "approve", "paper_staging");
 const EXTRACT_PATH = apiPath("cr_extraction", "extract", "stream");
 
 const buildUrl = (path: string) => `${API_BASE_URL}${joinPath(path)}`;
@@ -69,29 +66,6 @@ const postForm = async (
   const response = await fetch(buildUrl(path), {
     method: "POST",
     body: form,
-  });
-
-  if (!response.ok) {
-    throw new Error(await response.text());
-  }
-
-  const contentType = response.headers.get("content-type") ?? "";
-  return contentType.includes("application/json")
-    ? response.json()
-    : response.text();
-};
-
-const postWithQuery = async (
-  path: string,
-  query: Record<string, string | number>,
-) => {
-  const url = new URL(buildUrl(path));
-  Object.entries(query).forEach(([key, value]) => {
-    url.searchParams.set(key, String(value));
-  });
-
-  const response = await fetch(url.toString(), {
-    method: "POST",
   });
 
   if (!response.ok) {
@@ -229,15 +203,6 @@ export const uploadDocument = async (params: {
   });
 };
 
-export const fetchStagingPapers = async (offset: number, limit: number) => {
-  const payload = await getWithQuery(FETCH_PAPERS_PATH, {
-    offset,
-    limit,
-    table_type: "papers_staging",
-  });
-  return toRows(payload);
-};
-
 export const fetchPapers = async (offset: number, limit: number) => {
   const payload = await getWithQuery(FETCH_PAPERS_PATH, {
     offset,
@@ -251,7 +216,6 @@ const resolveId = (row: PaperRow) => {
   const candidates = [
     row.id,
     row.paper_id,
-    row.staging_id,
     row.idx,
     row.uuid,
     row._id,
@@ -270,35 +234,10 @@ const sanitizeEditablePayload = (row: PaperRow): PaperRow => {
   return payload;
 };
 
-export const updateStagingPaper = async (row: PaperRow) => {
-  const id = resolveId(row);
-  const payload = sanitizeEditablePayload(row);
-  return postJsonWithQuery(UPDATE_STAGING_PATH, { id }, payload);
-};
-
 export const updatePaper = async (row: PaperRow) => {
   const id = resolveId(row);
   const payload = sanitizeEditablePayload(row);
   return postJsonWithQuery(UPDATE_PAPERS_PATH, { id }, payload);
-};
-
-const resolveStagingApproveId = (row: PaperRow) => {
-  const candidates = [row.idx, row.staging_idx, row.staging_id];
-  const numeric = candidates.find((item) => {
-    if (item === null || item === undefined || item === "") return false;
-    return Number.isInteger(Number(item));
-  });
-
-  if (numeric === undefined) {
-    throw new Error("Missing numeric idx for staging approval");
-  }
-
-  return String(numeric);
-};
-
-export const approveStagingPaper = async (row: PaperRow) => {
-  const id = resolveStagingApproveId(row);
-  return postWithQuery(APPROVE_STAGING_PATH, { id });
 };
 
 const resolvePaperId = (row: PaperRow) => {

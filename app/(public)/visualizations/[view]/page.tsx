@@ -79,7 +79,7 @@ export default async function VisualizationModulePage({
   if (!(view in modules)) notFound();
 
   const key = view as ViewKey;
-  const module = modules[key];
+  const viewModule = modules[key];
 
   return (
     <div className="soales-page min-h-dvh">
@@ -124,24 +124,28 @@ export default async function VisualizationModulePage({
               <div className="soales-chip mb-5">
                 <span
                   className="h-2 w-2 rounded-full"
-                  style={{ backgroundColor: module.accent }}
+                  style={{ backgroundColor: viewModule.accent }}
                 />
-                <span className="soales-mono" style={{ color: module.accent }}>
-                  {module.label.toUpperCase()}_MODULE
+                <span className="soales-mono" style={{ color: viewModule.accent }}>
+                  {viewModule.label.toUpperCase()}_MODULE
                 </span>
               </div>
               <h1 className="soales-heading text-5xl leading-[56px] text-[#e5e7eb] md:text-[64px] md:leading-[72px]">
-                {module.title}
+                {viewModule.title}
               </h1>
-              <p className="mt-5 max-w-2xl text-[#ccc3d8]">{module.subtitle}</p>
+              <p className="mt-5 max-w-2xl text-[#ccc3d8]">
+                {viewModule.subtitle}
+              </p>
             </div>
             <div className="soales-panel min-w-64 p-5">
-              <p className="soales-mono text-[#ccc3d8]">{module.metricLabel}</p>
+              <p className="soales-mono text-[#ccc3d8]">
+                {viewModule.metricLabel}
+              </p>
               <p
                 className="soales-heading mt-2 text-5xl"
-                style={{ color: module.accent }}
+                style={{ color: viewModule.accent }}
               >
-                {module.metric}
+                {viewModule.metric}
               </p>
             </div>
           </div>
@@ -151,11 +155,14 @@ export default async function VisualizationModulePage({
           <div className="relative min-h-[560px] overflow-hidden xl:col-span-8">
             <div className="relative h-full min-h-[510px] overflow-hidden">
               {key === "methodology" ? (
-                <Pipeline accent={module.accent} />
+                <Pipeline accent={viewModule.accent} />
               ) : key === "temporal" ? (
-                <Histogram accent={module.accent} />
+                <Histogram accent={viewModule.accent} />
               ) : (
-                <ParticleField accent={module.accent} dense={key === "clusters"} />
+                <ParticleField
+                  accent={viewModule.accent}
+                  dense={key === "clusters"}
+                />
               )}
             </div>
           </div>
@@ -238,7 +245,7 @@ function Pipeline({ accent }: { accent: string }) {
       <div className="grid w-full gap-5 md:grid-cols-3">
         {[
           ["01", "Extract", "Normalize paper source data."],
-          ["02", "Validate", "Review staging metadata."],
+          ["02", "Validate", "Review paper metadata."],
           ["03", "Project", "Publish client visual modules."],
         ].map(([step, title, copy]) => (
           <div

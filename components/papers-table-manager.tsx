@@ -5,16 +5,12 @@ import { useMemo, useRef, useState } from "react";
 import { useExtractionSession } from "@/components/extraction-session";
 import { LoadingSignal } from "@/components/loading-signal";
 import {
-  approveStagingPaper,
   fetchPapers,
-  fetchStagingPapers,
   type PaperRow,
   updatePaper,
-  updateStagingPaper,
 } from "@/lib/paper-review-api";
 
 type TableManagerProps = {
-  variant: "papers" | "papers-staging";
   title: string;
   description: string;
 };
@@ -46,11 +42,6 @@ const toCellText = (value: unknown) => {
   return JSON.stringify(value);
 };
 
-const isAlreadyApprovedError = (error: unknown) => {
-  if (!(error instanceof Error)) return false;
-  return error.message.toLowerCase().includes("already approved");
-};
-
 const toEditForm = (row: PaperRow): EditForm => {
   const authors =
     Array.isArray(row.authors) &&
@@ -76,7 +67,6 @@ const toEditForm = (row: PaperRow): EditForm => {
 };
 
 export default function PapersTableManager({
-  variant,
   title,
   description,
 }: TableManagerProps) {
@@ -86,14 +76,11 @@ export default function PapersTableManager({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [approveIndex, setApproveIndex] = useState<number | null>(null);
   const [extractIndex, setExtractIndex] = useState<number | null>(null);
-  const [approving, setApproving] = useState(false);
   const [saving, setSaving] = useState(false);
   const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
   const [pendingSaveRow, setPendingSaveRow] = useState<PaperRow | null>(null);
   const saveInFlightRef = useRef(false);
-  const approveInFlightRef = useRef(false);
   const { startExtraction, sessions, revealSessionByPaperId } =
     useExtractionSession();
   const [editForm, setEditForm] = useState<EditForm>({
@@ -123,9 +110,7 @@ export default function PapersTableManager({
     setError("");
 
     try {
-      const fetchRows =
-        variant === "papers-staging" ? fetchStagingPapers : fetchPapers;
-      const payload = await fetchRows(offset, limit);
+      const payload = await fetchPapers(offset, limit);
       setRows(payload);
       setEditingIndex(null);
     } catch (fetchError) {
@@ -147,9 +132,7 @@ export default function PapersTableManager({
     saveInFlightRef.current = true;
     setSaving(true);
     try {
-      const updateRow =
-        variant === "papers-staging" ? updateStagingPaper : updatePaper;
-      await updateRow(row);
+      await updatePaper(row);
       await load();
     } catch (saveError) {
       setError(
@@ -195,32 +178,6 @@ export default function PapersTableManager({
     setPendingSaveRow(null);
   };
 
-  const approve = async () => {
-    if (approveIndex === null || variant !== "papers-staging") return;
-    if (approveInFlightRef.current) return;
-    approveInFlightRef.current = true;
-
-    setApproving(true);
-    try {
-      try {
-        await approveStagingPaper(rows[approveIndex]);
-      } catch (approveError) {
-        if (!isAlreadyApprovedError(approveError)) {
-          throw approveError;
-        }
-      }
-      setApproveIndex(null);
-      await load();
-    } catch (approveError) {
-      setError(
-        approveError instanceof Error ? approveError.message : "Approve failed",
-      );
-    } finally {
-      approveInFlightRef.current = false;
-      setApproving(false);
-    }
-  };
-
   const resolvePaperId = (row: PaperRow) => {
     const candidates = [row.paper_id, row.id, row.idx, row.uuid, row._id];
     const value = candidates.find(
@@ -242,7 +199,7 @@ export default function PapersTableManager({
   };
 
   const confirmExtract = async () => {
-    if (extractIndex === null || variant !== "papers") return;
+    if (extractIndex === null) return;
 
     const row = rows[extractIndex];
     const paperTitle = typeof row.title === "string" ? row.title : "";
@@ -269,7 +226,7 @@ export default function PapersTableManager({
       <header className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
           <p className="soales-mono uppercase text-[#ccc3d8]/80">
-            {variant === "papers-staging" ? "Review Queue" : "Client Dataset"}
+            Client Dataset
           </p>
           <h1 className="soales-subheading mt-3 text-3xl tracking-[-0.02em] text-[#dae2fd] md:text-5xl">
             {title}
@@ -352,15 +309,6 @@ export default function PapersTableManager({
                 ))}
                 <td>
                   <div className="flex flex-col gap-2">
-                    {variant === "papers-staging" ? (
-                      <button
-                        type="button"
-                        onClick={() => setApproveIndex(rowIndex)}
-                        className="rounded border border-[#38bdf8]/35 px-2 py-1 text-xs font-semibold text-[#93c5fd] transition-colors duration-150 ease-out hover:border-[#93c5fd]/70"
-                      >
-                        Approve
-                      </button>
-                    ) : null}
                     <button
                       type="button"
                       onClick={() => openEditor(rowIndex)}
@@ -368,18 +316,16 @@ export default function PapersTableManager({
                     >
                       Edit
                     </button>
-                    {variant === "papers" ? (
-                      <button
-                        type="button"
-                        onClick={() => openExtractConfirm(rowIndex)}
-                        disabled={extractingPaperIds.has(resolvePaperId(row))}
-                        className="w-20 rounded border border-[#93c5fd]/35 px-2 py-1 text-xs font-semibold text-[#93c5fd] transition-colors duration-150 ease-out hover:border-[#93c5fd]/70 disabled:opacity-70"
-                      >
-                        {extractingPaperIds.has(resolvePaperId(row))
-                          ? "Extracting..."
-                          : "Extract"}
-                      </button>
-                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => openExtractConfirm(rowIndex)}
+                      disabled={extractingPaperIds.has(resolvePaperId(row))}
+                      className="w-20 rounded border border-[#93c5fd]/35 px-2 py-1 text-xs font-semibold text-[#93c5fd] transition-colors duration-150 ease-out hover:border-[#93c5fd]/70 disabled:opacity-70"
+                    >
+                      {extractingPaperIds.has(resolvePaperId(row))
+                        ? "Extracting..."
+                        : "Extract"}
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -512,35 +458,6 @@ export default function PapersTableManager({
             >
               Cancel
             </button>
-          </div>
-        </div>
-      ) : null}
-
-      {approveIndex !== null ? (
-        <div className="ui-fade-in fixed inset-0 z-40 grid place-items-center bg-[#060e20]/70 px-4 backdrop-blur-xl">
-          <div className="soales-panel ui-pop w-full max-w-md p-5">
-            <p className="text-sm text-[#dae2fd]">
-              Are you sure you want to approve this paper&apos;s bibliographic
-              information?
-            </p>
-            <div className="mt-4 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={approve}
-                disabled={approving}
-                className="soales-button-primary disabled:opacity-70"
-              >
-                {approving ? "Approving..." : "Approve"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setApproveIndex(null)}
-                disabled={approving}
-                className="soales-button-secondary disabled:opacity-70"
-              >
-                Cancel
-              </button>
-            </div>
           </div>
         </div>
       ) : null}

@@ -9,7 +9,6 @@ const isProtectedPath = (pathname: string) => {
   return (
     pathname.startsWith("/admin") ||
     pathname.startsWith("/upload") ||
-    pathname.startsWith("/papers-staging") ||
     pathname.startsWith("/papers")
   );
 };
@@ -45,7 +44,6 @@ export const config = {
     "/access",
     "/admin/:path*",
     "/upload/:path*",
-    "/papers-staging/:path*",
     "/papers/:path*",
   ],
 };

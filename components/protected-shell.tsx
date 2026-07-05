@@ -8,12 +8,10 @@ import { UploadStatusCard } from "@/components/upload-session";
 
 const navItems = [
   { href: "/upload", label: "File Upload", short: "Upload" },
-  { href: "/papers-staging", label: "Papers Staging", short: "Staging" },
   { href: "/papers", label: "Papers", short: "Papers" },
 ];
 
 const sectionTitle = (pathname: string) => {
-  if (pathname.startsWith("/papers-staging")) return "Staging Review";
   if (pathname.startsWith("/papers")) return "Paper Library";
   return "Ingestion";
 };
@@ -37,7 +35,7 @@ export default function ProtectedShell({
             </p>
           </div>
 
-          <nav className="mt-4 grid grid-cols-3 gap-2 xl:grid-cols-1">
+          <nav className="mt-4 grid grid-cols-2 gap-2 xl:grid-cols-1">
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href || pathname.startsWith(`${item.href}/`);
