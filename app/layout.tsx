@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Hanken_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
-import { RouteTransitionLoader } from "@/components/route-transition-loader";
 import "./globals.css";
 
 const bodyFont = Inter({
@@ -41,7 +40,6 @@ export default function RootLayout({
       <body
         className={`${bodyFont.variable} ${displayFont.variable} ${monoFont.variable}`}
       >
-        <RouteTransitionLoader />
         {children}
       </body>
     </html>

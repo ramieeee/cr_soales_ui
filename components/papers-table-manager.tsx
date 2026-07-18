@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useExtractionSession } from "@/components/extraction-session";
 import { LoadingSignal } from "@/components/loading-signal";
@@ -14,6 +14,9 @@ type TableManagerProps = {
   title: string;
   description: string;
 };
+
+const PAGE_SIZE_OPTIONS = [30, 50, 100] as const;
+type PageSize = (typeof PAGE_SIZE_OPTIONS)[number];
 
 const VISIBLE_KEYS = [
   "title",
@@ -69,9 +72,10 @@ export default function PapersTableManager({
   title,
   description,
 }: TableManagerProps) {
-  const [offset, setOffset] = useState(0);
-  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<PageSize>(30);
   const [rows, setRows] = useState<PaperRow[]>([]);
+  const [hasNextPage, setHasNextPage] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -104,13 +108,15 @@ export default function PapersTableManager({
     [sessions],
   );
 
-  const load = async () => {
+  const load = async (nextPage = page, nextPageSize = pageSize) => {
     setLoading(true);
     setError("");
 
     try {
-      const payload = await fetchPapers(offset, limit);
+      const offset = (nextPage - 1) * nextPageSize;
+      const payload = await fetchPapers(offset, nextPageSize);
       setRows(payload);
+      setHasNextPage(payload.length === nextPageSize);
       setEditingIndex(null);
     } catch (fetchError) {
       setError(
@@ -119,6 +125,17 @@ export default function PapersTableManager({
     } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    void load(page, pageSize);
+    // Reload only when page or page size changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, pageSize]);
+
+  const onPageSizeChange = (value: PageSize) => {
+    setPageSize(value);
+    setPage(1);
   };
 
   const openEditor = (index: number) => {
@@ -213,12 +230,15 @@ export default function PapersTableManager({
     }
   };
 
+  const rangeStart = rows.length ? (page - 1) * pageSize + 1 : 0;
+  const rangeEnd = (page - 1) * pageSize + rows.length;
+
   return (
     <section className="grid gap-6">
       {loading ? (
         <LoadingSignal
           label="Fetching Records"
-          detail="Loading paper nodes from the review API..."
+          detail="Loading papers from the review API..."
         />
       ) : null}
 
@@ -231,49 +251,36 @@ export default function PapersTableManager({
             {description}
           </p>
         </div>
-        <div className="soales-panel px-5 py-4">
-          <p className="soales-subheading text-3xl text-[#dae2fd]">
-            {rows.length}
-          </p>
-          <p className="soales-mono mt-2 text-[10px] uppercase text-[#ccc3d8]">
-            Loaded Rows
-          </p>
+        <div className="flex flex-wrap items-end gap-3">
+          <label className="grid gap-1 text-sm">
+            <span className="soales-mono text-[10px] uppercase text-[#ccc3d8]">
+              Rows per page
+            </span>
+            <select
+              value={pageSize}
+              onChange={(event) =>
+                onPageSizeChange(Number(event.target.value) as PageSize)
+              }
+              disabled={loading}
+              className="soales-input w-28 cursor-pointer appearance-none disabled:opacity-70"
+            >
+              {PAGE_SIZE_OPTIONS.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="soales-panel px-5 py-4">
+            <p className="soales-subheading text-3xl text-[#dae2fd]">
+              {rows.length}
+            </p>
+            <p className="soales-mono mt-2 text-[10px] uppercase text-[#ccc3d8]">
+              Loaded Rows
+            </p>
+          </div>
         </div>
       </header>
-
-      <div className="soales-panel flex flex-wrap items-end gap-4 p-4">
-        <label className="grid gap-1 text-sm">
-          <span className="soales-mono text-[#ccc3d8]">Offset</span>
-          <input
-            type="number"
-            min={0}
-            value={offset}
-            onChange={(event) => setOffset(Number(event.target.value))}
-            className="soales-input w-28"
-          />
-        </label>
-
-        <label className="grid gap-1 text-sm">
-          <span className="soales-mono text-[#ccc3d8]">Limit</span>
-          <input
-            type="number"
-            min={1}
-            max={1000}
-            value={limit}
-            onChange={(event) => setLimit(Number(event.target.value))}
-            className="soales-input w-28"
-          />
-        </label>
-
-        <button
-          type="button"
-          onClick={load}
-          disabled={loading}
-          className="soales-button-primary disabled:opacity-70"
-        >
-          {loading ? "Loading..." : "Fetch"}
-        </button>
-      </div>
 
       {error ? (
         <p className="ui-fade-in rounded bg-[#93000a]/20 px-3 py-2 text-sm text-[#ffdad6]">
@@ -297,18 +304,18 @@ export default function PapersTableManager({
                 key={`${rowIndex}-${toCellText(row.id) || toCellText(row.idx)}`}
               >
                 {columns.map((column) => (
-                  <td key={column} className="max-w-[280px]">
-                    <div className="line-clamp-4 break-words">
+                  <td key={column}>
+                    <div className="soales-table-cell" title={toCellText(row[column])}>
                       {toCellText(row[column])}
                     </div>
                   </td>
                 ))}
                 <td>
-                  <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2 whitespace-nowrap">
                     <button
                       type="button"
                       onClick={() => openEditor(rowIndex)}
-                      className="w-20 rounded border border-[#475569]/70 px-2 py-1 text-xs font-semibold text-[#e5e7eb] transition-colors duration-150 ease-out hover:border-[#93c5fd]"
+                      className="rounded border border-[#475569]/70 px-2 py-1 text-xs font-semibold text-[#e5e7eb] transition-colors duration-150 ease-out hover:border-[#93c5fd]"
                     >
                       Edit
                     </button>
@@ -316,7 +323,7 @@ export default function PapersTableManager({
                       type="button"
                       onClick={() => openExtractConfirm(rowIndex)}
                       disabled={extractingPaperIds.has(resolvePaperId(row))}
-                      className="w-20 rounded border border-[#93c5fd]/35 px-2 py-1 text-xs font-semibold text-[#93c5fd] transition-colors duration-150 ease-out hover:border-[#93c5fd]/70 disabled:opacity-70"
+                      className="rounded border border-[#93c5fd]/35 px-2 py-1 text-xs font-semibold text-[#93c5fd] transition-colors duration-150 ease-out hover:border-[#93c5fd]/70 disabled:opacity-70"
                     >
                       {extractingPaperIds.has(resolvePaperId(row))
                         ? "Extracting..."
@@ -326,18 +333,45 @@ export default function PapersTableManager({
                 </td>
               </tr>
             ))}
-            {!rows.length ? (
+            {!loading && !rows.length ? (
               <tr>
                 <td
                   colSpan={Math.max(columns.length + 1, 2)}
                   className="px-3 py-5 text-center text-[#ccc3d8]"
                 >
-                  Click Fetch to load rows.
+                  No papers found.
                 </td>
               </tr>
             ) : null}
           </tbody>
         </table>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="soales-mono text-[10px] uppercase tracking-widest text-[#ccc3d8]">
+          {rows.length ? `Showing ${rangeStart}–${rangeEnd}` : "No rows"}
+        </p>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+            disabled={loading || page <= 1}
+            className="soales-button-secondary disabled:opacity-40"
+          >
+            Previous
+          </button>
+          <span className="soales-mono min-w-20 px-2 text-center text-xs uppercase text-[#93c5fd]">
+            Page {page}
+          </span>
+          <button
+            type="button"
+            onClick={() => setPage((prev) => prev + 1)}
+            disabled={loading || !hasNextPage}
+            className="soales-button-secondary disabled:opacity-40"
+          >
+            Next
+          </button>
+        </div>
       </div>
 
       {editingIndex !== null ? (
@@ -461,7 +495,7 @@ export default function PapersTableManager({
       ) : null}
 
       {confirmSaveOpen ? (
-        <div className="ui-fade-in fixed inset-0 z-40 grid place-items-center bg-[#060e20]/70 px-4 backdrop-blur-xl">
+        <div className="ui-fade-in fixed inset-0 z-40 grid place-items-center bg-[#060e20]/25 px-4 backdrop-blur-[2px]">
           <div className="soales-panel ui-pop w-full max-w-md p-5">
             <p className="text-sm text-[#dae2fd]">Approve the edited data?</p>
             <div className="mt-4 flex justify-end gap-2">
@@ -487,7 +521,7 @@ export default function PapersTableManager({
       ) : null}
 
       {extractIndex !== null ? (
-        <div className="ui-fade-in fixed inset-0 z-40 grid place-items-center bg-[#060e20]/70 px-4 backdrop-blur-xl">
+        <div className="ui-fade-in fixed inset-0 z-40 grid place-items-center bg-[#060e20]/25 px-4 backdrop-blur-[2px]">
           <div className="soales-panel ui-pop w-full max-w-md p-5">
             <p className="text-sm text-[#dae2fd]">
               Extract data from the paper?

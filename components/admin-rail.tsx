@@ -5,8 +5,8 @@ import { usePathname } from "next/navigation";
 
 const navItems = [
   { href: "/admin", label: "Paper Upload", icon: "upload_file" },
-  { href: "/admin/papers", label: "Paper Nodes", icon: "dataset" },
-  { href: "/admin/logs", label: "Logs", icon: "history" },
+  { href: "/admin/papers", label: "Papers", icon: "dataset" },
+  { href: "/admin/queue", label: "Queue", icon: "queue" },
 ];
 
 const isActivePath = (pathname: string, href: string) => {

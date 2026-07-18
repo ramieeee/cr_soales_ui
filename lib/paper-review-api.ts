@@ -28,6 +28,8 @@ const UPLOAD_PATH = apiPath("multimodal_extraction", "extract");
 const FETCH_PAPERS_PATH = apiPath("paper_review", "fetch", "papers");
 const UPDATE_PAPERS_PATH = apiPath("paper_review", "update", "paper");
 const EXTRACT_PATH = apiPath("cr_extraction", "extract", "stream");
+const FETCH_JOBS_PATH = apiPath("jobs");
+const FETCH_JOB_PATH = (jobId: string) => apiPath("jobs", jobId);
 
 const buildUrl = (path: string) => `${API_BASE_URL}${joinPath(path)}`;
 
@@ -217,6 +219,29 @@ export const fetchPapers = async (offset: number, limit: number) => {
     table_type: "papers",
   });
   return toRows(payload);
+};
+
+export type JobRow = Record<string, unknown>;
+
+export const fetchJobs = async (
+  offset: number,
+  limit: number,
+  status?: string,
+) => {
+  const query: Record<string, string | number> = { offset, limit };
+  if (status) query.status = status;
+  const payload = await getWithQuery(FETCH_JOBS_PATH, query);
+  return toRows(payload) as JobRow[];
+};
+
+export const fetchJob = async (jobId: string) => {
+  const response = await fetch(buildUrl(FETCH_JOB_PATH(jobId)), {
+    method: "GET",
+  });
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+  return response.json() as Promise<JobRow>;
 };
 
 const resolveId = (row: PaperRow) => {

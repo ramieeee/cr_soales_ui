@@ -591,7 +591,7 @@ export function ExtractionDock() {
       </div>
 
       {expandedSession ? (
-        <div className="ui-fade-in fixed inset-0 z-50 bg-[#060e20]/75 p-4 backdrop-blur-xl md:p-6">
+        <div className="ui-fade-in fixed inset-0 z-50 bg-[#060e20]/25 p-4 backdrop-blur-[2px] md:p-6">
           <div className="soales-panel ui-pop mx-auto flex h-full max-h-[96dvh] w-full max-w-6xl flex-col overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,0.55)]">
             <div className="flex items-start justify-between gap-4 bg-[#1f2937] px-5 py-4 md:px-7">
               <div className="min-w-0">
