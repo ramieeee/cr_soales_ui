@@ -224,9 +224,6 @@ export default function PapersTableManager({
 
       <header className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
-          <p className="soales-mono uppercase text-[#ccc3d8]/80">
-            Client Dataset
-          </p>
           <h1 className="soales-subheading mt-3 text-3xl tracking-[-0.02em] text-[#dae2fd] md:text-5xl">
             {title}
           </h1>
@@ -235,7 +232,9 @@ export default function PapersTableManager({
           </p>
         </div>
         <div className="soales-panel px-5 py-4">
-          <p className="soales-subheading text-3xl text-[#dae2fd]">{rows.length}</p>
+          <p className="soales-subheading text-3xl text-[#dae2fd]">
+            {rows.length}
+          </p>
           <p className="soales-mono mt-2 text-[10px] uppercase text-[#ccc3d8]">
             Loaded Rows
           </p>
@@ -287,9 +286,7 @@ export default function PapersTableManager({
           <thead>
             <tr>
               {columns.map((column) => (
-                <th key={column}>
-                  {column}
-                </th>
+                <th key={column}>{column}</th>
               ))}
               <th>Actions</th>
             </tr>
@@ -345,7 +342,9 @@ export default function PapersTableManager({
 
       {editingIndex !== null ? (
         <div className="soales-panel ui-pop grid gap-5 p-5">
-          <p className="soales-mono uppercase text-[#93c5fd]">Edit Allowed Fields</p>
+          <p className="soales-mono uppercase text-[#93c5fd]">
+            Edit Allowed Fields
+          </p>
 
           <label className="grid gap-1 text-sm">
             <span className="text-[#ccc3d8]">title</span>

@@ -193,10 +193,21 @@ const toRows = (payload: unknown): PaperRow[] => {
 
 export const uploadDocument = async (params: {
   pdf: File;
+  vllmBaseUrl?: string;
+  vllmPort?: string;
 }) => {
-  return postForm(UPLOAD_PATH, {
+  const fields: Record<string, string | Blob> = {
     pdf: params.pdf,
-  });
+  };
+  const trimmedUrl = params.vllmBaseUrl?.trim();
+  if (trimmedUrl) {
+    fields.vllm_base_url = trimmedUrl;
+  }
+  const trimmedPort = params.vllmPort?.trim();
+  if (trimmedPort) {
+    fields.vllm_port = trimmedPort;
+  }
+  return postForm(UPLOAD_PATH, fields);
 };
 
 export const fetchPapers = async (offset: number, limit: number) => {

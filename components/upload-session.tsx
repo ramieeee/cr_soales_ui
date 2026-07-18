@@ -15,7 +15,11 @@ type UploadStatus = "idle" | "uploading" | "success" | "error";
 type UploadSessionContextValue = {
   status: UploadStatus;
   message: string;
-  startUpload: (params: { pdf: File }) => Promise<void>;
+  startUpload: (params: {
+    pdf: File;
+    vllmBaseUrl?: string;
+    vllmPort?: string;
+  }) => Promise<void>;
 };
 
 const UploadSessionContext = createContext<UploadSessionContextValue | null>(null);
@@ -27,7 +31,11 @@ export function UploadSessionProvider({
   const [message, setMessage] = useState("");
 
   const startUpload = useCallback(
-    async (params: { pdf: File }) => {
+    async (params: {
+      pdf: File;
+      vllmBaseUrl?: string;
+      vllmPort?: string;
+    }) => {
       setStatus("uploading");
       setMessage("Uploading to Python server...");
 

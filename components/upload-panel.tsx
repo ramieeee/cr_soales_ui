@@ -14,6 +14,8 @@ const isPdfFile = (file: File) => {
 export default function UploadPanel() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
+  const [vllmBaseUrl, setVllmBaseUrl] = useState("");
+  const [vllmPort, setVllmPort] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [formError, setFormError] = useState("");
   const { status, message, startUpload } = useUploadSession();
@@ -34,6 +36,8 @@ export default function UploadPanel() {
 
     await startUpload({
       pdf: file,
+      vllmBaseUrl: vllmBaseUrl.trim() || undefined,
+      vllmPort: vllmPort.trim() || undefined,
     });
   };
 
@@ -139,6 +143,49 @@ export default function UploadPanel() {
               Bibliographic metadata and source type are extracted automatically
               from the PDF.
             </div>
+
+            <label className="block space-y-2">
+              <span className="soales-mono text-xs uppercase tracking-widest text-[#93c5fd]">
+                LLM server IP
+              </span>
+              <input
+                type="text"
+                inputMode="decimal"
+                autoComplete="off"
+                spellCheck={false}
+                value={vllmBaseUrl}
+                onChange={(event) => {
+                  const next = event.target.value.replace(/[^\d.]/g, "");
+                  setVllmBaseUrl(next);
+                }}
+                placeholder="e.g. 203.0.113.10"
+                disabled={status === "uploading"}
+                className="w-full rounded-lg border border-[#1f2937] bg-[#0b1220] px-3 py-2 text-sm text-[#dae2fd] outline-none placeholder:text-[#6b7280] focus:border-[#93c5fd]"
+              />
+            </label>
+
+            <label className="block space-y-2">
+              <span className="soales-mono text-xs uppercase tracking-widest text-[#93c5fd]">
+                LLM server port
+              </span>
+              <input
+                type="text"
+                inputMode="numeric"
+                autoComplete="off"
+                spellCheck={false}
+                value={vllmPort}
+                onChange={(event) => {
+                  const next = event.target.value.replace(/\D/g, "");
+                  setVllmPort(next);
+                }}
+                placeholder="e.g. 8000"
+                disabled={status === "uploading"}
+                className="w-full rounded-lg border border-[#1f2937] bg-[#0b1220] px-3 py-2 text-sm text-[#dae2fd] outline-none placeholder:text-[#6b7280] focus:border-[#93c5fd]"
+              />
+              <span className="block text-xs leading-5 text-[#ccc3d8]/70">
+                IP and port only. Empty falls back to FastAPI env.
+              </span>
+            </label>
 
             {formError ? (
               <div className="rounded bg-[#93000a]/20 p-3 text-sm text-[#ffdad6]">
