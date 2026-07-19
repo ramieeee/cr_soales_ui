@@ -27,7 +27,6 @@ const apiPath = (...parts: string[]) => joinPath(API_PREFIX, ...parts);
 const UPLOAD_PATH = apiPath("multimodal_extraction", "extract");
 const FETCH_PAPERS_PATH = apiPath("paper_review", "fetch", "papers");
 const UPDATE_PAPERS_PATH = apiPath("paper_review", "update", "paper");
-const EXTRACT_PATH = apiPath("cr_extraction", "extract", "stream");
 const FETCH_JOBS_PATH = apiPath("jobs");
 const FETCH_JOB_PATH = (jobId: string) => apiPath("jobs", jobId);
 
@@ -106,64 +105,6 @@ const postJsonWithQuery = async (
   return contentType.includes("application/json")
     ? response.json()
     : response.text();
-};
-
-const postJson = async (path: string, body: unknown) => {
-  const response = await fetch(buildUrl(path), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    throw new Error(await response.text());
-  }
-
-  const contentType = response.headers.get("content-type") ?? "";
-  return contentType.includes("application/json")
-    ? response.json()
-    : response.text();
-};
-
-const postJsonStream = async (
-  path: string,
-  body: unknown,
-  onChunk: (chunk: string) => void,
-) => {
-  const response = await fetch(buildUrl(path), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!response.ok) {
-    throw new Error(await response.text());
-  }
-
-  if (!response.body) {
-    const payload = await response.text();
-    if (payload) onChunk(payload);
-    return;
-  }
-
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) {
-      const trailing = decoder.decode();
-      if (trailing) onChunk(trailing);
-      return;
-    }
-
-    const chunk = decoder.decode(value, { stream: true });
-    if (chunk) onChunk(chunk);
-  }
 };
 
 const toRows = (payload: unknown): PaperRow[] => {
@@ -270,30 +211,4 @@ export const updatePaper = async (row: PaperRow) => {
   const id = resolveId(row);
   const payload = sanitizeEditablePayload(row);
   return postJsonWithQuery(UPDATE_PAPERS_PATH, { id }, payload);
-};
-
-const resolvePaperId = (row: PaperRow) => {
-  const candidates = [row.paper_id, row.id, row.idx, row.uuid, row._id];
-  const value = candidates.find(
-    (item) => item !== undefined && item !== null && item !== "",
-  );
-
-  if (value === undefined) {
-    throw new Error("Missing paper_id for extraction");
-  }
-
-  return String(value);
-};
-
-export const extractPaper = async (row: PaperRow) => {
-  const paperId = resolvePaperId(row);
-  return postJson(EXTRACT_PATH, { paper_id: paperId });
-};
-
-export const streamExtractPaper = async (
-  row: PaperRow,
-  onChunk: (chunk: string) => void,
-) => {
-  const paperId = resolvePaperId(row);
-  return postJsonStream(EXTRACT_PATH, { paper_id: paperId }, onChunk);
 };

@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { useExtractionSession } from "@/components/extraction-session";
 import { LoadingSignal } from "@/components/loading-signal";
 import {
   fetchPapers,
@@ -79,13 +78,10 @@ export default function PapersTableManager({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [extractIndex, setExtractIndex] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
   const [pendingSaveRow, setPendingSaveRow] = useState<PaperRow | null>(null);
   const saveInFlightRef = useRef(false);
-  const { startExtraction, sessions, revealSessionByPaperId } =
-    useExtractionSession();
   const [editForm, setEditForm] = useState<EditForm>({
     title: "",
     authorsText: "",
@@ -98,15 +94,6 @@ export default function PapersTableManager({
 
   const columns = useMemo(() => Array.from(VISIBLE_KEYS), []);
 
-  const extractingPaperIds = useMemo(
-    () =>
-      new Set(
-        sessions
-          .filter((session) => session.status === "extracting")
-          .map((session) => session.paperId),
-      ),
-    [sessions],
-  );
 
   const load = async (nextPage = page, nextPageSize = pageSize) => {
     setLoading(true);
@@ -194,41 +181,6 @@ export default function PapersTableManager({
     setPendingSaveRow(null);
   };
 
-  const resolvePaperId = (row: PaperRow) => {
-    const candidates = [row.paper_id, row.id, row.idx, row.uuid, row._id];
-    const value = candidates.find(
-      (item) => item !== undefined && item !== null && item !== "",
-    );
-
-    return value === undefined ? "" : String(value);
-  };
-
-  const openExtractConfirm = (rowIndex: number) => {
-    const paperId = resolvePaperId(rows[rowIndex]);
-
-    if (extractingPaperIds.has(paperId)) {
-      revealSessionByPaperId(paperId);
-      return;
-    }
-
-    setExtractIndex(rowIndex);
-  };
-
-  const confirmExtract = async () => {
-    if (extractIndex === null) return;
-
-    const row = rows[extractIndex];
-    const paperTitle = typeof row.title === "string" ? row.title : "";
-    setExtractIndex(null);
-
-    try {
-      void startExtraction({ row, paperTitle });
-    } catch (extractError) {
-      setError(
-        extractError instanceof Error ? extractError.message : "Extract failed",
-      );
-    }
-  };
 
   const rangeStart = rows.length ? (page - 1) * pageSize + 1 : 0;
   const rangeEnd = (page - 1) * pageSize + rows.length;
@@ -311,25 +263,13 @@ export default function PapersTableManager({
                   </td>
                 ))}
                 <td>
-                  <div className="flex items-center gap-2 whitespace-nowrap">
-                    <button
-                      type="button"
-                      onClick={() => openEditor(rowIndex)}
-                      className="rounded border border-[#475569]/70 px-2 py-1 text-xs font-semibold text-[#e5e7eb] transition-colors duration-150 ease-out hover:border-[#93c5fd]"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => openExtractConfirm(rowIndex)}
-                      disabled={extractingPaperIds.has(resolvePaperId(row))}
-                      className="rounded border border-[#93c5fd]/35 px-2 py-1 text-xs font-semibold text-[#93c5fd] transition-colors duration-150 ease-out hover:border-[#93c5fd]/70 disabled:opacity-70"
-                    >
-                      {extractingPaperIds.has(resolvePaperId(row))
-                        ? "Extracting..."
-                        : "Extract"}
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => openEditor(rowIndex)}
+                    className="rounded border border-[#475569]/70 px-2 py-1 text-xs font-semibold text-[#e5e7eb] transition-colors duration-150 ease-out hover:border-[#93c5fd]"
+                  >
+                    Edit
+                  </button>
                 </td>
               </tr>
             ))}
@@ -520,31 +460,6 @@ export default function PapersTableManager({
         </div>
       ) : null}
 
-      {extractIndex !== null ? (
-        <div className="ui-fade-in fixed inset-0 z-40 grid place-items-center bg-[#060e20]/25 px-4 backdrop-blur-[2px]">
-          <div className="soales-panel ui-pop w-full max-w-md p-5">
-            <p className="text-sm text-[#dae2fd]">
-              Extract data from the paper?
-            </p>
-            <div className="mt-4 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={confirmExtract}
-                className="soales-button-primary"
-              >
-                Extract
-              </button>
-              <button
-                type="button"
-                onClick={() => setExtractIndex(null)}
-                className="soales-button-secondary"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
     </section>
   );
 }

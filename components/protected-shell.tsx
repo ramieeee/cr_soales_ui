@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { ExtractionDock } from "@/components/extraction-session";
 import { UploadStatusCard } from "@/components/upload-session";
 
 const navItems = [
@@ -108,7 +107,6 @@ export default function ProtectedShell({
         </div>
       </div>
 
-      <ExtractionDock />
     </div>
   );
 }

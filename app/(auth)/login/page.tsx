@@ -84,7 +84,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
             {hasError ? (
               <p className="rounded bg-[#93000a]/20 px-3 py-2 text-sm text-[#ffdad6]">
-                이메일 또는 비밀번호가 올바르지 않습니다.
+                Email or password is incorrect.
               </p>
             ) : null}
 
