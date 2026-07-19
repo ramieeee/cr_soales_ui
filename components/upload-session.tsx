@@ -15,6 +15,10 @@ type UploadStatus = "idle" | "uploading" | "success" | "error";
 type UploadSessionContextValue = {
   status: UploadStatus;
   message: string;
+  vllmBaseUrl: string;
+  vllmPort: string;
+  setVllmBaseUrl: (value: string) => void;
+  setVllmPort: (value: string) => void;
   startUpload: (params: {
     pdf: File;
     vllmBaseUrl?: string;
@@ -29,6 +33,8 @@ export function UploadSessionProvider({
 }: Readonly<{ children: React.ReactNode }>) {
   const [status, setStatus] = useState<UploadStatus>("idle");
   const [message, setMessage] = useState("");
+  const [vllmBaseUrl, setVllmBaseUrl] = useState("");
+  const [vllmPort, setVllmPort] = useState("");
 
   const startUpload = useCallback(
     async (params: {
@@ -57,9 +63,13 @@ export function UploadSessionProvider({
     () => ({
       status,
       message,
+      vllmBaseUrl,
+      vllmPort,
+      setVllmBaseUrl,
+      setVllmPort,
       startUpload,
     }),
-    [status, message, startUpload],
+    [status, message, vllmBaseUrl, vllmPort, startUpload],
   );
 
   return (
@@ -89,6 +99,15 @@ export function UploadStatusCard() {
           ? "text-[#93c5fd] bg-[#1f2937]"
           : "text-[#9ca3af] bg-[#111827]";
 
+  const statusLabel =
+    status === "idle"
+      ? "Idle"
+      : status === "uploading"
+        ? "Uploading"
+        : status === "success"
+          ? "Success"
+          : "Error";
+
   return (
     <div
       className={`mx-3 min-w-[10.75rem] rounded-lg p-3 transition-colors duration-200 ease-out ${
@@ -96,9 +115,10 @@ export function UploadStatusCard() {
       } ${toneClass}`}
     >
       <p className="soales-mono uppercase">Upload Status</p>
-      <p className="mt-2 line-clamp-4 text-xs whitespace-pre-wrap break-words">
-        {message || "No upload has been started yet."}
-      </p>
+      <p className="mt-2 text-sm font-medium tracking-[-0.01em]">{statusLabel}</p>
+      {status === "error" && message ? (
+        <p className="mt-1 line-clamp-2 text-xs leading-5 opacity-80">{message}</p>
+      ) : null}
     </div>
   );
 }

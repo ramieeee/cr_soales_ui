@@ -14,11 +14,17 @@ const isPdfFile = (file: File) => {
 export default function UploadPanel() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [vllmBaseUrl, setVllmBaseUrl] = useState("");
-  const [vllmPort, setVllmPort] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [formError, setFormError] = useState("");
-  const { status, message, startUpload } = useUploadSession();
+  const {
+    status,
+    message,
+    startUpload,
+    vllmBaseUrl,
+    vllmPort,
+    setVllmBaseUrl,
+    setVllmPort,
+  } = useUploadSession();
 
   const handleFileSelect = (selected: File | null) => {
     if (!selected) return;
@@ -140,8 +146,7 @@ export default function UploadPanel() {
           </div>
           <div className="flex-1 space-y-5 overflow-y-auto p-6">
             <div className="rounded-xl bg-[#0b1220] p-4 text-sm leading-6 text-[#ccc3d8]">
-              Bibliographic metadata and source type are extracted automatically
-              from the PDF.
+              LLM Server IP and Port inputs are optional
             </div>
 
             <label className="block space-y-2">
@@ -182,9 +187,6 @@ export default function UploadPanel() {
                 disabled={status === "uploading"}
                 className="w-full rounded-lg border border-[#1f2937] bg-[#0b1220] px-3 py-2 text-sm text-[#dae2fd] outline-none placeholder:text-[#6b7280] focus:border-[#93c5fd]"
               />
-              <span className="block text-xs leading-5 text-[#ccc3d8]/70">
-                IP and port only. Empty falls back to FastAPI env.
-              </span>
             </label>
 
             {formError ? (
